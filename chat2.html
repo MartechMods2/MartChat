@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <link rel="stylesheet" href="chat2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="reply-area" id="reply-area" style="display: none;">
+            <span id="cancel-reply"></span>
+        </div>
+        <div class="chat-box" id="chat-box"></div>
+        <div class="loading" id="loading" style="display: none;">
+            <i class="fas fa-cog fa-spin"></i> Generating response...
+        </div>
+        <div class="chat-input-container">
+            <input type="file" id="file-input" accept="*" multiple style="display: none;" onchange="handleFileUpload()">
+            <button id="file-upload-button" onclick="document.getElementById('file-input').click();" title="Upload File">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <input type="text" id="message-input" placeholder="Type your message here...">
+            <button id="send-button"><i class="fas fa-paper-plane"></i></button>
+            <button id="loading-button" style="display: none;"><i class="fas fa-cog fa-spin"></i></button>
+            <button id="settings-button" onclick="connectToBluetooth()"><i class="fas fa-cog"></i> Connect Bluetooth</button>
+        </div>
+        <div class="context-menu" id="context-menu" style="display: none;">
+            <ul>
+                <li id="delete-message">Delete</li>
+                <li id="copy-message">Copy</li>
+                <li id="share-message" onclick="shareMessage()">Share</li>
+                <li id="reply-message">Reply</li>
+                <li id="pin-message">Pin</li>
+                <li id="reask-message">Reask</li>
+            </ul>
+        </div>
+    </div>
+    <script src="script.js"></script>
+
+<script>
+// Bluetooth variables
+let characteristic;
+const serviceUUID = '88257514-d13d-11ef-b120-325096b39f47'; // Your service UUID
+const characteristicUUID = '123e4567-e89b-12d3-a456-426614174000'; // Your characteristic UUID (change as needed)
+
+// Function to connect to a Bluetooth device
+async function connectToBluetooth() {
+    try {
+        const device = await navigator.bluetooth.requestDevice({
+            filters: [{ services: [serviceUUID] }]
+        });
+
+        const server = await device.gatt.connect();
+        const service = await server.getPrimaryService(serviceUUID);
+        characteristic = await service.getCharacteristic(characteristicUUID);
+
+        console.log("Connected to Bluetooth device");
+        await receiveMessages(characteristic); // Start listening for messages
+    } catch (error) {
+        console.error("Bluetooth connection error:", error);
+        alert("Failed to connect to the Bluetooth device. Please try again.");
+    }
+}
+
+// Function to send a message via Bluetooth
+async function sendBluetoothMessage(message) {
+    if (characteristic) {
+        try {
+            const encoder = new TextEncoder('utf-8');
+            const data = encoder.encode(message);
+            await characteristic.writeValue(data);
+            console.log("Bluetooth message sent:", message);
+        } catch (error) {
+            console.error("Error sending Bluetooth message:", error);
+            alert("Failed to send the Bluetooth message. Please try again.");
+        }
+    } else {
+        console.error("No Bluetooth characteristic connected.");
+        alert("Not connected to a Bluetooth characteristic.");
+    }
+}
+
+// Existing send button functionality modified to include Bluetooth message sending
+document.getElementById("send-button").addEventListener("click", function() {
+    const messageInput = document.getElementById("message-input");
+    const messageText = messageInput.value;
+    const fileInput = document.getElementById("file-input");
+    const files = fileInput.files;
+
+    if (messageText.trim() !== "" || files.length > 0) {
+        if (messageText.trim() !== "") {
+            const replyMessage = document.getElementById("reply-area").innerText;
+            if (replyMessage) {
+                addMessage("You replied to: " + replyMessage, true);
+                document.getElementById("reply-area").style.display = 'none'; // Hide reply area after sending
+            } else {
+                addMessage("You: " + messageText, true);
+                sendBluetoothMessage(messageText); // Send via Bluetooth
+            }
+            messageInput.value = ""; // Clear input
+        }
+
+        // Handle file uploads
+        for (let i = 0; i < files.length; i++) {
+            addMessage("You shared a file: " + files[i].name, true);
+        }
+
+        document.getElementById("chat-box").scrollTop = document.getElementById("chat-box").scrollHeight; // Scroll to bottom
+        generateAIResponse(messageText); // Generate AI response
+        fileInput.value = ""; // Clear file input
+    }
+});
+
+// Other existing functions (addMessage, handleFileUpload, etc.) remain unchanged
+
+</script>
+</body>
+</html>

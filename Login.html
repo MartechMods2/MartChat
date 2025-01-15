@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-switch">
+                <button id="login-btn" class="active">Login</button>
+                <button id="register-btn">Register</button>
+            </div>
+            <form id="login-form" class="form active">
+                <h2>Login</h2>
+                <div class="input-group">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="login-password" placeholder="Password" required>
+                    <span class="show-password" onclick="togglePassword('login-password')">👁️</span>
+                </div>
+                <button type="submit">Login</button>
+                <div class="social-login">
+                    <button type="button" id="google-login">Login with Google</button>
+                    <button type="button" id="github-login">Login with GitHub</button>
+                </div>
+            </form>
+            <form id="register-form" class="form">
+                <h2>Register</h2>
+                <div class="input-group">
+                    <input type="email" id="register-email" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="register-password" placeholder="Password" required>
+                    <span class="show-password" onclick="togglePassword('register-password')">👁️</span>
+                </div>
+                <button type="submit">Register</button>
+                <div class="social-login">
+                    <button type="button" id="google-register">Register with Google</button>
+                    <button type="button" id="github-register">Register with GitHub</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+</body>
+</html>
+<script>
+// Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyCOPj54NSsQTvSFA4VqC-KTkm_3pTifeBg",
+    authDomain: "form-28467.firebaseapp.com",
+    projectId: "form-28467",
+    storageBucket: "form-28467.firebasestorage.app",
+    messagingSenderId: "682996415112",
+    appId: "1:682996415112:web:3c15d256687de839ae3d3d"
+};
+
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// Form handling
+document.getElementById('login-btn').addEventListener('click', () => {
+    switchForm('login');
+});
+
+document.getElementById('register-btn').addEventListener('click', () => {
+    switchForm('register');
+});
+
+// Email and password login
+document.getElementById('login-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+            window.location.href = "success.html"; // Redirect upon successful login
+        })
+        .catch((error) => {
+            showToast(error.message, 'error');
+        });
+});
+
+// Email and password registration
+document.getElementById('register-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+
+    auth.createUserWithEmailAndPassword(email, password)
+        .then(() => {
+            window.location.href = "success.html"; // Redirect upon successful registration
+        })
+        .catch((error) => {
+            showToast(error.message, 'error');
+        });
+});
+
+// Google login
+document.getElementById('google-login').addEventListener('click', () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+        .then(() => {
+            window.location.href = "success.html"; // Redirect upon successful login
+        })
+        .catch((error) => {
+            showToast(error.message, 'error');
+        });
+});
+
+// GitHub login
+document.getElementById('github-login').addEventListener('click', () => {
+    const provider = new firebase.auth.GithubAuthProvider();
+    auth.signInWithPopup(provider)
+        .then(() => {
+            window.location.href = "success.html"; // Redirect upon successful login
+        })
+        .catch((error) => {
+            showToast(error.message, 'error');
+        });
+});
+
+// Function to switch forms
+function switchForm(formType) {
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const loginBtn = document.getElementById('login-btn');
+    const registerBtn = document.getElementById('register-btn');
+
+    if (formType === 'login') {
+        loginForm.classList.add('active');
+        registerForm.classList.remove('active');
+        loginBtn.classList.add('active');
+        registerBtn.classList.remove('active');
+    } else {
+        registerForm.classList.add('active');
+        loginForm.classList.remove('active');
+        registerBtn.classList.add('active');
+        loginBtn.classList.remove('active');
+    }
+}
+
+// Function to toggle password visibility
+function togglePassword(inputId) {
+    const passwordInput = document.getElementById(inputId);
+    const type = passwordInput.type === "password" ? "text" : "password";
+    passwordInput.type = type;
+}
+
+// Toast notification function
+function showToast(message, type) {
+    const toast = document.getElementById('toast');
+    toast.innerText = message;
+    toast.style.display = 'block';
+    toast.style.opacity = '1';
+
+    if (type === 'success') {
+        toast.style.backgroundColor = '#28a745'; // Green for success
+    } else {
+        toast.style.backgroundColor = '#dc3545'; // Red for error
+    }
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 500);
+    }, 3000);
+}
+
+// Initialize with login form active
+switchForm('login');
+</script>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: #1e1e1e;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    width: 400px;
+    overflow: hidden;
+}
+
+.form-container {
+    padding: 20px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-switch {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.form-switch button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-weight: bold;
+    color: #bb86fc;
+    transition: color 0.3s;
+}
+
+.form-switch button.active {
+    color: #ffffff;
+    border-bottom: 2px solid #bb86fc;
+}
+
+.form {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.form.active {
+    display: block;
+    opacity: 1;
+}
+
+.input-group {
+    position: relative;
+    margin-top: 15px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background: #222;
+    color: white;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    border-color: #bb86fc;
+    outline: none;
+}
+
+.show-password {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #bb86fc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #9a67d9;
+}
+
+.social-login {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: none;
+    transition: opacity 0.5s;
+}
+</style>

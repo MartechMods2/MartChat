@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Authentication</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+    body {
+        background: linear-gradient(120deg, #2c3e50, #3498db);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+        margin: 0;
+    }
+    .container {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        width: 350px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        text-align: center;
+    }
+    .tab-switch {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 15px;
+    }
+    .tab-switch button {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        background: #eee;
+        cursor: pointer;
+        font-weight: bold;
+        border-radius: 8px 8px 0 0;
+        transition: 0.3s;
+    }
+    .tab-switch button.active {
+        background: #3498db;
+        color: white;
+    }
+    .form {
+        display: none;
+    }
+    .form.active {
+        display: block;
+    }
+    input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+    #loginBtn, #signupBtn {
+        width: 100%;
+        padding: 12px;
+        background: #3498db;
+        border: none;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    #loginBtn:hover, #signupBtn:hover {
+        background: #2980b9;
+    }
+    .divider {
+        margin: 15px 0;
+        font-size: 14px;
+        color: #888;
+    }
+    .social-login {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+    .social-login button {
+        flex: 1 1 45%;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: 0.3s;
+    }
+    .social-login button:hover {
+        opacity: 0.85;
+    }
+    .google { background: #db4437; color: white; }
+    .github { background: #333; color: white; }
+    .facebook { background: #3b5998; color: white; }
+    .apple { background: black; color: white; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="tab-switch">
+        <button type="button" id="loginTab" class="active">Login</button>
+        <button type="button" id="signupTab">Sign Up</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="form active">
+        <h1>Login</h1>
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button id="loginBtn" type="submit">Login</button>
+    </form>
+
+    <!-- Sign Up Form -->
+    <form id="signupForm" class="form">
+        <h1>Create Account</h1>
+        <input type="text" id="signupUsername" placeholder="Username" required>
+        <input type="email" id="signupEmail" placeholder="Email" required>
+        <input type="password" id="signupPassword" placeholder="Password" required>
+        <input type="password" id="signupConfirm" placeholder="Confirm Password" required>
+        <button id="signupBtn" type="submit">Sign Up</button>
+    </form>
+
+    <div class="divider">Or continue with</div>
+    <div class="social-login">
+        <button type="button" class="google" onclick="authGoogle()"><i class="fab fa-google"></i> Google</button>
+        <button type="button" class="github" onclick="authGitHub()"><i class="fab fa-github"></i> GitHub</button>
+        <button type="button" class="facebook" onclick="authFacebook()"><i class="fab fa-facebook-f"></i> Facebook</button>
+        <button type="button" class="apple" onclick="authApple()"><i class="fab fa-apple"></i> Apple</button>
+    </div>
+</div>
+
+<!-- Firebase v9 compat mode -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script>
+   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAgx0jy6we6cvnIgKbS1fBoeRfSD2MDszo",
+  authDomain: "mod-hive.firebaseapp.com",
+  projectId: "mod-hive",
+  storageBucket: "mod-hive.firebasestorage.app",
+  messagingSenderId: "982583858832",
+  appId: "1:982583858832:web:44d5e4e2edd77fac06ea15",
+  measurementId: "G-PK2DRED7FB"
+};
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            window.location.href = "main2.html";
+        }
+    });
+
+    const loginTab = document.getElementById('loginTab');
+    const signupTab = document.getElementById('signupTab');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+
+    loginTab.addEventListener('click', () => {
+        loginTab.classList.add('active');
+        signupTab.classList.remove('active');
+        loginForm.classList.add('active');
+        signupForm.classList.remove('active');
+    });
+
+    signupTab.addEventListener('click', () => {
+        signupTab.classList.add('active');
+        loginTab.classList.remove('active');
+        signupForm.classList.add('active');
+        loginForm.classList.remove('active');
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        auth.signInWithEmailAndPassword(email, password)
+            .catch(err => alert(err.message));
+    });
+
+    signupForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('signupUsername').value.trim();
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirm = document.getElementById('signupConfirm').value;
+        if (password !== confirm) {
+            alert("Passwords do not match!");
+            return;
+        }
+        auth.createUserWithEmailAndPassword(email, password)
+            .then(userCredential => {
+                return userCredential.user.updateProfile({
+                    displayName: username
+                });
+            })
+            .catch(err => alert(err.message));
+    });
+
+    function authGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(err => alert(err.message));
+}
+
+    function authGitHub() {
+        const provider = new firebase.auth.GithubAuthProvider();
+        auth.signInWithPopup(provider).catch(err => alert(err.message));
+    }
+    function authFacebook() {
+        const provider = new firebase.auth.FacebookAuthProvider();
+        provider.addScope('email');
+        provider.addScope('public_profile');
+        auth.signInWithPopup(provider).catch(err => alert(err.message));
+    }
+    function authApple() {
+        const provider = new firebase.auth.OAuthProvider('apple.com');
+        auth.signInWithPopup(provider).catch(err => alert(err.message));
+    }
+</script>
+
+</body>
+</html>

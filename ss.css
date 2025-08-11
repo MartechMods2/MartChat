@@ -1,0 +1,104 @@
+body{
+    background: #333;
+    text-align: center;
+    margin: 0;
+    max-width: 320px;
+    max-height: 720px;
+    height: 100%;
+    width: 100%;
+    overflow: ;
+  text-align: center;
+    justify-content: center; /* horizontal centering */
+    align-items: center; /* vertical centering */
+}
+.main{
+    align-items: center;
+    text-align: center;
+    display: flex;
+    justify-content: center; /* horizontal centering */
+    align-items: center; /*vertical centering */
+
+}
+img{
+    animation: oup 5s ease-in-out infinite;
+}
+@keyframes op {
+    0%{transform: rotateX(0deg);}
+    20%{transform: rotateY(45deg);}
+    40%{transform: rotateX(90deg);}
+    60%{transform: rotateY(180deg);}
+    80%{transform: rotateX(270deg);}
+    100%{transform: rotateY(360deg);}
+    
+}
+.circle{
+margin-top: 100px;
+margin-left: 110px;
+ text-align: center;
+    display: flex;
+    justify-content: center; /* horizontal centering */
+    align-items: center; /* vertical centering */
+    border: none;
+    background: red;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    border-radius: 60%;
+    color: #35d363;
+    background: white;
+    background-size: 400% 400%;
+    animation: flow 2s ease infinite;
+}
+
+@keyframes flow {
+    0% {
+        background-position: 0% 50%;
+       
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+h2 {
+  animation: op3 4s ease-in-out infinite;
+    color: white;
+    text-align: center;
+    font-family: serif;
+    font-weight: bolder;
+    display: flex;
+    font-size: 3em;
+    margin-top: 50px;
+    justify-content: center; /* horizontal centering */
+    align-items: center; /* vertical centering */
+   
+}
+@keyframes op3 {
+    0%{ transform: translateY(25%);}
+    20%{ transform: translateY(50%);}
+    40%{ transform: translateY(0);}
+    60%{ transform: translateY(50%);}
+    80%{ transform: translateY(0);}
+    95%{ transform: translateY(50%);}
+    100%{ transform: translateY(25%);}
+}
+h1{
+    animation: op2 3s ease-in-out;
+    color: white;
+    text-align: center;
+    font-family: serif;
+    font-weight: bolder;
+    display: flex;
+    font-size: 3em;
+    margin-top: 50px;
+    justify-content: center; /* horizontal centering */
+    align-items: center; /* vertical centering */
+   
+}
+@keyframes op2 {
+    0%{opacity: 0.1; transform: translateY(0%);}
+    50%{opacity: 0.5; transform: translateY(-50%);}
+    100%{opacity: 1;transform: translateY(0%);}
+}

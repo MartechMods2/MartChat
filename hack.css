@@ -1,0 +1,61 @@
+body {
+    margin: 20px;
+   padding: 0;
+}
+ht{
+ margin: 1px 40px 1px 1px;
+ padding: 20px;
+  text-align: center;
+  font-size: 2em;
+  font-weight: bolder;
+}
+h1{
+    text-align: center;
+}
+a{
+    text-decoration: none;
+    color: white;
+}
+.navbar{
+color: white;
+   text-align: center; 
+  background:black;
+  border-radius: 25px;
+  display: flex;
+  justify-content: space-between;
+   align-items: center;
+   transition: background-color 3.3s;
+ box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  
+}
+.nd{
+    background: black;
+    height: 220px;
+    width: 200px;
+    border-radius: 10px;
+    padding: 5px;
+   color: white;
+   margin: 30px;
+   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+h2{
+    margin: 10px;
+}
+img{
+    background: white;
+    border-radius: 25px;
+    margin: 1px 1px -5px 10px;
+animation: color ease-in-out 9s infinite;
+
+        }
+        @keyframes color {
+        0% {background-color: white; opacity: 0.4;}  
+        15%{background-color: khaki;}
+        25% {background-color: greenyellow; opacity: 0.7;}
+        35% {background-color: darkseagreen;}
+        45%{background-color: honeydew;}
+        50%{ background-color: white;}
+        75% { background-color: aqua;opacity: 0.9;} 
+        85% {background-color: darkgray;}
+        100% {background-color: white;opacity: 1;}
+        }

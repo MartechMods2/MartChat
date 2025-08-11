@@ -1,0 +1,482 @@
+.container{
+    margin-left: 30px;
+    margin-right: 30px;
+}
+.cont1{
+margin: 0 12px 50px;
+text-align: center;
+display: inline-table;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.cont1:nth-child(1){
+   
+}
+.site-footer
+{
+  background-color:#26272b;
+  padding:45px 0 20px;
+  font-size:15px;
+  line-height:24px;
+  color:#737373;
+}
+.site-footer hr
+{
+  border-top-color:#bbb;
+  opacity:0.5;
+}
+.site-footer hr.small
+{
+  margin:20px 0;
+}
+.site-footer h6
+{
+  color:#fff;
+  font-size:16px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+}
+.site-footer a
+{
+  color:#737373;
+}
+.site-footer a:hover
+{
+  color:#3366cc;
+  text-decoration:none;
+}
+.footer-links
+{
+  padding-left:0;
+  list-style:none;
+}
+.footer-links li
+{
+  display:block;
+}
+.footer-links a
+{
+  color:#737373;
+}
+.footer-links a:active,.footer-links a:focus,.footer-links a:hover
+{
+  color:#3366cc;
+  text-decoration:none;
+}
+.footer-links.inline li
+{
+  display:inline-block;
+}
+.site-footer .social-icons
+{
+  text-align:right;
+}
+.site-footer .social-icons a
+{
+  width:40px;
+  height:40px;
+  line-height:40px;
+  margin-left:6px;
+  margin-right:0;
+  border-radius:100%;
+  background-color:#33353d;
+}
+.copyright-text
+{
+  margin:0;
+}
+@media (max-width:991px)
+{
+  .site-footer [class^=col-]
+  {
+    margin-bottom:30px;
+  }
+}
+@media (max-width:767px)
+{
+  .site-footer
+  {
+    padding-bottom:0;
+  }
+  .site-footer .copyright-text,.site-footer .social-icons
+  {
+    text-align:center;
+  }
+}
+.social-icons
+{
+  padding-left:0;
+  margin-bottom:0;
+  list-style:none;
+}
+.social-icons li
+{
+  display:inline-block;
+  margin-bottom:4px;
+}
+.social-icons li.title
+{
+  margin-right:15px;
+  text-transform:uppercase;
+  color:#96a2b2;
+  font-weight:700;
+  font-size:13px;
+}
+.social-icons a{
+  background-color:#eceeef;
+  color:#818a91;
+  font-size:16px;
+  display:inline-block;
+  line-height:44px;
+  text-align:center;
+  margin-right:8px;
+  border-radius:100%;
+  -webkit-transition:all .2s linear;
+  -o-transition:all .2s linear;
+  transition:all .2s linear;
+}
+.social-icons a:active,.social-icons a:focus,.social-icons a:hover
+{
+  color:#fff;
+  background-color:#29aafe;
+}
+.social-icons.size-sm a
+{
+  line-height:34px;
+  height:34px;
+  width:34px;
+  font-size:14px;
+}
+.social-icons a.facebook:hover
+{
+  background-color:#3b5998;
+}
+.social-icons a.twitter:hover
+{
+  background-color:#00aced;
+}
+.social-icons a.linkedin:hover
+{
+  background-color:#007bb6;
+}
+.social-icons a.dribbble:hover
+{
+  background-color:#ea4c89;
+}
+@media (max-width:767px)
+{
+  .social-icons li.title
+  {
+    display:block;
+    margin-right:0;
+    font-weight:600;
+  }
+}
+/* Basic Dark Theme and Responsive Styling */
+
+  .close-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+        body {
+ 
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            transition: background-color 1.3s, color 1.3s;
+        }
+        .light-theme {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .dark-theme {
+            background-color: #121212;
+            color: #ffffff;
+        }
+.navbar {
+   display: flex;
+   border-radius: 25px;
+   top: 2%;
+   Left: 50%;
+   transform: translateX(-50%);
+   z-index: 10;
+   position: fixed;
+   justify-content: space-between;
+   align-items: center;
+   background-color: #333;
+   padding: 10px 20px;
+   transition: background-color 3.3s;
+ box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+   width: 95%;
+   transform: translateX (-50%) scale(0.5);
+
+        }
+        .mm2{
+            padding: -10px;
+            background: white;
+            border-radius: 60px;
+            animation: color ease-in-out 9s infinite;
+
+        }
+        @keyframes color {
+        0% {background-color: white; opacity: 0.4;}  
+        15%{background-color: khaki;}
+        25% {background-color: greenyellow; opacity: 0.7;}
+        35% {background-color: darkseagreen;}
+        45%{background-color: honeydew;}
+        50%{ background-color: white;}
+        75% { background-color: aqua;opacity: 0.9;} 
+        85% {background-color: darkgray;}
+        100% {background-color: white;opacity: 1;}
+        }
+        .navbar h1 {
+   margin-right: 40px;
+            color: white;
+            font-weight: bolder;
+            font-size: 27px;
+            transition: color 0.3s;
+        }
+        .menu-icon{
+            margin-left:10px;
+        }
+        .theme-icon{
+            font-size:20px;
+            cursor:pointer;
+            transition: transform 0.3s;
+        }
+        .menu-icon {
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .menu-icon:hover, .theme-icon:hover {
+            transform: scale(1.2); /* Slightly enlarge on hover */
+        }
+        .side-nav {
+    
+            position: fixed;
+            left: -300px; /* Hide side nav initially */
+            top: 0;
+            height: 100%;
+            width: 300px;
+            background-color: #444;
+            transition: left 0.3s ease-in-out;
+            padding-top: 60px;
+            z-index: 1000;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+        }
+        .side-nav.active {
+            left: 0; /* Show side nav */
+        }
+        .side-nav a {
+            display: block;
+            padding: 16px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s, padding-left 0.3s;
+        }
+        .side-nav a:hover, .side-nav a.active {
+            background-color: #575757; /* Active color for side nav links */
+            padding-left: 24px; /* Indent on hover */
+        }
+        .dropdown {
+            display: none; /* Hide dropdown by default */
+            padding-left: 20px; /* Indent dropdown items */
+        }
+        .dropdown.active {
+            display: block; /* Show dropdown when active */
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        t{
+            font-weight:bolder;
+            font-size:20px;
+        }
+/* ---THE BODY SECTION ENDS--- */
+
+
+/* ---THIS IS ANOTHER SECTION--- */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+  /* custom scroll bar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #242526;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #3A3B3C;
+  }
+  #menu-btn:checked ~ .nav-links{
+    left: 0%;
+  }
+  #menu-btn:checked ~ .btn.menu-btn{
+    display: none;
+  }
+  #close-btn:checked ~ .btn.menu-btn{
+    display: block;
+
+  .content .row .mega-links{
+    border-left: 0px;
+    padding-left: 15px;
+  }
+  .row .mega-links li{
+    margin: 0;
+  }
+  .content .row header{
+    font-size: 19px;
+  }
+}
+section {
+            padding: 4rem 2rem;
+            min-height: 60vh; /* Adjusted min-height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        section h1, section h2, section p {
+            max-width: 90%; /* Increased max-width for smaller screens */
+            margin: 1rem auto;
+            text-align: center;
+        }
+/* ---ANOTHER SECTION ENDS--- */
+
+
+
+
+/* ---ANOTHER SECTION--- */
+
+        .mod-card {
+            background-color: #332f2f;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0; /* Vertical margins only */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .mod-card:hover {
+            transform: translateY(-5px);
+        }
+.mod-card a {
+    text-decoration: none;
+}
+a{
+    text-decoration: none;
+}
+a:hover{
+ color: inherit;
+ background: transparent;
+}
+        .mod-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto 10px;
+        }
+
+        .mod-grid {
+            display: flex;
+            flex-direction: column; /* Stack mod cards vertically */
+            align-items: center;
+        }
+
+        .tutorial-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .tutorial-list li {
+            background-color: #1e1e1e;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .tutorial-list li:hover {
+            background-color: #333;
+        }
+
+        .tutorial-list a {
+            color: #eee;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s, transform 1s;
+        }
+
+        .fade-in.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+/* ... rest of your styles ... */
+        .mart {
+            position: relative;
+            display: inline-block;
+        }
+
+        .mart-btn {
+            background-color: #1e1e1e; /* Dark button background */
+            color: white; /* Button text color */
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+
+        .mart-btn:hover {
+            background-color: #575757; /* Background on hover */
+        }
+
+        .mart-items {
+            display: none;
+            position: absolute;
+            background-color: #1e1e1e; /* Dark background for items */
+            min-width: 160px;
+            z-index: 1;
+            border-radius: 7px;
+        }
+
+        .mart-items a {
+            color: white; /* Link color */
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+
+        .mart-items a:hover {
+            background-color: #575757; /* Darker background on hover */
+            border-radius:7px;
+        }
+
+        .mart-items a.active {
+            background-color: #3a3a3a; /* Background for active link */
+        }
+
+        .mart:hover .mart-items {
+            display: block; /* Show the items on hover */
+        }

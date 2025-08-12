@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Gamer Dashboard</title>
+<link rel="stylesheet" href="hack.css">
+<style>
+  body{background:linear-gradient(120deg,#1e272e,#485460);font-family:Arial,Helvetica,sans-serif;color:#fff;margin:0;padding:0}
+  .wrap{max-width:900px;margin:28px auto;padding:18px;background:rgba(0,0,0,0.45);border-radius:12px}
+  header{display:flex;gap:16px;align-items:center}
+  img{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #3498db}
+  h1{margin:0}
+  .cols{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:18px}
+  .card{background:rgba(255,255,255,0.03);padding:12px;border-radius:8px}
+  input,select,textarea,button{width:100%;padding:10px;margin:8px 0;border-radius:6px;border:none;font-size:15px}
+  textarea{height:72px;resize:none}
+  .btn-green{background:#27ae60;color:#fff;cursor:pointer}
+  .btn-red{background:#e74c3c;color:#fff;cursor:pointer}
+  ol,ul{padding-left:18px}
+  .badge{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+  .badge img{width:20px;height:20px;object-fit:cover;border-radius:3px}
+  #chatMessages{height:200px;overflow-y:auto;background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;font-size:14px}
+  @media(max-width:900px){.cols{grid-template-columns:1fr}}
+</style><a href="Mod Hive.html">
+<button style="color: white; background:#332f2f; border-radius: 7px; width: 100px; height:50px;" ><b>Back to Main page</b></button></a>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <img id="profilePic" src="https://via.placeholder.com/100" alt="profile"/>
+    <div>
+      <h1 id="displayName">Loading...</h1>
+      <div id="email" style="opacity:0.9"></div>
+    </div>
+  </header>
+
+  <div class="cols">
+    <div>
+      <div class="card">
+        <h3>Gamer Info</h3>
+        <input id="nickname" placeholder="Gamer Nickname"/>
+        <select id="rank">
+          <option value="">Select rank</option><option>Rookie</option><option>Pro</option><option>Elite</option><option>Legend</option>
+        </select>
+        <input id="points" type="number" placeholder="Points" readonly/>
+        <textarea id="bio" placeholder="Bio (short)"></textarea>
+        <input id="favGame" placeholder="Favorite Game"/>
+        <button class="btn-green" onclick="saveGamerFields()">Save gamer info</button>
+      </div>
+
+      <div class="card">
+        <h3>Recent Games</h3>
+        <ul id="gamesList"></ul>
+        <input id="newGame" placeholder="Game name"/>
+        <button class="btn-green" onclick="addGame()">Add game</button>
+      </div>
+
+      <div class="card">
+        <h3>Achievements</h3>
+        <div id="achievementsList"></div>
+        <input id="newAchievement" placeholder="New achievement name"/>
+        <input id="badgeUrl" placeholder="Badge image URL (optional)"/>
+        <button class="btn-green" onclick="addAchievement()">Add achievement</button>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card">
+        <h3>Leaderboard (Top 5)</h3>
+        <ol id="leaderboard"></ol>
+      </div>
+
+      <div class="card">
+        <h3>Global Chat</h3>
+        <div id="chatMessages"></div>
+        <input id="chatInput" placeholder="Type a message..."/>
+        <button class="btn-green" onclick="sendChat()">Send</button>
+      </div>
+
+      <div class="card">
+        <h3>Quick Actions</h3>
+        <button onclick="addPoints(10)" class="btn-green">+10 Points</button>
+        <button onclick="addPoints(100)" class="btn-green">+100 Points</button>
+        <button onclick="claimDailyBonus()" class="btn-green">Daily Bonus</button>
+        <button onclick="logout()" class="btn-red">Logout</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let uid = null;
+
+// === AUTH STATE ===
+auth.onAuthStateChanged(user => {
+  if (!user) { window.location.href = "auth.html"; return; }
+  uid = user.uid;
+  document.getElementById('displayName').textContent = user.displayName || "Player";
+  document.getElementById('profilePic').src = user.photoURL || "https://via.placeholder.com/100";
+  document.getElementById('email').textContent = user.email || "";
+
+  // Load own profile
+  db.collection('users').doc(uid).onSnapshot(doc => {
+    if (!doc.exists) return;
+    const d = doc.data();
+    document.getElementById('nickname').value = d.nickname || "";
+    document.getElementById('rank').value = d.rank || "";
+    document.getElementById('points').value = d.points || 0;
+    document.getElementById('bio').value = d.bio || "";
+    document.getElementById('favGame').value = d.favGame || "";
+    renderAchievements(d.achievements || []);
+    renderList('gamesList', d.recentGames || []);
+  });
+
+  // Leaderboard
+  db.collection('users').orderBy('points','desc').limit(5).onSnapshot(snap => {
+    const el = document.getElementById('leaderboard'); el.innerHTML='';
+    snap.forEach(doc => {
+      const r = doc.data();
+      const name = r.nickname || (r.email? r.email.split('@')[0] : 'Unknown');
+      el.innerHTML += `<li>${escapeHtml(name)} — ${Number(r.points||0)} pts</li>`;
+    });
+  });
+
+  // Chat
+  db.collection('chat').orderBy('timestamp','asc').limitToLast(50).onSnapshot(snap => {
+    const chatBox = document.getElementById('chatMessages');
+    chatBox.innerHTML = '';
+    snap.forEach(doc => {
+      const msg = doc.data();
+      const time = msg.timestamp?.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) || '';
+      chatBox.innerHTML += `<div><strong>${escapeHtml(msg.nickname || 'Player')}</strong> <small>${time}</small>: ${escapeHtml(msg.text)}</div>`;
+    });
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+});
+
+// === UTILITIES ===
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function renderList(elId, arr){ const el = document.getElementById(elId); el.innerHTML=''; (arr||[]).forEach(item=> el.innerHTML += `<li>${escapeHtml(item)}</li>`); }
+function renderAchievements(arr){
+  const el = document.getElementById('achievementsList');
+  el.innerHTML='';
+  arr.forEach(obj => {
+    if (typeof obj === 'string') obj = { name: obj, badge: '' };
+    el.innerHTML += `<div class="badge">${obj.badge? `<img src="${escapeHtml(obj.badge)}"/>` : ''} ${escapeHtml(obj.name)}</div>`;
+  });
+}
+function getRankFromPoints(points){
+  if (points >= 1000) return "Legend";
+  if (points >= 500) return "Elite";
+  if (points >= 100) return "Pro";
+  return "Rookie";
+}
+
+// === PROFILE ACTIONS ===
+function saveGamerFields(){
+  if (!uid) return;
+  const points = parseInt(document.getElementById('points').value) || 0;
+  const rank = getRankFromPoints(points);
+  db.collection('users').doc(uid).set({
+    nickname: document.getElementById('nickname').value.trim() || "New Gamer",
+    rank: rank,
+    points: points,
+    bio: document.getElementById('bio').value || "",
+    favGame: document.getElementById('favGame').value || ""
+  }, { merge: true }).then(()=> alert('Gamer info saved.'));
+}
+
+function addAchievement(){
+  const name = document.getElementById('newAchievement').value.trim();
+  const badge = document.getElementById('badgeUrl').value.trim();
+  if (!name || !uid) return;
+  db.collection('users').doc(uid).update({ achievements: firebase.firestore.FieldValue.arrayUnion({ name: name, badge: badge }) })
+    .then(()=> { document.getElementById('newAchievement').value=''; document.getElementById('badgeUrl').value=''; });
+}
+
+function addGame(){
+  const g = document.getElementById('newGame').value.trim();
+  if (!g || !uid) return;
+  db.collection('users').doc(uid).update({ recentGames: firebase.firestore.FieldValue.arrayUnion(g) })
+    .then(()=> document.getElementById('newGame').value='');
+}
+
+function addPoints(n){
+  if (!uid) return;
+  const ref = db.collection('users').doc(uid);
+  db.runTransaction(tx => {
+    return tx.get(ref).then(doc=>{
+      const current = (doc.exists && doc.data().points) ? doc.data().points : 0;
+      const newPoints = current + n;
+      tx.set(ref, { points: newPoints, rank: getRankFromPoints(newPoints) }, { merge: true });
+    });
+  });
+}
+
+function claimDailyBonus(){
+  if (!uid) return;
+  const ref = db.collection('users').doc(uid);
+  db.runTransaction(tx => {
+    return tx.get(ref).then(doc=>{
+      const data = doc.data() || {};
+      const lastClaim = data.lastBonusClaim ? new Date(data.lastBonusClaim) : null;
+      const today = new Date(); today.setHours(0,0,0,0);
+      if (lastClaim && lastClaim >= today){
+        alert("You already claimed today's bonus!");
+        return;
+      }
+      const newPoints = (data.points || 0) + 50;
+      tx.set(ref, { points: newPoints, rank: getRankFromPoints(newPoints), lastBonusClaim: firebase.firestore.Timestamp.fromDate(new Date()) }, { merge: true });
+    });
+  }).then(()=> alert("Daily bonus claimed! +50 points"));
+}
+
+// === CHAT ===
+function sendChat(){
+  const text = document.getElementById('chatInput').value.trim();
+  if (!text || !uid) return;
+  db.collection('users').doc(uid).get().then(userDoc => {
+    const data = userDoc.data() || {};
+    const nickname = data.nickname || auth.currentUser.displayName || "Player";
+    db.collection('chat').add({
+      nickname: nickname,
+      text: text,
+      timestamp: firebase.firestore.Timestamp.fromDate(new Date())
+    }).then(() => {
+      document.getElementById('chatInput').value = '';
+    });
+  });
+}
+
+// === LOGOUT ===
+function logout(){ auth.signOut().then(()=> location.href='auth.html'); }
+</script>
+<footer class="site-footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <h6>About</h6>
+            <p class="text-justify"><b>Modhive.com</b> is an initiative to help Programmers or Gamers with trick or cheat to help them surpass their challenges easily while gaming, forming a strong bond, connecting  different ethnics and method of both gaming and programming together is also part of this website goal. And mostly <b>Modhive.com</b> focuses on helping Gamers to mod games to their specified expectations without limitat.</p>
+          </div>
+    <div class="cont1">
+            <h6>Categories</h6>
+            <ul class="footer-links">
+              <li><a href="AndroidMod.html">Android Mods</a></li>
+              <li><a href="pc.html">PC Mods</a></li>
+              <li><a href="emulator.html">Emulator Mods</a></li>
+            </ul>
+          </div>     
+<div class="cont1">
+            <h6>Quick Links</h6>
+            <ul class="footer-links">
+              <li>
+<style>
+  .click-text { cursor: pointer; text-decoration: none; display: block;}
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); justify-content: center; align-items: center; }
+  .box { background: white; padding: 20px; border-radius: 10px; text-align: center; width: 300px; }
+</style>
+
+<p class="click-text" data-title="About Us" data-content="We are a community of passionate gamers and modders dedicated to enhancing the gaming experience.">About Us</p>
+<p class="click-text" data-title="Email Us" data-content="For Any Further complains, Please Kindly Email Us @ ibrahimmartinex@gmail.com">Email Us</p>
+<p class="click-text" data-title="Privacy Policy" data-content="Coming soon.......">Privacy Policy</p>
+
+<div class="overlay" id="overlay">
+  <div class="box">
+    <h2 id="dlgTitle"></h2>
+    <p id="dlgContent"></p>
+    <button onclick="overlay.style.display='none'">Close</button>
+  </div>
+</div>
+
+<script>
+  const overlay = document.getElementById('overlay'),
+        title = document.getElementById('dlgTitle'),
+        content = document.getElementById('dlgContent');
+
+  document.querySelectorAll('.click-text').forEach(el => {
+    el.onclick = () => {
+      title.textContent = el.dataset.title;
+      content.textContent = el.dataset.content;
+      overlay.style.display = 'flex';
+    }
+  });
+</script>
+
+</li>
+              
+              
+            </ul>
+        </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 col-sm-6 col-xs-12">
+            <p class="copyright-text">Copyright &copy; 2025 All Rights Reserved by 
+         <a href="Mod Hive.html">Modhive</a>.
+            </p>
+          </div>
+
+          
+            </ul>
+        
+        </div>
+      </div>
+</footer>
+</body>
+</html>

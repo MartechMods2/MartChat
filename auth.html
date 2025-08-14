@@ -2,147 +2,176 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Mod Hive Auth</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Authentication</title>
-<script src=""></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-    body {
-        background: linear-gradient(120deg, #2c3e50, #3498db);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        font-family: Arial, sans-serif;
-        margin: 0;
+    .lg{
+        height: 50px;
+        width: 50px;
+        border-radius: 13px;
+        background:white;
+        border:none;
+        margin: 0px 0px 10px 90px;
+        animation: color ease-in-out 9s infinite;
     }
-    .container {
-        background: white;
-        padding: 25px;
-        border-radius: 12px;
-        width: 350px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        text-align: center;
+    @keyframes fade{
+        0% {opacity:0;}
+        50%{opacity:0.5;}
+        100%{opacity:1;}
     }
-    .tab-switch {
-        display: flex;
-        justify-content: space-around;
-        margin-bottom: 15px;
-    }
-    .tab-switch button {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        background: #eee;
-        cursor: pointer;
-        font-weight: bold;
-        border-radius: 8px 8px 0 0;
-        transition: 0.3s;
-    }
-    .tab-switch button.active {
-        background: #3498db;
-        color: white;
-    }
-    .form {
-        display: none;
-    }
-    .form.active {
-        display: block;
-    }
-    input {
-        width: 100%;
-        padding: 12px;
-        margin: 10px 0;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-    }
-    #loginBtn, #signupBtn {
-        width: 100%;
-        padding: 12px;
-        background: #3498db;
-        border: none;
-        color: white;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-    #loginBtn:hover, #signupBtn:hover {
-        background: #2980b9;
-    }
-    .divider {
-        margin: 15px 0;
-        font-size: 14px;
-        color: #888;
-    }
-    .social-login {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
-    }
-    .social-login button {
-        flex: 1 1 45%;
-        padding: 10px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: 0.3s;
-    }
-    .social-login button:hover {
-        opacity: 0.85;
-    }
-    .google { background: #db4437; color: white; }
-    .github { background: #333; color: white; }
-    .facebook { background: #3b5998; color: white; }
-    .apple { background: black; color: white; }
+        @keyframes color {
+        0% {background-color: white; opacity: 0.4;}  
+        15%{background-color: khaki;}
+        25% {background-color: greenyellow; opacity: 0.7;}
+        35% {background-color: darkseagreen;}
+        45%{background-color: honeydew;}
+        50%{ background-color: white;}
+        75% { background-color: aqua;opacity: 0.9;} 
+        85% {background-color: darkgray;}
+        100% {background-color: white;opacity: 1;}
+        }
+</style>
+<style>
+body { 
+  background-color: #0a0a0a; 
+  color: #fff; 
+  font-family: 'Segoe UI', sans-serif; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  height: 140vh; 
+}
+.auth-card {
+  background: #0f0f0f;
+  border: 2px solid #00f0ff;
+  border-radius: 10px;
+  padding: 2rem;
+  width: 300px;
+ 
+  
+  box-shadow: 0 0 20px rgba(0,240,255,0.4);
+}
+h1 {
+  color: #00f0ff;
+  font-weight: bold;
+  text-align: center;
+}
+input {
+  background: #1a1a1a;
+  border: 1px solid #335;
+  padding: 9.6rem;
+  border-radius: 6px;
+  color: #fff;
+  font-family:monospace;
+  width: 100%;
+  height: 40px;
+  margin-bottom: 0.8rem;
+  margin-left:40px;
+}
+input:focus {
+  outline: none;
+  border-color: #00f0ff;
+  box-shadow: 0 0 8px #00f0ff;
+}
+button {
+  background: #00f0ff;
+  padding: 0.6rem;
+  border-radius: 6px;
+  color: #000;
+  border: 1.5px solid #00c0cc;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  transition: 0.3s;
+}
+button:hover {
+  background: #00c0cc;
+}
+.tab { display: none; }
+.tab.active { display: block; }
+.tab-buttons button {
+  background: transparent;
+  color: #00f0ff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0.5rem;
+}
+.tab-buttons button:hover { text-decoration: underline; }
+.auth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.6rem;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.auth-btn:hover {
+  background: #222;
+  border-color: #00f0ff;
+}
 </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="tab-switch">
-        <button type="button" id="loginTab" class="active">Login</button>
-        <button type="button" id="signupTab">Sign Up</button>
+<div class="auth-card">
+    <div class="lg">
+  <img src="best logo.png" width="48px" alt="" height="48px"></img></div>
+  <h1 style="font-size:40px; font-weight:bolder;">Mod Hive</h1>
+  <p class="text-gray-400 text-center mb-4" style="animation: fade 2s">Welcome!</p>
+
+  <!-- Tab buttons -->
+  <div class="flex justify-around tab-buttons mb-4">
+    <button onclick="showTab('login')">Login</button>
+    <button onclick="showTab('signup')">Sign Up</button>
+    <button onclick="showTab('forgot')">Forgotten Password?</button>
+  </div>
+
+  <!-- Login Tab -->
+  <div id="login" class="tab active">
+    <input id="loginEmail" placeholder="Email" style="margin:20px 0px 15px 0px; padding-left:10px;font-family:monospace;">
+    <input id="loginPassword" type="password" placeholder="Password" style="padding-left:10px;font-family:monospace;">
+    <button onclick="login()" style="margin: 20px 5px 40px 0px; height: 40px;">Login</button>
+    <div id="loginError" class="text-red-400 text-sm mt-2"></div>
+    <div class="mt-4">
+      <div onclick="socialLogin('google')" class="auth-btn">🌐 Login with Google</div>
+      <div onclick="socialLogin('facebook')" class="auth-btn">💎 Login with Facebook</div>
+      <div onclick="socialLogin('github')" class="auth-btn">⚙️ Login with GitHub</div>
     </div>
+  </div>
 
-    <!-- Login Form -->
-    <form id="loginForm" class="form active">
-        <h1>Login</h1>
-        <input type="email" id="loginEmail" placeholder="Email" required>
-        <input type="password" id="loginPassword" placeholder="Password" required>
-        <button id="loginBtn" type="submit">Login</button>
-    </form>
+  <!-- Sign Up Tab -->
+  <div id="signup" class="tab">
+    <input id="signupEmail" placeholder="Email"style="margin:20px 0px 15px 0px; padding-left:10px;font-family:monospace;" >
+    <input id="signupPassword" style="padding-left:10px;font-family:monospace;" type="password" placeholder="Password (min 6 chars)">
+    <button onclick="signup()"style="margin: 20px 5px 40px 0px; height: 40px;">Sign Up</button>
+    <div id="signupError" class="text-red-400 text-sm mt-2"></div>
+  </div>
 
-    <!-- Sign Up Form -->
-    <form id="signupForm" class="form">
-        <h1>Create Account</h1>
-        <input type="text" id="signupUsername" placeholder="Username" required>
-        <input type="email" id="signupEmail" placeholder="Email" required>
-        <input type="password" id="signupPassword" placeholder="Password" required>
-        <input type="password" id="signupConfirm" placeholder="Confirm Password" required>
-        <button id="signupBtn" type="submit">Sign Up</button>
-    </form>
-
-    <div class="divider">Or continue with</div>
-    <div class="social-login">
-        <button type="button" class="google" onclick="authGoogle()"><i class="fab fa-google"></i> Google</button>
-        <button type="button" class="github" onclick="authGitHub()"><i class="fab fa-github"></i> GitHub</button>
-        <button type="button" class="facebook" onclick="authFacebook()"><i class="fab fa-facebook-f"></i> Facebook</button>
-        <button type="button" class="apple" onclick="authApple()"><i class="fab fa-apple"></i> Apple</button>
-    </div>
+  <!-- Forgot Password Tab -->
+  <div id="forgot" class="tab">
+    <input id="forgotEmail"style="font-family:monospace;" placeholder="Enter your email">
+    <button onclick="resetPassword()"style="margin: 20px 5px 40px 0px; height: 40px;">Send Reset Email</button>
+    <div id="forgotMsg" class="text-green-400 text-sm mt-2"></div>
+  </div>
+  <p class="copyright-text" style="font-size:10px; margin-top:15px;text-align:center;">Copyright &copy; 2025 All Rights Reserved by 
+         <a style="color:white; text-decoration:none;" href="ModHive.html">Modhive</a>.
+            </p>
 </div>
 
-<!-- Firebase v9 compat mode -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
 <script>
-   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAgx0jy6we6cvnIgKbS1fBoeRfSD2MDszo",
   authDomain: "mod-hive.firebaseapp.com",
@@ -152,80 +181,87 @@ const firebaseConfig = {
   appId: "1:982583858832:web:44d5e4e2edd77fac06ea15",
   measurementId: "G-PK2DRED7FB"
 };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            window.location.href = "ModHive.html";
-        }
-    });
+/* ====== Redirect if logged in ====== */
+auth.onAuthStateChanged(user => {
+  if (user) {
+    window.location.href = "dashboard.html";
+  }
+});
 
-    const loginTab = document.getElementById('loginTab');
-    const signupTab = document.getElementById('signupTab');
-    const loginForm = document.getElementById('loginForm');
-    const signupForm = document.getElementById('signupForm');
-
-    loginTab.addEventListener('click', () => {
-        loginTab.classList.add('active');
-        signupTab.classList.remove('active');
-        loginForm.classList.add('active');
-        signupForm.classList.remove('active');
-    });
-
-    signupTab.addEventListener('click', () => {
-        signupTab.classList.add('active');
-        loginTab.classList.remove('active');
-        signupForm.classList.add('active');
-        loginForm.classList.remove('active');
-    });
-
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        auth.signInWithEmailAndPassword(email, password)
-            .catch(err => alert(err.message));
-    });
-
-    signupForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const username = document.getElementById('signupUsername').value.trim();
-        const email = document.getElementById('signupEmail').value;
-        const password = document.getElementById('signupPassword').value;
-        const confirm = document.getElementById('signupConfirm').value;
-        if (password !== confirm) {
-            alert("Passwords do not match!");
-            return;
-        }
-        auth.createUserWithEmailAndPassword(email, password)
-            .then(userCredential => {
-                return userCredential.user.updateProfile({
-                    displayName: username
-                });
-            })
-            .catch(err => alert(err.message));
-    });
-
-    function authGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch(err => alert(err.message));
+/* ====== Tabs ====== */
+function showTab(tab) {
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
 }
 
-    function authGitHub() {
-        const provider = new firebase.auth.GithubAuthProvider();
-        auth.signInWithPopup(provider).catch(err => alert(err.message));
-    }
-    function authFacebook() {
-        const provider = new firebase.auth.FacebookAuthProvider();
-        provider.addScope('email');
-        provider.addScope('public_profile');
-        auth.signInWithPopup(provider).catch(err => alert(err.message));
-    }
-    function authApple() {
-        const provider = new firebase.auth.OAuthProvider('apple.com');
-        auth.signInWithPopup(provider).catch(err => alert(err.message));
-    }
+/* ====== Login ====== */
+function login() {
+  const email = document.getElementById("loginEmail").value;
+  const pass = document.getElementById("loginPassword").value;
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(() => { window.location.href = "dashboard.html"; })
+    .catch(err => { document.getElementById("loginError").innerText = err.message; });
+}
+
+/* ====== Sign Up ====== */
+function signup() {
+  const email = document.getElementById("signupEmail").value;
+  const pass = document.getElementById("signupPassword").value;
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(cred => {
+      const uid = cred.user.uid;
+      db.collection("users").doc(uid).set({
+        nickname: email.split('@')[0],
+        rank: "Rookie",
+        points: 0,
+        bio: "",
+        profilePhoto: "",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+        loginMethod: "email"
+      }).then(() => { window.location.href = "dashboard.html"; });
+    })
+    .catch(err => { document.getElementById("signupError").innerText = err.message; });
+}
+
+/* ====== Forgot Password ====== */
+function resetPassword() {
+  const email = document.getElementById("forgotEmail").value;
+  auth.sendPasswordResetEmail(email)
+    .then(() => { document.getElementById("forgotMsg").innerText = "Password reset email sent!"; })
+    .catch(err => { document.getElementById("forgotMsg").innerText = err.message; });
+}
+
+/* ====== Social Logins ====== */
+function socialLogin(providerName) {
+  let provider;
+  if (providerName === "google") provider = new firebase.auth.GoogleAuthProvider();
+  if (providerName === "facebook") provider = new firebase.auth.FacebookAuthProvider();
+  if (providerName === "github") provider = new firebase.auth.GithubAuthProvider();
+
+  auth.signInWithPopup(provider)
+    .then(result => {
+      if (result.additionalUserInfo.isNewUser) {
+        const user = result.user;
+        db.collection("users").doc(user.uid).set({
+          nickname: user.displayName || user.email.split('@')[0],
+          rank: "Rookie",
+          points: 0,
+          bio: "",
+          profilePhoto: user.photoURL || "",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+          loginMethod: providerName
+        });
+      }
+      window.location.href = "dashboard.html";
+    })
+    .catch(err => { alert(err.message); });
+}
 </script>
 
 </body>

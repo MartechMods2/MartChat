@@ -4,101 +4,76 @@
 <meta charset="UTF-8">
 <title>Mod Hive Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!-- TailwindCSS for styling -->
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body { background-color: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; }
-header { background-color: #111; padding: 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00f0ff; }
-header h1 { font-size: 1.5rem; color: #00f0ff; font-weight: bold; }
-.nav-link { padding: 0.5rem 1rem; cursor: pointer; }
-.nav-link:hover { background: #1a1a1a; border-radius: 6px; }
-.tab-content { display: none; padding: 1rem; }
-.tab-content.active { display: block; }
-input, textarea { background: #1a1a1a; border: 1px solid #333; padding: 0.5rem; border-radius: 6px; color: #fff; width: 100%; }
-button { background: #00f0ff; padding: 0.5rem 1rem; border-radius: 6px; color: #000; font-weight: bold; cursor: pointer; }
-button:hover { background: #00c0cc; }
-.message { padding: 0.5rem; border-bottom: 1px solid #222; }
-.message strong { color: #00f0ff; }
+body { background-color: #0a0a0a; color: white; font-family: 'Segoe UI', sans-serif; }
+.navbar { background: #0f0f0f; border-bottom: 2px solid #00f0ff; padding: 0.5rem; }
+button, .btn { background: #00f0ff; color: black; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: bold; cursor: pointer; }
+button:hover, .btn:hover { background: #00c0cc; }
+.card { background: #111; border: 1px solid #00f0ff; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+input, textarea { background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 0.5rem; width: 100%; color: white; }
+.friend-btn { background: #1a1a1a; border: 1px solid #00f0ff; color: #00f0ff; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer; }
+.friend-btn:hover { background: #00f0ff; color: black; }
+.chat-box { height: 200px; overflow-y: auto; background: #000; padding: 0.5rem; border-radius: 6px; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Mod Hive</h1>
-  <div class="flex items-center gap-4">
-    <img id="profilePhoto" src="" class="w-10 h-10 rounded-full border border-cyan-400" alt="Profile">
-    <span id="nicknameDisplay"></span>
-    <span id="rankDisplay" class="text-sm text-gray-400"></span>
-    <span id="pointsDisplay" class="text-sm text-yellow-400"></span>
+<!-- Top Nav -->
+<div class="navbar flex justify-between items-center">
+  <div class="flex items-center gap-3">
+    <img id="profilePic" class="w-10 h-10 rounded-full border border-cyan-400" src="">
+    <span id="username" class="font-bold text-cyan-400"></span>
+  </div>
+  <div class="flex gap-3">
+    <button onclick="goMain()">🏠 Main Page</button>
     <button onclick="logout()">Logout</button>
   </div>
-</header>
-
-<nav class="flex bg-black p-2 border-b border-cyan-500">
-  <div class="nav-link" onclick="openTab('feed')">Feed</div>
-  <div class="nav-link" onclick="openTab('globalChat')">Global Chat</div>
-  <div class="nav-link" onclick="openTab('privateChat')">Private Chat</div>
-  <div class="nav-link" onclick="openTab('friends')">Friends</div>
-  <div class="nav-link" onclick="openTab('leaderboard')">Leaderboard</div>
-  <div class="nav-link" onclick="openTab('profile')">Profile</div>
-</nav>
-
-<!-- Feed -->
-<div id="feed" class="tab-content active">
-  <h2 class="text-xl mb-2">Post Something</h2>
-  <textarea id="postText" placeholder="What's on your mind?"></textarea>
-  <button onclick="createPost()" class="mt-2">Post</button>
-  <div id="postsList" class="mt-4"></div>
 </div>
 
-<!-- Global Chat -->
-<div id="globalChat" class="tab-content">
-  <h2 class="text-xl mb-2">Global Chat</h2>
-  <div id="globalMessages" class="max-h-96 overflow-y-auto border border-gray-700 p-2 rounded"></div>
-  <input id="globalMessageInput" placeholder="Type your message...">
-  <button onclick="sendGlobalMessage()">Send</button>
+<div class="p-4 grid lg:grid-cols-3 gap-4">
+
+  <!-- Profile Settings -->
+  <div class="card">
+    <h2 class="text-xl mb-2">Profile Settings</h2>
+    <input id="nickname" placeholder="Custom Username">
+    <input type="file" id="profileFile">
+    <textarea id="bio" placeholder="Your bio"></textarea>
+    <button onclick="saveProfile()">Save Profile</button>
+  </div>
+
+  <!-- Posts -->
+  <div class="card col-span-2">
+    <h2 class="text-xl mb-2">Create Post</h2>
+    <textarea id="postText" placeholder="What's on your mind? Links auto-detected."></textarea>
+    <input type="file" id="postFile">
+    <button onclick="createPost()">Post</button>
+    <div id="posts" class="mt-4"></div>
+  </div>
+
 </div>
 
-<!-- Private Chat -->
-<div id="privateChat" class="tab-content">
-  <h2 class="text-xl mb-2">Private Chat</h2>
-  <input id="privateFriendId" placeholder="Friend UID">
-  <button onclick="startPrivateChat()">Start Chat</button>
-  <div id="privateMessages" class="max-h-96 overflow-y-auto border border-gray-700 p-2 rounded mt-4"></div>
-  <input id="privateMessageInput" placeholder="Type your private message...">
-  <button onclick="sendPrivateMessage()">Send</button>
-</div>
+<!-- Friends & Chat -->
+<div class="p-4 grid lg:grid-cols-3 gap-4">
+  <div class="card">
+    <h2 class="text-lg mb-2">Friend Suggestions</h2>
+    <div id="friendSuggestions"></div>
+  </div>
 
-<!-- Friends -->
-<div id="friends" class="tab-content">
-  <h2 class="text-xl mb-2">Friends List</h2>
-  <div id="friendsList"></div>
-</div>
-
-<!-- Leaderboard -->
-<div id="leaderboard" class="tab-content">
-  <h2 class="text-xl mb-2">Leaderboard</h2>
-  <div id="leaderboardList"></div>
-</div>
-
-<!-- Profile -->
-<div id="profile" class="tab-content">
-  <h2 class="text-xl mb-2">Edit Profile</h2>
-  <input id="nicknameInput" placeholder="Nickname">
-  <input id="bioInput" placeholder="Bio">
-  <input id="profilePhotoInput" placeholder="Photo URL">
-  <button onclick="updateProfile()">Save</button>
-  <footer>
-  <p class="copyright-text" style="font-size:10px; margin-top:20px;">Copyright &copy; 2025 All Rights Reserved by 
-         <a style="color:white; text-decoration:none;" href="ModHive.html">Modhive</a>.
-            </p>
-            </footer>
+  <div class="card col-span-2">
+    <h2 class="text-lg mb-2">Global Chat</h2>
+    <div id="chatMessages" class="chat-box"></div>
+    <input id="chatInput" placeholder="Type a message...">
+    <input type="file" id="chatFile">
+    <button onclick="sendGlobalChat()">Send</button>
+  </div>
 </div>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
 <script>
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -114,158 +89,202 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
+const storage = firebase.storage();
+const ADMIN_UID = "7aTPZ6wEIpQaPjlXWDrz5Ajc4By1";
 
-/* ====== UI Tabs ====== */
-function openTab(tab) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.getElementById(tab).classList.add('active');
+let currentUser;
+
+// Convert text to clickable links
+function linkify(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 underline">${url}</a>`);
 }
 
-/* ====== Auth State ====== */
-let currentUser;
+// Auth check
 auth.onAuthStateChanged(user => {
   if (!user) {
     window.location.href = "auth.html";
-    return;
+  } else {
+    currentUser = user;
+    loadUserProfile();
+    loadPosts();
+    loadFriendSuggestions();
+    loadGlobalChat();
   }
-  currentUser = user;
-  loadUserProfile();
-  loadPosts();
-  loadGlobalChat();
-  loadLeaderboard();
 });
 
-/* ====== Profile ====== */
+// Profile load
 function loadUserProfile() {
-  db.collection("users").doc(currentUser.uid).onSnapshot(doc => {
+  db.collection("users").doc(currentUser.uid).get().then(doc => {
     if (doc.exists) {
       const data = doc.data();
-      document.getElementById("nicknameDisplay").innerText = data.nickname || "";
-      document.getElementById("rankDisplay").innerText = data.rank || "";
-      document.getElementById("pointsDisplay").innerText = data.points + " pts";
-      document.getElementById("profilePhoto").src = data.profilePhoto || "https://via.placeholder.com/40";
+      document.getElementById("username").innerText = data.nickname || currentUser.email;
+      document.getElementById("profilePic").src = data.profilePhoto || "default.png";
+      document.getElementById("nickname").value = data.nickname || "";
+      document.getElementById("bio").value = data.bio || "";
     }
   });
 }
-function updateProfile() {
-  const nickname = document.getElementById("nicknameInput").value;
-  const bio = document.getElementById("bioInput").value;
-  const profilePhoto = document.getElementById("profilePhotoInput").value;
-  db.collection("users").doc(currentUser.uid).set({
-    nickname, bio, profilePhoto
-  }, { merge: true });
+
+// Save profile
+function saveProfile() {
+  const nickname = document.getElementById("nickname").value;
+  const bio = document.getElementById("bio").value;
+  const file = document.getElementById("profileFile").files[0];
+  
+  if (file) {
+    const ref = storage.ref(`profilePics/${currentUser.uid}`);
+    ref.put(file).then(() => ref.getDownloadURL()).then(url => {
+      db.collection("users").doc(currentUser.uid).update({ nickname, bio, profilePhoto: url });
+    });
+  } else {
+    db.collection("users").doc(currentUser.uid).update({ nickname, bio });
+  }
 }
 
-/* ====== Posts ====== */
+// Create post
 function createPost() {
   const text = document.getElementById("postText").value;
-  if (!text) return;
-  db.collection("posts").add({
-    author: currentUser.uid,
-    text,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-    likeCount: 0
-  });
-  document.getElementById("postText").value = "";
+  const file = document.getElementById("postFile").files[0];
+  const postRef = db.collection("posts").doc();
+  
+  if (file) {
+    const ref = storage.ref(`posts/${postRef.id}`);
+    ref.put(file).then(() => ref.getDownloadURL()).then(url => {
+      savePost(postRef, text, url);
+    });
+  } else {
+    savePost(postRef, text, null);
+  }
 }
+
+function savePost(postRef, text, mediaUrl) {
+  db.collection("users").doc(currentUser.uid).get().then(doc => {
+    const nickname = doc.data().nickname || currentUser.email;
+    postRef.set({
+      uid: currentUser.uid,
+      author: nickname,
+      text,
+      media: mediaUrl || "",
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      likes: [],
+      comments: []
+    });
+  });
+}
+
+// Load posts
 function loadPosts() {
-  db.collection("posts").orderBy("createdAt", "desc").onSnapshot(snap => {
-    const list = document.getElementById("postsList");
-    list.innerHTML = "";
-    snap.forEach(doc => {
-      const p = doc.data();
-      const el = document.createElement("div");
-      el.className = "p-2 border-b border-gray-700";
-      el.innerHTML = `<strong>${p.author}</strong>: ${p.text}`;
-      list.appendChild(el);
+  db.collection("posts").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+    const postsDiv = document.getElementById("posts");
+    postsDiv.innerHTML = "";
+    snapshot.forEach(doc => {
+      const post = doc.data();
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `
+        <p class="font-bold">${post.author}</p>
+        <p>${linkify(post.text)}</p>
+        ${post.media ? `<img src="${post.media}" class="max-h-48 mt-2">` : ""}
+        <div class="flex gap-2 mt-2">
+          <button onclick="likePost('${doc.id}')">👍 ${post.likes.length}</button>
+          ${currentUser.uid === ADMIN_UID ? `<button onclick="deletePost('${doc.id}')">🗑 Delete</button>` : ""}
+        </div>
+      `;
+      postsDiv.appendChild(div);
     });
   });
 }
 
-/* ====== Global Chat ====== */
-function sendGlobalMessage() {
-  const text = document.getElementById("globalMessageInput").value;
-  if (!text) return;
-  db.collection("chatGlobal").add({
-    author: currentUser.uid,
-    text,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+// Like post
+function likePost(id) {
+  const ref = db.collection("posts").doc(id);
+  ref.update({
+    likes: firebase.firestore.FieldValue.arrayUnion(currentUser.uid)
   });
-  document.getElementById("globalMessageInput").value = "";
 }
+
+// Delete post (admin only)
+function deletePost(id) {
+  db.collection("posts").doc(id).delete();
+}
+
+// Friend suggestions
+function loadFriendSuggestions() {
+  db.collection("users").get().then(snapshot => {
+    const suggestionsDiv = document.getElementById("friendSuggestions");
+    suggestionsDiv.innerHTML = "";
+    snapshot.forEach(doc => {
+      if (doc.id !== currentUser.uid) {
+        const user = doc.data();
+        const div = document.createElement("div");
+        div.className = "flex justify-between items-center mb-2";
+        div.innerHTML = `
+          <span>${user.nickname || user.email}</span>
+          <button class="friend-btn" onclick="addFriend('${doc.id}')">Add Friend</button>
+        `;
+        suggestionsDiv.appendChild(div);
+      }
+    });
+  });
+}
+
+// Add friend
+function addFriend(uid) {
+  db.collection("users").doc(currentUser.uid).update({
+    friends: firebase.firestore.FieldValue.arrayUnion(uid)
+  });
+}
+
+// Global chat
 function loadGlobalChat() {
-  db.collection("chatGlobal").orderBy("createdAt").onSnapshot(snap => {
-    const box = document.getElementById("globalMessages");
-    box.innerHTML = "";
-    snap.forEach(doc => {
-      const m = doc.data();
-      const el = document.createElement("div");
-      el.className = "message";
-      el.innerHTML = `<strong>${m.author}</strong>: ${m.text}`;
-      box.appendChild(el);
+  db.collection("globalChat").orderBy("createdAt").onSnapshot(snapshot => {
+    const chatDiv = document.getElementById("chatMessages");
+    chatDiv.innerHTML = "";
+    snapshot.forEach(doc => {
+      const msg = doc.data();
+      const p = document.createElement("p");
+      p.innerHTML = `${msg.author}: ${linkify(msg.text)}`;
+      chatDiv.appendChild(p);
     });
-    box.scrollTop = box.scrollHeight;
+    chatDiv.scrollTop = chatDiv.scrollHeight;
   });
 }
 
-/* ====== Private Chat ====== */
-let activeChatId;
-function startPrivateChat() {
-  const friendUid = document.getElementById("privateFriendId").value;
-  if (!friendUid) return;
-  activeChatId = [currentUser.uid, friendUid].sort().join("_");
-  const chatDoc = db.collection("chatPrivate").doc(activeChatId);
-  chatDoc.get().then(doc => {
-    if (!doc.exists) {
-      chatDoc.set({
-        participants: [currentUser.uid, friendUid],
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    }
-    loadPrivateMessages();
-  });
-}
-function sendPrivateMessage() {
-  if (!activeChatId) return;
-  const text = document.getElementById("privateMessageInput").value;
-  if (!text) return;
-  db.collection("chatPrivate").doc(activeChatId).collection("messages").add({
-    author: currentUser.uid,
-    text,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-  document.getElementById("privateMessageInput").value = "";
-}
-function loadPrivateMessages() {
-  db.collection("chatPrivate").doc(activeChatId).collection("messages").orderBy("createdAt").onSnapshot(snap => {
-    const box = document.getElementById("privateMessages");
-    box.innerHTML = "";
-    snap.forEach(doc => {
-      const m = doc.data();
-      const el = document.createElement("div");
-      el.className = "message";
-      el.innerHTML = `<strong>${m.author}</strong>: ${m.text}`;
-      box.appendChild(el);
+function sendGlobalChat() {
+  const text = document.getElementById("chatInput").value;
+  const file = document.getElementById("chatFile").files[0];
+  
+  if (file) {
+    const ref = storage.ref(`chatFiles/${Date.now()}_${file.name}`);
+    ref.put(file).then(() => ref.getDownloadURL()).then(url => {
+      sendChatMessage(`${text} ${url}`);
     });
-    box.scrollTop = box.scrollHeight;
+  } else {
+    sendChatMessage(text);
+  }
+}
+
+function sendChatMessage(message) {
+  db.collection("users").doc(currentUser.uid).get().then(doc => {
+    const nickname = doc.data().nickname || currentUser.email;
+    db.collection("globalChat").add({
+      uid: currentUser.uid,
+      author: nickname,
+      text: message,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    document.getElementById("chatInput").value = "";
+    document.getElementById("chatFile").value = "";
   });
 }
 
-/* ====== Leaderboard ====== */
-function loadLeaderboard() {
-  db.collection("users").orderBy("points", "desc").limit(10).onSnapshot(snap => {
-    const box = document.getElementById("leaderboardList");
-    box.innerHTML = "";
-    snap.forEach(doc => {
-      const u = doc.data();
-      const el = document.createElement("div");
-      el.innerHTML = `${u.nickname || u.uid} - ${u.points} pts`;
-      box.appendChild(el);
-    });
-  });
+// Go to main page
+function goMain() {
+  window.location.href = "ModHive.html";
 }
 
-/* ====== Logout ====== */
+// Logout
 function logout() {
   auth.signOut();
 }

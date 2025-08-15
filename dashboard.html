@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mod Hive Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background-color: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; }
+    a { color: #00f0ff; text-decoration: underline; }
+    input, textarea { background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: .5rem; color: white; width: 100%; }
+    .chat-box { height: 200px; overflow-y: auto; background: #000; padding: .5rem; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="flex items-center justify-between p-4 border-b border-cyan-500 bg-[#0f0f0f]">
+    <div class="flex items-center gap-3">
+      <img id="profilePic" class="w-10 h-10 rounded-full border border-cyan-400" src="" />
+      <span id="username" class="text-cyan-400 font-bold"></span>
+    </div>
+    <div class="flex gap-3">
+      <button onclick="goMain()" class="bg-cyan-400 px-3 py-1 rounded text-black font-bold">🏠 Main Page</button>
+      <button onclick="logout()" class="bg-red-500 px-3 py-1 rounded text-white font-bold">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Main Layout -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
+    <!-- Left: Profile & Friends -->
+    <div>
+      <div class="bg-[#111] border border-cyan-500 p-4 rounded mb-4">
+        <h2 class="text-xl mb-2">Profile Settings</h2>
+        <input id="nickname" placeholder="Custom Username" />
+        <input id="profileUrl" placeholder="Profile Photo URL" />
+        <textarea id="bio" placeholder="Your bio"></textarea>
+        <button onclick="saveProfile()" class="bg-cyan-400 text-black font-bold mt-2 px-3 py-1 rounded">Save</button>
+      </div>
+      <div class="bg-[#111] border border-cyan-500 p-4 rounded">
+        <h2 class="text-xl mb-2">Friend Suggestions</h2>
+        <div id="friendSuggestions"></div>
+      </div>
+    </div>
+
+    <!-- Middle: Feed -->
+    <div>
+      <div class="bg-[#111] border border-cyan-500 p-4 rounded mb-4">
+        <h2 class="text-xl mb-2">Create Post</h2>
+        <textarea id="postText" placeholder="Write something..."></textarea>
+        <input id="postImageUrl" placeholder="Image/File/Link URL (optional)" />
+        <button onclick="createPost()" class="bg-cyan-400 text-black font-bold mt-2 px-3 py-1 rounded">Post</button>
+      </div>
+      <div id="posts"></div>
+    </div>
+
+    <!-- Right: Global Chat & Friends -->
+    <div>
+      <div class="bg-[#111] border border-cyan-500 p-4 rounded mb-4">
+        <h2 class="text-xl mb-2">Global Chat</h2>
+        <div id="chatMessages" class="chat-box"></div>
+        <input id="chatInput" placeholder="Type a message..." />
+        <button onclick="sendGlobalChat()" class="mt-2 bg-cyan-400 text-black font-bold px-3 py-1 rounded">Send</button>
+      </div>
+      <div class="bg-[#111] border border-cyan-500 p-4 rounded">
+        <h2 class="text-xl mb-2">My Friends</h2>
+        <div id="friendList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <script>
+ // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyAgx0jy6we6cvnIgKbS1fBoeRfSD2MDszo",
+  authDomain: "mod-hive.firebaseapp.com",
+  projectId: "mod-hive",
+  storageBucket: "mod-hive.firebasestorage.app",
+  messagingSenderId: "982583858832",
+  appId: "1:982583858832:web:44d5e4e2edd77fac06ea15",
+  measurementId: "G-PK2DRED7FB"
+};
+    const ADMIN_UID = "7aTPZ6wEIpQaPjlXWDrz5Ajc4By1";
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    function linkify(text) {
+      return text.replace(/(https?:\/\/[^\s]+)/g, url => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`);
+    }
+
+    let currentUser;
+    auth.onAuthStateChanged(user => {
+      if (!user) return location.href = "auth.html";
+      currentUser = user;
+      loadProfile();
+      loadPosts();
+      loadChat();
+      loadFriends();
+      loadSuggestions();
+    });
+
+    function goMain() { location.href = "ModHive.html"; }
+    function logout() { auth.signOut(); }
+
+    function loadProfile() {
+      db.collection("users").doc(currentUser.uid).get().then(doc => {
+        const d = doc.data() || {};
+        document.getElementById("username").innerText = d.nickname || currentUser.email;
+        document.getElementById("profilePic").src = d.profilePhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.nickname || "User")}`;
+        document.getElementById("nickname").value = d.nickname || "";
+        document.getElementById("profileUrl").value = d.profilePhoto || "";
+        document.getElementById("bio").value = d.bio || "";
+      });
+    }
+
+    function saveProfile() {
+      db.collection("users").doc(currentUser.uid).set({
+        nickname: document.getElementById("nickname").value,
+        profilePhoto: document.getElementById("profileUrl").value,
+        bio: document.getElementById("bio").value
+      }, { merge: true });
+    }
+
+    function createPost() {
+      const text = document.getElementById("postText").value;
+      const media = document.getElementById("postImageUrl").value;
+      db.collection("users").doc(currentUser.uid).get().then(doc => {
+        const author = doc.data().nickname || currentUser.email;
+        db.collection("posts").add({ uid: currentUser.uid, author, text, media, createdAt: firebase.firestore.FieldValue.serverTimestamp(), likes: [] });
+        document.getElementById("postText").value = "";
+        document.getElementById("postImageUrl").value = "";
+      });
+    }
+
+    function loadPosts() {
+      db.collection("posts").orderBy("createdAt", "desc").onSnapshot(snap => {
+        const container = document.getElementById("posts");
+        container.innerHTML = "";
+        snap.forEach(doc => {
+          const d = doc.data();
+          const div = document.createElement("div");
+          div.className = "bg-[#111] border border-cyan-500 p-4 rounded mb-4";
+          div.innerHTML = `
+            <p class="font-bold">${d.author}</p>
+            <p>${linkify(d.text)}</p>
+            ${d.media ? `<a href="${d.media}" target="_blank">View Media</a>` : ""}
+            <div class="flex gap-2 mt-2">
+              <button onclick="likePost('${doc.id}')">👍 ${d.likes.length}</button>
+              ${currentUser.uid === ADMIN_UID ? `<button onclick="deletePost('${doc.id}')">🗑 Delete</button>` : ""}
+            </div>`;
+          container.appendChild(div);
+        });
+      });
+    }
+
+    function likePost(id) {
+      db.collection("posts").doc(id).update({ likes: firebase.firestore.FieldValue.arrayUnion(currentUser.uid) });
+    }
+
+    function deletePost(id) {
+      db.collection("posts").doc(id).delete();
+    }
+
+    function loadChat() {
+      db.collection("globalChat").orderBy("createdAt").onSnapshot(snap => {
+        const chat = document.getElementById("chatMessages");
+        chat.innerHTML = "";
+        snap.forEach(doc => {
+          const m = doc.data();
+          const p = document.createElement("p");
+          p.innerHTML = `<b>${m.author}</b>: ${linkify(m.text)}`;
+          chat.appendChild(p);
+        });
+        chat.scrollTop = chat.scrollHeight;
+      });
+    }
+
+    function sendGlobalChat() {
+      const text = document.getElementById("chatInput").value;
+      db.collection("users").doc(currentUser.uid).get().then(doc => {
+        const nick = doc.data().nickname || currentUser.email;
+        db.collection("globalChat").add({
+          uid: currentUser.uid,
+          author: nick,
+          text,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        document.getElementById("chatInput").value = "";
+      });
+    }
+
+    function loadSuggestions() {
+      db.collection("users").get().then(snapshot => {
+        const container = document.getElementById("friendSuggestions");
+        container.innerHTML = "";
+        snapshot.forEach(doc => {
+          if (doc.id !== currentUser.uid) {
+            const data = doc.data();
+            const div = document.createElement("div");
+            div.innerHTML = `<p>${data.nickname || doc.id}</p><button onclick="addFriend('${doc.id}')">Add Friend</button>`;
+            container.appendChild(div);
+          }
+        });
+      });
+    }
+
+    function addFriend(friendId) {
+      db.collection("users").doc(currentUser.uid).collection("friends").doc(friendId).set({ since: firebase.firestore.FieldValue.serverTimestamp() });
+    }
+
+    function loadFriends() {
+      const container = document.getElementById("friendList");
+      db.collection("users").doc(currentUser.uid).collection("friends").onSnapshot(snap => {
+        container.innerHTML = "";
+        snap.forEach(doc => {
+          const friendId = doc.id;
+          db.collection("users").doc(friendId).get().then(fd => {
+            const d = fd.data();
+            const p = document.createElement("p");
+            p.textContent = d.nickname || friendId;
+            container.appendChild(p);
+          });
+        });
+      });
+    }
+  </script>
+</body>
+</html>

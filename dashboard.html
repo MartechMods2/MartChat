@@ -2,232 +2,967 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>Mod Hive — Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mod Hive Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { background-color: #0a0a0a; color: #fff; font-family: 'Segoe UI', sans-serif; }
-    a { color: #00f0ff; text-decoration: underline; }
-    input, textarea { background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: .5rem; color: white; width: 100%; }
-    .chat-box { height: 200px; overflow-y: auto; background: #000; padding: .5rem; border-radius: 6px; }
+    :root { --cyan:#00f0ff; --bg:#0f0f0f; --panel:#111; }
+    body { background: var(--bg); color:#fff; font-family: 'Montserrat', sans-serif; }
+    .sidebar { background: var(--panel); min-height: 100vh; padding: 1rem; width: 250px; position: fixed; inset: 0 auto 0 0; border-right: 2px solid var(--cyan); }
+    .sidebar h2 { color: var(--cyan); }
+    .navbtn { display:block; width:100%; margin-bottom:.5rem; background:#1a1a1a; border:1px solid var(--cyan); color:var(--cyan); padding:.6rem .8rem; border-radius:.5rem; transition:.2s; text-align:left; }
+    .navbtn:hover { background:var(--cyan); color:#000; }
+    .main { margin-left: 270px; padding: 1.25rem; }
+    .card { background:#0d0d0d; border:1px solid #154e52; border-radius:.75rem; padding:1rem; }
+    .section { display:none; }
+    .active { display:block; }
+    .link { color: var(--cyan); text-decoration: underline; }
+    .chip { display:inline-block; background:#082326; border:1px solid #164b4f; padding:.15rem .5rem; border-radius:999px; margin-right:.25rem; font-size:.75rem; }
+    .toast { position:fixed; bottom:20px; right:20px; background:var(--cyan); color:#000; padding:10px 16px; border-radius:8px; font-weight:700; display:none; box-shadow:0 8px 30px rgba(0,0,0,.35); }
+    .muted { color:#9aa0a6; font-size:.85rem; }
+    .btn { background: var(--cyan); color:#000; padding:.5rem .8rem; border-radius:.5rem; font-weight:700; }
+    .btn-ghost { border:1px solid var(--cyan); color:var(--cyan); padding:.4rem .7rem; border-radius:.5rem; }
+    .divider { height:1px; background:#173c40; margin:.75rem 0; }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="flex items-center justify-between p-4 border-b border-cyan-500 bg-[#0f0f0f]">
-    <div class="flex items-center gap-3">
-      <img id="profilePic" class="w-10 h-10 rounded-full border border-cyan-400" src="" />
-      <span id="username" class="text-cyan-400 font-bold"></span>
-    </div>
-    <div class="flex gap-3">
-      <button onclick="goMain()" class="bg-cyan-400 px-3 py-1 rounded text-black font-bold">🏠 Main Page</button>
-      <button onclick="logout()" class="bg-red-500 px-3 py-1 rounded text-white font-bold">Logout</button>
-    </div>
-  </nav>
-
-  <!-- Main Layout -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
-    <!-- Left: Profile & Friends -->
-    <div>
-      <div class="bg-[#111] border border-cyan-500 p-4 rounded mb-4">
-        <h2 class="text-xl mb-2">Profile Settings</h2>
-        <input id="nickname" placeholder="Custom Username" />
-        <input id="profileUrl" placeholder="Profile Photo URL" />
-        <textarea id="bio" placeholder="Your bio"></textarea>
-        <button onclick="saveProfile()" class="bg-cyan-400 text-black font-bold mt-2 px-3 py-1 rounded">Save</button>
-      </div>
-      <div class="bg-[#111] border border-cyan-500 p-4 rounded">
-        <h2 class="text-xl mb-2">Friend Suggestions</h2>
-        <div id="friendSuggestions"></div>
-      </div>
-    </div>
-
-    <!-- Middle: Feed -->
-    <div>
-      <div class="bg-[#111] border border-cyan-500 p-4 rounded mb-4">
-        <h2 class="text-xl mb-2">Create Post</h2>
-        <textarea id="postText" placeholder="Write something..."></textarea>
-        <input id="postImageUrl" placeholder="Image/File/Link URL (optional)" />
-        <button onclick="createPost()" class="bg-cyan-400 text-black font-bold mt-2 px-3 py-1 rounded">Post</button>
-      </div>
-      <div id="posts"></div>
-    </div>
-
-    <!-- Right: Global Chat & Friends -->
-    <div>
-      <div class="bg-[#111] border border-cyan-500 p-4 rounded mb-4">
-        <h2 class="text-xl mb-2">Global Chat</h2>
-        <div id="chatMessages" class="chat-box"></div>
-        <input id="chatInput" placeholder="Type a message..." />
-        <button onclick="sendGlobalChat()" class="mt-2 bg-cyan-400 text-black font-bold px-3 py-1 rounded">Send</button>
-      </div>
-      <div class="bg-[#111] border border-cyan-500 p-4 rounded">
-        <h2 class="text-xl mb-2">My Friends</h2>
-        <div id="friendList"></div>
-      </div>
-    </div>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2 class="font-extrabold text-xl mb-3">Mod Hive</h2>
+    <button class="navbtn" onclick="showSection('home')">🏠 Home</button>
+    <button class="navbtn" onclick="showSection('posts')">📰 Posts</button>
+    <button class="navbtn" onclick="showSection('global')">🌍 Global Chat</button>
+    <button class="navbtn" onclick="showSection('private')">📨 Private Chat</button>
+    <button class="navbtn" onclick="showSection('friends')">👥 Friends</button>
+    <button class="navbtn" onclick="showSection('search')">🔎 Search Users</button>
+    <button class="navbtn" onclick="showSection('notifications')">🔔 Notifications</button>
+    <button class="navbtn" onclick="showSection('trending')">🔥 Trending</button>
+    <button class="navbtn" onclick="showSection('leaderboard')">🏆 Leaderboard</button>
+    <button class="navbtn" onclick="showSection('settings')">⚙️ Settings</button>
+    <button class="navbtn" onclick="logout()">🚪 Logout</button>
+    <p class="muted mt-3">Tip: run with a local server (e.g. VS Code Live Server) — not file://</p>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Main -->
+  <div class="main space-y-5">
+    <!-- Home -->
+    <section id="home" class="section active">
+      <div class="card">
+        <h1 class="text-2xl font-extrabold mb-3">Welcome, <span id="nicknameDisplay"></span>!</h1>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="card">
+            <p class="muted">Points</p>
+            <p id="pointsDisplay" class="text-2xl font-bold">0</p>
+          </div>
+          <div class="card">
+            <p class="muted">Rank</p>
+            <p id="rankDisplay" class="text-2xl font-bold">Rookie</p>
+          </div>
+          <div class="card">
+            <p class="muted">Friends</p>
+            <p id="friendsCount" class="text-2xl font-bold">0</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Posts -->
+    <section id="posts" class="section">
+      <div class="card">
+        <h2 class="text-xl font-bold mb-3">Create Post</h2>
+        <textarea id="postText" class="mb-2 w-full border p-2 text-black rounded" rows="3" placeholder="What's on your mind? Use #hashtags"></textarea>
+        <input id="postUrl" class="mb-2 w-full border p-2 text-black rounded" placeholder="Optional link (YouTube, image URL, article...)" />
+        <input id="pollInput" class="mb-2 w-full border p-2 text-black rounded" placeholder="Poll options (comma separated) — leave blank for no poll" />
+        <div class="flex items-center gap-2 mb-4">
+          <button class="btn" onclick="createPost()">Post</button>
+        </div>
+        <div id="postFeed" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- Global Chat -->
+    <section id="global" class="section">
+      <div class="card">
+        <h2 class="text-xl font-bold mb-2">Global Chat</h2>
+        <div id="globalMessages" class="bg-[#000]/40 border border-cyan-600 rounded p-2 mb-2" style="height:260px; overflow-y:auto;"></div>
+        <div class="flex gap-2">
+          <input id="globalInput" class="flex-1 border p-2 text-black rounded" placeholder="Type message..." />
+          <button onclick="sendGlobal()" class="btn">Send</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Private Chat -->
+    <section id="private" class="section">
+      <div class="card">
+        <h2 class="text-xl font-bold mb-2">Private Chat</h2>
+        <div class="flex gap-2 mb-2">
+          <select id="dmSelect" class="border p-2 text-black rounded min-w-[220px]"></select>
+          <button class="btn-ghost" onclick="openSelectedDM()">Open</button>
+        </div>
+        <div id="privateMessages" class="bg-[#000]/40 border border-cyan-600 rounded p-2 mb-2" style="height:260px; overflow-y:auto;"></div>
+        <div class="flex gap-2">
+          <input id="privateInput" class="flex-1 border p-2 text-black rounded" placeholder="Message..." />
+          <button onclick="sendPrivate()" class="btn">Send</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Friends -->
+    <section id="friends" class="section">
+      <div class="card">
+        <h2 class="text-xl font-bold mb-3">Friend Requests</h2>
+        <div id="friendRequests" class="space-y-2"></div>
+        <div class="divider"></div>
+        <h3 class="text-lg font-semibold mb-2">Your Friends</h3>
+        <div id="friendList" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- Search Users -->
+    <section id="search" class="section">
+      <div class="card">
+        <h2 class="text-xl font-bold mb-3">Search Users</h2>
+        <div class="flex gap-2 mb-2">
+          <input id="searchInput" class="flex-1 border p-2 text-black rounded" placeholder="Search by exact nickname..." />
+          <button class="btn" onclick="searchUsers()">Search</button>
+        </div>
+        <div id="searchResults" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- Notifications -->
+    <section id="notifications" class="section">
+      <div class="card">
+        <h2 class="text-xl font-bold mb-3">Notifications</h2>
+        <div class="flex gap-2 mb-3">
+          <button class="btn-ghost" onclick="markAllNotificationsRead()">Mark all as read</button>
+        </div>
+        <div id="notifList" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- Trending -->
+    <section id="trending" class="section">
+      <div class="card">
+        <h2 class="text-xl font-bold mb-3">Trending Posts</h2>
+        <div id="trendingList" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- Leaderboard -->
+    <section id="leaderboard" class="section">
+      <div class="card">
+        <h2 class="text-xl font-bold mb-3">Top Players</h2>
+        <div id="leaderboardList" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section id="settings" class="section">
+      <div class="card">
+        <h2 class="text-xl font-bold mb-3">Account Settings</h2>
+        <input id="nicknameInput" placeholder="New nickname" class="mb-2 w-full border p-2 text-black rounded" />
+        <input id="photoInput" placeholder="Profile Photo URL" class="mb-2 w-full border p-2 text-black rounded" />
+        <textarea id="bioInput" placeholder="Bio" class="mb-2 w-full border p-2 text-black rounded"></textarea>
+        <button onclick="saveAccount()" class="btn">Save</button>
+      </div>
+    </section>
+
+    <!-- Profile (view other users) -->
+    <section id="profile" class="section">
+      <div class="card" id="profileBox">
+        <!-- filled dynamically -->
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- Firebase SDKs (compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
   <script>
- // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAgx0jy6we6cvnIgKbS1fBoeRfSD2MDszo",
-  authDomain: "mod-hive.firebaseapp.com",
-  projectId: "mod-hive",
-  storageBucket: "mod-hive.firebasestorage.app",
-  messagingSenderId: "982583858832",
-  appId: "1:982583858832:web:44d5e4e2edd77fac06ea15",
-  measurementId: "G-PK2DRED7FB"
-};
-    const ADMIN_UID = "7aTPZ6wEIpQaPjlXWDrz5Ajc4By1";
+    /* =========================
+       Firebase (NO STORAGE)
+       ========================= */
+    const firebaseConfig = {
+      apiKey: "AIzaSyAgx0jy6we6cvnIgKbS1fBoeRfSD2MDszo",
+      authDomain: "mod-hive.firebaseapp.com",
+      projectId: "mod-hive",
+      storageBucket: "mod-hive.firebasestorage.app",
+      messagingSenderId: "982583858832",
+      appId: "1:982583858832:web:44d5e4e2edd77fac06ea15",
+      measurementId: "G-PK2DRED7FB"
+    };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    const db = firebase.firestore();
+    const db   = firebase.firestore();
 
-    function linkify(text) {
-      return text.replace(/(https?:\/\/[^\s]+)/g, url => `<a href="${url}" target="_blank" rel="noopener">${url}</a>`);
+    // Optional admin (can delete any post). Put your UID here if you want.
+    const ADMIN_UID = "YOUR_ADMIN_UID_HERE";
+
+    /* =========================
+       Helpers / UI
+       ========================= */
+    function showSection(id){
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
     }
 
-    let currentUser;
-    auth.onAuthStateChanged(user => {
-      if (!user) return location.href = "auth.html";
-      currentUser = user;
-      loadProfile();
+    function showToast(msg){
+      const t = document.getElementById("toast");
+      t.innerText = msg;
+      t.style.display='block';
+      setTimeout(()=>{ t.style.display='none'; }, 2000);
+    }
+
+    function linkify(text){
+      if(!text) return "";
+      // URLs
+      let html = text.replace(/(https?:\/\/[^\s]+)/g, (url)=>`<a class="link" href="${url}" target="_blank">${url}</a>`);
+      // Hashtag chips (click to filter)
+      html = html.replace(/(^|\s)#([a-z0-9_]+)/gi, (m,space,tag)=> `${space}<span class="chip cursor-pointer" onclick="filterByHashtag('${tag.toLowerCase()}')">#${tag}</span>`);
+      return html;
+    }
+
+    function shortDate(ts){
+      if(!ts) return "";
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
+      return d.toLocaleString();
+    }
+
+    function ensureRank(points){
+      if(points >= 1000) return "Master";
+      if(points >= 250)  return "Pro";
+      return "Rookie";
+    }
+
+    /* =========================
+       Global State
+       ========================= */
+    let user = null;
+    let userData = {};
+    let friends = [];
+
+    /* =========================
+       Auth Gate
+       ========================= */
+    auth.onAuthStateChanged(async (u)=>{
+      if(!u){ location.href = "auth.html"; return; }
+      user = u;
+
+      const snap = await db.collection("users").doc(u.uid).get();
+      if (snap.exists){
+        userData = snap.data();
+      } else {
+        userData = {
+          nickname: u.email.split('@')[0],
+          points: 0,
+          rank: "Rookie",
+          bio: "",
+          profilePhoto: "",
+          friends: [],
+          friendRequests: [],
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        await db.collection("users").doc(u.uid).set(userData);
+      }
+
+      // UI header
+      document.getElementById('nicknameDisplay').innerText = userData.nickname || user.email;
+      document.getElementById('pointsDisplay').innerText   = userData.points || 0;
+      document.getElementById('rankDisplay').innerText     = userData.rank || "Rookie";
+      document.getElementById('friendsCount').innerText    = (userData.friends || []).length;
+      friends = userData.friends || [];
+
+      // Load modules
       loadPosts();
-      loadChat();
-      loadFriends();
-      loadSuggestions();
+      loadGlobal();
+      loadLeaderboard();
+      loadFriendsPage();
+      loadFriendRequests();
+      loadNotifications();
+      loadTrending();
+      populateDMList();
     });
 
-    function goMain() { location.href = "ModHive.html"; }
-    function logout() { auth.signOut(); }
+    function logout(){ auth.signOut(); }
 
-    function loadProfile() {
-      db.collection("users").doc(currentUser.uid).get().then(doc => {
-        const d = doc.data() || {};
-        document.getElementById("username").innerText = d.nickname || currentUser.email;
-        document.getElementById("profilePic").src = d.profilePhoto || `https://ui-avatars.com/api/?name=${encodeURIComponent(d.nickname || "User")}`;
-        document.getElementById("nickname").value = d.nickname || "";
-        document.getElementById("profileUrl").value = d.profilePhoto || "";
-        document.getElementById("bio").value = d.bio || "";
+    /* =========================
+       Account Settings
+       ========================= */
+    async function saveAccount(){
+      const nickname = document.getElementById('nicknameInput').value || userData.nickname;
+      const profilePhoto = document.getElementById('photoInput').value || userData.profilePhoto || "";
+      const bio = document.getElementById('bioInput').value || userData.bio || "";
+
+      const updatedPoints = userData.points || 0;
+      const rank = ensureRank(updatedPoints);
+
+      await db.collection("users").doc(user.uid).update({ nickname, profilePhoto, bio, rank });
+      userData.nickname = nickname;
+      userData.profilePhoto = profilePhoto;
+      userData.bio = bio;
+      userData.rank = rank;
+
+      document.getElementById('nicknameDisplay').innerText = nickname;
+      document.getElementById('rankDisplay').innerText = rank;
+
+      showToast("Profile saved");
+    }
+
+    /* =========================
+       POSTS (text, link, hashtags, polls)
+       ========================= */
+    function createPost(){
+      const textRaw = document.getElementById('postText').value.trim();
+      if(!textRaw) return;
+      const link = document.getElementById('postUrl').value.trim();
+      const pollOpts = document.getElementById('pollInput').value.split(",").map(o=>o.trim()).filter(Boolean);
+      const hashtags = (textRaw.match(/#[a-z0-9_]+/gi) || []).map(t=>t.toLowerCase());
+
+      const postData = {
+        uid: user.uid,
+        author: userData.nickname || user.email,
+        text: textRaw,
+        link,
+        hashtags,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        likes: [],
+        poll: pollOpts.length>1 ? pollOpts.map(opt=>({ option:opt, votes:[] })) : null,
+        editedAt: null,
+        repostOf: null
+      };
+
+      db.collection("posts").add(postData).then(()=>{
+        db.collection("users").doc(user.uid).update({
+          points: firebase.firestore.FieldValue.increment(5),
+          rank: ensureRank((userData.points||0)+5)
+        });
+        userData.points = (userData.points||0) + 5;
+        document.getElementById('pointsDisplay').innerText = userData.points;
+        document.getElementById('rankDisplay').innerText = ensureRank(userData.points);
+        showToast("Post created! (+5 pts)");
+      });
+
+      document.getElementById('postText').value="";
+      document.getElementById('postUrl').value="";
+      document.getElementById('pollInput').value="";
+    }
+
+    function renderPoll(postId, poll){
+      return `
+        <div class="mt-2 space-y-1">
+          ${poll.map((p,i)=>`
+            <button onclick="votePoll('${postId}',${i})" class="w-full text-left px-3 py-2 rounded border border-cyan-700 hover:bg-[#04272a]">
+              ${p.option} <span class="muted">(${p.votes.length} vote${p.votes.length!==1?'s':''})</span>
+            </button>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function votePoll(postId, index){
+      const ref = db.collection("posts").doc(postId);
+      ref.get().then(doc=>{
+        if(!doc.exists) return;
+        const post = doc.data();
+        if(!post.poll) return;
+        // prevent multiple votes for same option; also remove from other options if needed
+        let changed = false;
+        post.poll = post.poll.map((opt,i)=>{
+          const set = new Set(opt.votes || []);
+          if(i===index){
+            if(!set.has(user.uid)){ set.add(user.uid); changed = true; }
+          } else {
+            if(set.delete(user.uid)) changed = true;
+          }
+          return { option: opt.option, votes: Array.from(set) };
+        });
+        if(changed) ref.update({ poll: post.poll });
       });
     }
 
-    function saveProfile() {
-      db.collection("users").doc(currentUser.uid).set({
-        nickname: document.getElementById("nickname").value,
-        profilePhoto: document.getElementById("profileUrl").value,
-        bio: document.getElementById("bio").value
-      }, { merge: true });
+    function postActionsHTML(id, p){
+      const editable = (user.uid === p.uid) || (user.uid === ADMIN_UID);
+      return `
+        <div class="flex flex-wrap gap-2 mt-2">
+          <button class="btn-ghost" onclick="likePost('${id}')">👍 ${p.likes.length}</button>
+          <button class="btn-ghost" onclick="toggleComments('${id}')">💬 Comments</button>
+          <button class="btn-ghost" onclick="repost('${id}')">🔁 Repost</button>
+          ${editable ? `<button class="btn-ghost" onclick="editPostPrompt('${id}','${encodeURIComponent(p.text||"")}','${encodeURIComponent(p.link||"")}')">✏️ Edit</button>` : ""}
+          ${editable ? `<button class="btn-ghost" onclick="deletePost('${id}')">🗑 Delete</button>` : ""}
+        </div>
+      `;
     }
 
-    function createPost() {
-      const text = document.getElementById("postText").value;
-      const media = document.getElementById("postImageUrl").value;
-      db.collection("users").doc(currentUser.uid).get().then(doc => {
-        const author = doc.data().nickname || currentUser.email;
-        db.collection("posts").add({ uid: currentUser.uid, author, text, media, createdAt: firebase.firestore.FieldValue.serverTimestamp(), likes: [] });
-        document.getElementById("postText").value = "";
-        document.getElementById("postImageUrl").value = "";
-      });
+    function renderPostHTML(id, p){
+      const repostBadge = p.repostOf ? `<span class="chip">Repost</span>` : "";
+      const linkHTML = p.link ? `<a class="link" href="${p.link}" target="_blank">🔗 ${p.link}</a>` : "";
+      const pollHTML = p.poll ? renderPoll(id, p.poll) : "";
+      const hashtags = (p.hashtags||[]).map(h=>`<span class="chip cursor-pointer" onclick="filterByHashtag('${h.replace('#','')}')">${h}</span>`).join(" ");
+      return `
+        <div class="card">
+          <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-full bg-[#09383c] flex items-center justify-center text-sm border border-cyan-700 cursor-pointer" onclick="viewProfile('${p.uid}')">
+              ${(p.author||'?').slice(0,2).toUpperCase()}
+            </div>
+            <div>
+              <p class="font-bold cursor-pointer" onclick="viewProfile('${p.uid}')">${p.author} ${repostBadge}</p>
+              <p class="muted">${shortDate(p.createdAt)} ${p.editedAt ? ' • edited' : ''}</p>
+            </div>
+          </div>
+          <div class="mt-2 leading-relaxed">${linkify(p.text||"")}</div>
+          ${linkHTML ? `<div class="mt-2">${linkHTML}</div>` : ""}
+          ${hashtags ? `<div class="mt-2">${hashtags}</div>` : ""}
+          ${pollHTML}
+          ${postActionsHTML(id, p)}
+          <div id="comments-${id}" class="ml-3 mt-3 hidden"></div>
+        </div>
+      `;
     }
 
-    function loadPosts() {
-      db.collection("posts").orderBy("createdAt", "desc").onSnapshot(snap => {
-        const container = document.getElementById("posts");
-        container.innerHTML = "";
-        snap.forEach(doc => {
-          const d = doc.data();
+    function loadPosts(where = null){
+      let q = db.collection("posts").orderBy("createdAt","desc");
+      if(where && where.field === "hashtags"){
+        q = db.collection("posts").where("hashtags","array-contains", where.value).orderBy("createdAt","desc");
+      }
+      q.onSnapshot(snap=>{
+        const feed = document.getElementById('postFeed');
+        feed.innerHTML = "";
+        snap.forEach(doc=>{
+          const p = doc.data();
           const div = document.createElement("div");
-          div.className = "bg-[#111] border border-cyan-500 p-4 rounded mb-4";
-          div.innerHTML = `
-            <p class="font-bold">${d.author}</p>
-            <p>${linkify(d.text)}</p>
-            ${d.media ? `<a href="${d.media}" target="_blank">View Media</a>` : ""}
-            <div class="flex gap-2 mt-2">
-              <button onclick="likePost('${doc.id}')">👍 ${d.likes.length}</button>
-              ${currentUser.uid === ADMIN_UID ? `<button onclick="deletePost('${doc.id}')">🗑 Delete</button>` : ""}
-            </div>`;
-          container.appendChild(div);
+          div.innerHTML = renderPostHTML(doc.id, p);
+          feed.appendChild(div.firstElementChild);
         });
       });
     }
 
-    function likePost(id) {
-      db.collection("posts").doc(id).update({ likes: firebase.firestore.FieldValue.arrayUnion(currentUser.uid) });
+    function likePost(id){
+      const ref = db.collection("posts").doc(id);
+      ref.get().then(doc=>{
+        if(!doc.exists) return;
+        const p = doc.data();
+        if (!p.likes.includes(user.uid)){
+          ref.update({ likes: firebase.firestore.FieldValue.arrayUnion(user.uid) });
+          db.collection("users").doc(user.uid).update({ points: firebase.firestore.FieldValue.increment(1) });
+          // notify author
+          if(p.uid !== user.uid){
+            sendNotification(p.uid, `${userData.nickname || user.email} liked your post`);
+          }
+        }
+      });
     }
 
-    function deletePost(id) {
+    function toggleComments(postId){
+      const box = document.getElementById(`comments-${postId}`);
+      if(box.classList.contains("hidden")){
+        box.classList.remove("hidden");
+        loadComments(postId, box);
+      } else {
+        box.classList.add("hidden");
+      }
+    }
+
+    function loadComments(postId, container){
+      db.collection("posts").doc(postId).collection("comments").orderBy("createdAt")
+      .onSnapshot(snap=>{
+        container.innerHTML = `
+          <div class="flex gap-2 mb-2">
+            <input id="commentInput-${postId}" class="flex-1 border p-2 text-black rounded" placeholder="Write a comment..." />
+            <button class="btn" onclick="addComment('${postId}')">Send</button>
+          </div>
+        `;
+        snap.forEach(c=>{
+          const cm = c.data();
+          const block = document.createElement("div");
+          block.className = "bg-[#0b0b0b] border border-cyan-900 rounded p-2 mb-2";
+          block.innerHTML = `
+            <p><b class="cursor-pointer" onclick="viewProfile('${cm.uid}')">${cm.author}</b> <span class="muted">• ${shortDate(cm.createdAt)}</span></p>
+            <p class="mt-1">${linkify(cm.text)}</p>
+            <div class="flex gap-2 mt-1">
+              <button class="btn-ghost" onclick="toggleReplies('${postId}','${c.id}')">↩ Reply</button>
+              ${(cm.uid===user.uid || user.uid===ADMIN_UID) ? `<button class="btn-ghost" onclick="deleteComment('${postId}','${c.id}')">🗑 Delete</button>` : ""}
+            </div>
+            <div id="replies-${postId}-${c.id}" class="ml-3 mt-2 hidden"></div>
+          `;
+          container.appendChild(block);
+        });
+      });
+    }
+
+    function addComment(postId){
+      const input = document.getElementById(`commentInput-${postId}`);
+      const text = input.value.trim();
+      if(!text) return;
+      db.collection("posts").doc(postId).get().then(d=>{
+        const post = d.data();
+        db.collection("posts").doc(postId).collection("comments").add({
+          uid:user.uid, author:userData.nickname||user.email, text,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        if(post.uid !== user.uid){
+          sendNotification(post.uid, `${userData.nickname || user.email} commented on your post`);
+        }
+      });
+      input.value="";
+      db.collection("users").doc(user.uid).update({ points: firebase.firestore.FieldValue.increment(1) });
+    }
+
+    function deleteComment(postId, commentId){
+      db.collection("posts").doc(postId).collection("comments").doc(commentId).delete();
+    }
+
+    function toggleReplies(postId, commentId){
+      const box = document.getElementById(`replies-${postId}-${commentId}`);
+      if(box.classList.contains("hidden")){
+        box.classList.remove("hidden");
+        loadReplies(postId, commentId, box);
+      } else {
+        box.classList.add("hidden");
+      }
+    }
+
+    function loadReplies(postId, commentId, container){
+      db.collection("posts").doc(postId).collection("comments").doc(commentId).collection("replies").orderBy("createdAt").onSnapshot(snap=>{
+        container.innerHTML = `
+          <div class="flex gap-2 mb-2">
+            <input id="replyInput-${postId}-${commentId}" class="flex-1 border p-2 text-black rounded" placeholder="Write a reply..." />
+            <button class="btn" onclick="addReply('${postId}','${commentId}')">Reply</button>
+          </div>
+        `;
+        snap.forEach(r=>{
+          const rp = r.data();
+          const row = document.createElement('div');
+          row.className = "border-l border-cyan-900 pl-3 my-1";
+          row.innerHTML = `<b class="cursor-pointer" onclick="viewProfile('${rp.uid}')">${rp.author}</b> <span class="muted">• ${shortDate(rp.createdAt)}</span><div>${linkify(rp.text)}</div>`;
+          container.appendChild(row);
+        });
+      });
+    }
+
+    function addReply(postId, commentId){
+      const input = document.getElementById(`replyInput-${postId}-${commentId}`);
+      const text = input.value.trim();
+      if(!text) return;
+      db.collection("posts").doc(postId).collection("comments").doc(commentId).collection("replies").add({
+        uid:user.uid, author:userData.nickname||user.email, text,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      input.value="";
+      db.collection("users").doc(user.uid).update({ points: firebase.firestore.FieldValue.increment(1) });
+    }
+
+    function editPostPrompt(id, encText, encLink){
+      const oldText = decodeURIComponent(encText || "");
+      const oldLink = decodeURIComponent(encLink || "");
+      const text = prompt("Edit post text:", oldText);
+      if(text===null) return;
+      const link = prompt("Edit link (optional):", oldLink);
+      db.collection("posts").doc(id).update({
+        text, link,
+        editedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+
+    function deletePost(id){
       db.collection("posts").doc(id).delete();
     }
 
-    function loadChat() {
-      db.collection("globalChat").orderBy("createdAt").onSnapshot(snap => {
-        const chat = document.getElementById("chatMessages");
-        chat.innerHTML = "";
-        snap.forEach(doc => {
-          const m = doc.data();
-          const p = document.createElement("p");
-          p.innerHTML = `<b>${m.author}</b>: ${linkify(m.text)}`;
-          chat.appendChild(p);
+    function repost(id){
+      db.collection("posts").doc(id).get().then(doc=>{
+        if(!doc.exists) return;
+        const p = doc.data();
+        db.collection("posts").add({
+          uid: user.uid,
+          author: userData.nickname || user.email,
+          text: p.text,
+          link: p.link||"",
+          hashtags: p.hashtags||[],
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          likes: [],
+          poll: null, // don't copy poll on repost
+          editedAt: null,
+          repostOf: id
         });
-        chat.scrollTop = chat.scrollHeight;
+        showToast("Reposted");
       });
     }
 
-    function sendGlobalChat() {
-      const text = document.getElementById("chatInput").value;
-      db.collection("users").doc(currentUser.uid).get().then(doc => {
-        const nick = doc.data().nickname || currentUser.email;
-        db.collection("globalChat").add({
-          uid: currentUser.uid,
-          author: nick,
-          text,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    function filterByHashtag(tag){
+      showSection('posts');
+      loadPosts({ field:"hashtags", value: "#"+tag.toLowerCase() });
+      showToast(`#${tag} feed`);
+    }
+
+    /* =========================
+       Global Chat
+       ========================= */
+    function loadGlobal(){
+      db.collection("globalChat").orderBy("createdAt").onSnapshot(snap=>{
+        const box = document.getElementById('globalMessages');
+        box.innerHTML = "";
+        snap.forEach(dc=>{
+          const m = dc.data();
+          const p = document.createElement('p');
+          p.innerHTML = `<b class="cursor-pointer" onclick="viewProfile('${m.uid||''}')">${m.author}</b> <span class="muted">• ${shortDate(m.createdAt)}</span><br>${linkify(m.text)}`;
+          box.appendChild(p);
         });
-        document.getElementById("chatInput").value = "";
+        box.scrollTop = box.scrollHeight;
       });
     }
 
-    function loadSuggestions() {
-      db.collection("users").get().then(snapshot => {
-        const container = document.getElementById("friendSuggestions");
-        container.innerHTML = "";
-        snapshot.forEach(doc => {
-          if (doc.id !== currentUser.uid) {
-            const data = doc.data();
+    function sendGlobal(){
+      const text = document.getElementById('globalInput').value.trim();
+      if(!text) return;
+      db.collection("globalChat").add({
+        uid: user.uid,
+        author: userData.nickname||user.email,
+        text,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      db.collection("users").doc(user.uid).update({ points: firebase.firestore.FieldValue.increment(1) });
+      document.getElementById('globalInput').value="";
+    }
+
+    /* =========================
+       Private Chat (friends only)
+       ========================= */
+    function populateDMList(){
+      const sel = document.getElementById('dmSelect');
+      sel.innerHTML = "";
+      friends.forEach(f=>{
+        const opt = document.createElement("option");
+        opt.value = f; opt.textContent = f;
+        sel.appendChild(opt);
+      });
+    }
+
+    function openSelectedDM(){
+      const fuid = document.getElementById('dmSelect').value;
+      if(!fuid) return;
+      openDM(fuid);
+    }
+
+    function openDM(fuid){
+      showSection('private');
+      const chatId = ([user.uid,fuid]).sort().join("_");
+      db.collection("privateChats").doc(chatId).collection("messages").orderBy("createdAt")
+      .onSnapshot(snap=>{
+        const box = document.getElementById('privateMessages');
+        box.innerHTML="";
+        snap.forEach(mc=>{
+          const d = mc.data();
+          const row = document.createElement('div');
+          row.className="mb-1";
+          row.innerHTML = `<b class="cursor-pointer" onclick="viewProfile('${d.uid}')">${d.author}</b> <span class="muted">• ${shortDate(d.createdAt)}</span><div>${linkify(d.text)}</div>`;
+          box.appendChild(row);
+        });
+        box.scrollTop = box.scrollHeight;
+      });
+    }
+
+    function sendPrivate(){
+      const text = document.getElementById('privateInput').value.trim();
+      const fuid = document.getElementById('dmSelect').value;
+      if(!text || !fuid) return;
+      const chatId = ([user.uid,fuid]).sort().join("_");
+      db.collection("privateChats").doc(chatId).collection("messages").add({
+        uid:user.uid, author:userData.nickname||user.email, text,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      document.getElementById('privateInput').value="";
+    }
+
+    /* =========================
+       Friends & Requests
+       ========================= */
+    function loadFriendsPage(){
+      const list = document.getElementById('friendList');
+      list.innerHTML="";
+      (friends||[]).forEach(async f=>{
+        const fd = await db.collection("users").doc(f).get();
+        const dat = fd.data() || {};
+        const div = document.createElement('div');
+        div.className="card";
+        div.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-full bg-[#09383c] flex items-center justify-center text-sm border border-cyan-700">${(dat.nickname||'??').slice(0,2).toUpperCase()}</div>
+              <div>
+                <p class="font-bold">${dat.nickname||f}</p>
+                <p class="muted">${dat.points||0} pts • ${dat.rank||'Rookie'}</p>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn-ghost" onclick="startDM('${f}')">Chat</button>
+              <button class="btn-ghost" onclick="removeFriend('${f}')">Remove</button>
+              <button class="btn-ghost" onclick="viewProfile('${f}')">View</button>
+            </div>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function loadFriendRequests(){
+      db.collection("users").doc(user.uid).onSnapshot(doc=>{
+        const data = doc.data() || {};
+        const box = document.getElementById("friendRequests");
+        box.innerHTML="";
+        (data.friendRequests || []).forEach(async fid=>{
+          const udoc = await db.collection("users").doc(fid).get();
+          const udata = udoc.data() || {};
+          const item = document.createElement("div");
+          item.className="card";
+          item.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-bold">${udata.nickname || fid}</p>
+                <p class="muted">${udata.points||0} pts • ${udata.rank||'Rookie'}</p>
+              </div>
+              <div class="flex gap-2">
+                <button class="btn" onclick="acceptFriend('${fid}')">Accept</button>
+                <button class="btn-ghost" onclick="rejectFriend('${fid}')">Reject</button>
+              </div>
+            </div>
+          `;
+          box.appendChild(item);
+        });
+      });
+    }
+
+    function addFriend(uid){
+      if(uid===user.uid) return;
+      db.collection("users").doc(uid).update({
+        friendRequests: firebase.firestore.FieldValue.arrayUnion(user.uid)
+      });
+      sendNotification(uid, `${userData.nickname || user.email} sent you a friend request`);
+      showToast("Friend request sent");
+    }
+
+    function acceptFriend(fid){
+      db.collection("users").doc(user.uid).update({
+        friends: firebase.firestore.FieldValue.arrayUnion(fid),
+        friendRequests: firebase.firestore.FieldValue.arrayRemove(fid)
+      });
+      db.collection("users").doc(fid).update({
+        friends: firebase.firestore.FieldValue.arrayUnion(user.uid)
+      });
+      friends.push(fid);
+      populateDMList();
+      loadFriendsPage();
+      sendNotification(fid, `${userData.nickname || user.email} accepted your friend request`);
+      showToast("Friend added");
+      document.getElementById('friendsCount').innerText = friends.length;
+    }
+
+    function rejectFriend(fid){
+      db.collection("users").doc(user.uid).update({
+        friendRequests: firebase.firestore.FieldValue.arrayRemove(fid)
+      });
+      showToast("Request rejected");
+    }
+
+    async function removeFriend(fid){
+      await db.collection("users").doc(user.uid).update({
+        friends: firebase.firestore.FieldValue.arrayRemove(fid)
+      });
+      await db.collection("users").doc(fid).update({
+        friends: firebase.firestore.FieldValue.arrayRemove(user.uid)
+      });
+      friends = friends.filter(x=>x!==fid);
+      populateDMList();
+      loadFriendsPage();
+      document.getElementById('friendsCount').innerText = friends.length;
+      showToast("Friend removed");
+    }
+
+    function startDM(uid){
+      if(!friends.includes(uid)) return showToast("Add as friend first");
+      document.getElementById('dmSelect').value = uid;
+      openDM(uid);
+    }
+
+    /* =========================
+       Notifications
+       ========================= */
+    function sendNotification(toUid, text){
+      db.collection("users").doc(toUid).collection("notifications").add({
+        text,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        seen: false
+      });
+    }
+
+    function loadNotifications(){
+      db.collection("users").doc(user.uid).collection("notifications")
+        .orderBy("createdAt","desc")
+        .onSnapshot(snap=>{
+          const list = document.getElementById("notifList");
+          list.innerHTML="";
+          snap.forEach(n=>{
+            const d = n.data();
+            const item = document.createElement("div");
+            item.className = "card " + (d.seen ? "opacity-60" : "");
+            item.innerHTML = `<div class="flex items-center justify-between">
+              <div>${d.text} <span class="muted">• ${shortDate(d.createdAt)}</span></div>
+              <button class="btn-ghost" onclick="markNotificationRead('${n.id}')">Mark read</button>
+            </div>`;
+            list.appendChild(item);
+          });
+        });
+    }
+
+    function markNotificationRead(id){
+      db.collection("users").doc(user.uid).collection("notifications").doc(id).update({ seen: true });
+    }
+
+    async function markAllNotificationsRead(){
+      const snap = await db.collection("users").doc(user.uid).collection("notifications").where("seen","==",false).get();
+      const batch = db.batch();
+      snap.forEach(doc=> batch.update(doc.ref, { seen:true }) );
+      await batch.commit();
+      showToast("All notifications marked as read");
+    }
+
+    /* =========================
+       Search & Profiles
+       ========================= */
+    async function searchUsers(){
+      const query = (document.getElementById("searchInput").value||"").trim().toLowerCase();
+      if(!query) return;
+      const snap = await db.collection("users").where("nickname","==",query).get();
+      const results = document.getElementById("searchResults");
+      results.innerHTML="";
+      if(snap.empty){
+        results.innerHTML = `<p class="muted">No users found.</p>`;
+        return;
+      }
+      snap.forEach(doc=>{
+        const d = doc.data();
+        const row = document.createElement("div");
+        row.className="card";
+        row.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-bold">${d.nickname}</p>
+              <p class="muted">${d.points||0} pts • ${d.rank||'Rookie'}</p>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn-ghost" onclick="viewProfile('${doc.id}')">View</button>
+              <button class="btn" onclick="addFriend('${doc.id}')">➕ Add</button>
+            </div>
+          </div>
+        `;
+        results.appendChild(row);
+      });
+    }
+
+    function viewProfile(uid){
+      db.collection("users").doc(uid).get().then(doc=>{
+        if(!doc.exists) return;
+        const u = doc.data();
+        showSection("profile");
+        document.getElementById("profileBox").innerHTML = `
+          <div class="flex items-center gap-3">
+            <img src="${u.profilePhoto || 'https://via.placeholder.com/80'}" class="w-20 h-20 rounded-full border border-cyan-700"/>
+            <div>
+              <h2 class="text-xl font-bold">${u.nickname || uid}</h2>
+              <p class="muted">${u.points || 0} pts • ${u.rank || 'Rookie'}</p>
+            </div>
+          </div>
+          <p class="mt-3">${u.bio || "No bio yet."}</p>
+          <div class="flex gap-2 mt-3">
+            ${uid !== user.uid ? `<button class="btn" onclick="addFriend('${uid}')">➕ Add Friend</button>` : ``}
+            ${friends.includes(uid) ? `<button class="btn-ghost" onclick="startDM('${uid}')">Message</button>` : ``}
+          </div>
+          <div class="divider"></div>
+          <h3 class="font-semibold mb-2">Recent Posts</h3>
+          <div id="profilePosts"></div>
+        `;
+        db.collection("posts").where("uid","==",uid).orderBy("createdAt","desc").limit(10).get().then(snap=>{
+          const box = document.getElementById("profilePosts");
+          box.innerHTML="";
+          snap.forEach(pdoc=>{
+            const p = pdoc.data();
             const div = document.createElement("div");
-            div.innerHTML = `<p>${data.nickname || doc.id}</p><button onclick="addFriend('${doc.id}')">Add Friend</button>`;
-            container.appendChild(div);
-          }
-        });
-      });
-    }
-
-    function addFriend(friendId) {
-      db.collection("users").doc(currentUser.uid).collection("friends").doc(friendId).set({ since: firebase.firestore.FieldValue.serverTimestamp() });
-    }
-
-    function loadFriends() {
-      const container = document.getElementById("friendList");
-      db.collection("users").doc(currentUser.uid).collection("friends").onSnapshot(snap => {
-        container.innerHTML = "";
-        snap.forEach(doc => {
-          const friendId = doc.id;
-          db.collection("users").doc(friendId).get().then(fd => {
-            const d = fd.data();
-            const p = document.createElement("p");
-            p.textContent = d.nickname || friendId;
-            container.appendChild(p);
+            div.className="card";
+            div.innerHTML = `
+              <p class="muted">${shortDate(p.createdAt)}</p>
+              <div class="mt-1">${linkify(p.text||"")}</div>
+              ${p.link? `<div class="mt-1"><a class="link" target="_blank" href="${p.link}">🔗 ${p.link}</a></div>`:""}
+              <div class="mt-2"><span class="chip">👍 ${p.likes.length}</span> ${(p.hashtags||[]).map(h=>`<span class="chip">${h}</span>`).join(" ")}</div>
+            `;
+            box.appendChild(div);
           });
         });
       });
     }
+
+    /* =========================
+       Trending & Leaderboard
+       ========================= */
+    function loadTrending(){
+      // Simple approximation: order by createdAt then likes count client-side for latest 50
+      db.collection("posts").orderBy("createdAt","desc").limit(50).onSnapshot(snap=>{
+        const list = document.getElementById("trendingList");
+        const posts = [];
+        snap.forEach(d=> posts.push({ id:d.id, ...d.data() }) );
+        posts.sort((a,b)=> (b.likes?.length||0) - (a.likes?.length||0) );
+        list.innerHTML = "";
+        posts.slice(0,10).forEach(p=>{
+          const item = document.createElement("div");
+          item.className="card";
+          item.innerHTML = `<b class="cursor-pointer" onclick="viewProfile('${p.uid}')">${p.author}</b> <span class="muted">• ${shortDate(p.createdAt)}</span>
+                            <div class="mt-1">${linkify(p.text||"")}</div>
+                            <div class="mt-2"><span class="chip">👍 ${p.likes.length}</span></div>`;
+          list.appendChild(item);
+        });
+      });
+    }
+
+    function loadLeaderboard(){
+      db.collection("users").orderBy("points","desc").limit(10).onSnapshot(snap=>{
+        const list = document.getElementById('leaderboardList');
+        list.innerHTML="";
+        let rank = 1;
+        snap.forEach(doc=>{
+          const d = doc.data();
+          const item = document.createElement('div');
+          item.className="card";
+          item.innerHTML = `<b>#${rank++}</b> <span class="ml-2 font-bold">${d.nickname||doc.id}</span> — ${d.points||0} pts`;
+          list.appendChild(item);
+        });
+      });
+    }
+
+    /* =========================
+       Edit helpers
+       ========================= */
+    function deletePostCascade(postId){
+      // If you want to also delete comments/replies when deleting a post, implement a Cloud Function.
+      // Here we only delete the post doc (comments remain orphaned).
+      db.collection("posts").doc(postId).delete();
+    }
+
+    /* =========================
+       Navigation shortcuts
+       ========================= */
+    function openUserFeed(uid){
+      showSection('posts');
+      // (Optionally implement a filter for a single user’s posts)
+    }
+
+    /* =========================
+       DONE — let’s go!
+       ========================= */
   </script>
 </body>
 </html>

@@ -1,629 +1,471 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Mod Hive — Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <title>Mod Hive Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
-    :root { 
-      --cyan: #00f0ff; 
-      --cyan-dark: #00c2ce;
-      --bg: #0f0f0f; 
-      --panel: #111; 
-      --text-primary: #fff;
-      --text-secondary: #9aa0a6;
-      --border: #154e52;
-      --card-bg: #0d0d0d;
+    body {
+      background-color: #0f0f0f;
+      color: #ffffff;
+      font-family: 'Montserrat', sans-serif;
     }
-    
-    * {
-      box-sizing: border-box;
-    }
-    
-    body { 
-      background: var(--bg); 
-      color: var(--text-primary); 
-      font-family: 'Montserrat', sans-serif; 
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-    }
-    
-    .app-container {
+
+    .sidebar {
+      width: 60px;
+      background: #111;
+      border-right: 2px solid #00f0ff;
       display: flex;
-      min-height: 100vh;
-    }
-    
-    .sidebar { 
-      background: var(--panel); 
-      padding: 1rem;
-      border-right: 2px solid var(--cyan);
-      transition: all 0.3s ease;
-      overflow-y: auto;
-      position: relative;
-      z-index: 100;
-    }
-    
-    .sidebar.collapsed {
-      width: 70px;
-    }
-    
-    .sidebar.expanded {
-      width: 250px;
-    }
-    
-    .sidebar-toggle {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: transparent;
-      border: none;
-      color: var(--cyan);
-      cursor: pointer;
-      font-size: 1.2rem;
-    }
-    
-    .sidebar h2 { 
-      color: var(--cyan); 
-      margin-top: 1.5rem;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-    
-    .navbtn { 
-      display: flex;
+      flex-direction: column;
       align-items: center;
-      width: 100%;
-      margin-bottom: .5rem; 
-      background: #1a1a1a; 
-      border: 1px solid var(--cyan); 
-      color: var(--cyan); 
-      padding: .6rem .8rem; 
-      border-radius: .5rem; 
-      transition: .2s; 
-      text-align: left;
-      cursor: pointer;
-      white-space: nowrap;
-      overflow: hidden;
+      padding-top: 10px;
+      min-height: 100vh;
+      transition: width 0.3s;
     }
-    
-    .navbtn i {
-      margin-right: 10px;
-      min-width: 20px;
-    }
-    
-    .navbtn:hover { 
-      background: var(--cyan); 
-      color: #000; 
-    }
-    
-    .navbtn span {
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    
-    .main { 
-      flex: 1;
-      padding: 1.25rem;
-      transition: all 0.3s ease;
-      overflow-x: hidden;
-    }
-    
-    .card { 
-      background: var(--card-bg); 
-      border: 1px solid var(--border); 
-      border-radius: .75rem; 
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-    }
-    
-    .section { 
-      display: none; 
-      animation: fadeIn 0.3s ease;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    .active { 
-      display: block; 
-    }
-    
-    .link { 
-      color: var(--cyan); 
-      text-decoration: underline; 
-    }
-    
-    .chip { 
-      display: inline-block; 
-      background: #082326; 
-      border: 1px solid #164b4f; 
-      padding: .15rem .5rem; 
-      border-radius: 999px; 
-      margin-right: .25rem; 
-      font-size: .75rem; 
-      cursor: pointer;
-    }
-    
-    .toast { 
-      position: fixed; 
-      bottom: 20px; 
-      right: 20px; 
-      background: var(--cyan); 
-      color: #000; 
-      padding: 10px 16px; 
-      border-radius: 8px; 
-      font-weight: 700; 
-      display: none; 
-      box-shadow: 0 8px 30px rgba(0,0,0,.35);
-      z-index: 1000;
-      animation: slideIn 0.3s ease;
-    }
-    
-    @keyframes slideIn {
-      from { transform: translateX(100px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    
-    .muted { 
-      color: var(--text-secondary); 
-      font-size: .85rem; 
-    }
-    
-    .btn { 
-      background: var(--cyan); 
-      color: #000; 
-      padding: .5rem .8rem; 
-      border-radius: .5rem; 
-      font-weight: 700; 
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .btn:hover {
-      background: var(--cyan-dark);
-    }
-    
-    .btn-ghost { 
-      border: 1px solid var(--cyan); 
-      color: var(--cyan); 
-      padding: .4rem .7rem; 
-      border-radius: .5rem; 
-      background: transparent;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .btn-ghost:hover {
-      background: rgba(0, 240, 255, 0.1);
-    }
-    
-    .divider { 
-      height: 1px; 
-      background: #173c40; 
-      margin: .75rem 0; 
-    }
-    
-    input, textarea, select {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #2d2d2d;
-      border-radius: 0.5rem;
-      background: #1a1a1a;
-      color: var(--text-primary);
-      margin-bottom: 0.75rem;
-    }
-    
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      border-color: var(--cyan);
-    }
-    
-    input::placeholder, textarea::placeholder {
-      color: #5a5a5a;
-    }
-    
-    .grid-responsive {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1rem;
-    }
-    
-    .profile-avatar {
+
+    .sidebar button {
       width: 40px;
       height: 40px;
-      border-radius: 50%;
-      background: #09383c;
+      margin-bottom: 12px;
       display: flex;
-      align-items: center;
       justify-content: center;
-      border: 1px solid var(--cyan);
-      font-weight: bold;
+      align-items: center;
+      background: #1a1a1a;
+      border: 2px solid #00f0ff;
+      color: #00f0ff;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      transition: 0.3s;
     }
-    
-    .message-box {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid var(--cyan);
-      border-radius: 0.5rem;
-      padding: 1rem;
-      height: 260px;
-      overflow-y: auto;
-      margin-bottom: 1rem;
+
+    .sidebar button:hover {
+      background: #00f0ff;
+      color: #000;
+      transform: scale(1.05);
     }
-    
-    .notification-item {
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      background: #0f0f0f;
-      margin-bottom: 0.5rem;
-      border-left: 3px solid var(--cyan);
+
+    .collapsed {
+      width: 0 !important;
+      overflow: hidden !important;
     }
-    
-    .notification-item.unread {
-      background: #082326;
-      border-left: 3px solid #00f0ff;
+
+    .main-area {
+      margin-left: 70px;
+      padding: 2rem;
     }
-    
-    /* Responsive styles */
-    @media (max-width: 768px) {
-      .app-container {
-        flex-direction: column;
-      }
-      
-      .sidebar {
-        width: 100%;
-        position: relative;
-        min-height: auto;
-        border-right: none;
-        border-bottom: 2px solid var(--cyan);
-      }
-      
-      .sidebar.expanded, .sidebar.collapsed {
-        width: 100%;
-      }
-      
-      .sidebar.collapsed .navbtn span {
-        display: none;
-      }
-      
-      .sidebar.collapsed .navbtn i {
-        margin-right: 0;
-      }
-      
-      .main {
-        margin-left: 0;
-        padding: 1rem;
-      }
-      
-      .grid-responsive {
-        grid-template-columns: 1fr;
-      }
+
+    .section {
+      display: none;
     }
-    
-    /* Dark scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
+
+    .active-section {
+      display: block;
     }
-    
-    ::-webkit-scrollbar-track {
-      background: #0a0a0a;
+
+    .xp-bar-bg {
+      width: 100%;
+      height: 12px;
+      background: #333;
+      border-radius: 6px;
+      margin-top: 6px;
     }
-    
-    ::-webkit-scrollbar-thumb {
-      background: #164b4f;
-      border-radius: 4px;
+
+    .xp-bar-fill {
+      height: 100%;
+      background: #00f0ff;
+      width: 40%;
+      border-radius: 6px;
     }
-    
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--cyan);
+
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #00f0ff;
+      color: #000;
+      padding: 8px 16px;
+      border-radius: 6px;
+      display: none;
     }
   </style>
 </head>
+
 <body>
-  <div class="app-container">
-    <!-- Sidebar -->
-    <div class="sidebar expanded" id="sidebar">
-      <button class="sidebar-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-      </button>
-      <h2 class="font-extrabold text-xl mb-3">Mod Hive</h2>
-      <button class="navbtn" onclick="showSection('home')">
-        <i class="fas fa-home"></i><span>Home</span>
-      </button>
-      <button class="navbtn" onclick="showSection('posts')">
-        <i class="fas fa-newspaper"></i><span>Posts</span>
-      </button>
-      <button class="navbtn" onclick="showSection('global')">
-        <i class="fas fa-globe"></i><span>Global Chat</span>
-      </button>
-      <button class="navbtn" onclick="showSection('private')">
-        <i class="fas fa-envelope"></i><span>Private Chat</span>
-      </button>
-      <button class="navbtn" onclick="showSection('friends')">
-        <i class="fas fa-users"></i><span>Friends</span>
-      </button>
-      <button class="navbtn" onclick="showSection('search')">
-        <i class="fas fa-search"></i><span>Search Users</span>
-      </button>
-      <button class="navbtn" onclick="showSection('notifications')">
-        <i class="fas fa-bell"></i><span>Notifications</span>
-      </button>
-      <button class="navbtn" onclick="showSection('trending')">
-        <i class="fas fa-fire"></i><span>Trending</span>
-      </button>
-      <button class="navbtn" onclick="showSection('leaderboard')">
-        <i class="fas fa-trophy"></i><span>Leaderboard</span>
-      </button>
-      <button class="navbtn" onclick="showSection('settings')">
-        <i class="fas fa-cog"></i><span>Settings</span>
-      </button>
-      <button class="navbtn" onclick="logout()">
-        <i class="fas fa-sign-out-alt"></i><span>Logout</span>
-      </button>
-      <p class="muted mt-3">Tip: run with a local server (e.g. VS Code Live Server) — not file://</p>
-    </div>
 
-    <!-- Main -->
-    <div class="main">
-      <!-- Home -->
-      <section id="home" class="section active">
-        <div class="card">
-          <h1 class="text-2xl font-extrabold mb-3">Welcome, <span id="nicknameDisplay"></span>!</h1>
-          <div class="grid-responsive">
-            <div class="card">
-              <p class="muted">Points</p>
-              <p id="pointsDisplay" class="text-2xl font-bold">0</p>
-            </div>
-            <div class="card">
-              <p class="muted">Rank</p>
-              <p id="rankDisplay" class="text-2xl font-bold">Rookie</p>
-            </div>
-            <div class="card">
-              <p class="muted">Friends</p>
-              <p id="friendsCount" class="text-2xl font-bold">0</p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Quick Actions -->
-        <div class="card">
-          <h2 class="text-xl font-bold mb-3">Quick Actions</h2>
-          <div class="grid-responsive">
-            <button class="btn" onclick="showSection('posts')">
-              <i class="fas fa-plus mr-2"></i> Create Post
-            </button>
-            <button class="btn-ghost" onclick="showSection('global')">
-              <i class="fas fa-comments mr-2"></i> Global Chat
-            </button>
-            <button class="btn-ghost" onclick="showSection('trending')">
-              <i class="fas fa-chart-line mr-2"></i> View Trends
-            </button>
-          </div>
-        </div>
-        
-        <!-- Recent Activity -->
-        <div class="card">
-          <h2 class="text-xl font-bold mb-3">Recent Activity</h2>
-          <div id="recentActivity">
-            <p class="muted text-center">No recent activity</p>
-          </div>
-        </div>
-      </section>
+  <!-- Toggle button for sidebar -->
+  <button onclick="toggleSidebar()" class="fixed top-2 left-2 z-50 bg-[#111] p-2 rounded text-cyan-400">☰</button>
 
-      <!-- Posts -->
-      <section id="posts" class="section">
-        <div class="card">
-          <h2 class="text-xl font-bold mb-3">Create Post</h2>
-          <textarea id="postText" rows="3" placeholder="What's on your mind? Use #hashtags"></textarea>
-          <input id="postUrl" placeholder="Optional link (YouTube, image URL, article...)" />
-          <input id="pollInput" placeholder="Poll options (comma separated) — leave blank for no poll" />
-          <div class="flex items-center gap-2 mb-4">
-            <button class="btn" onclick="createPost()">Post</button>
-            <button class="btn-ghost" onclick="clearPostForm()">Clear</button>
-          </div>
-          <div id="postFeed" class="space-y-3"></div>
-        </div>
-      </section>
-
-      <!-- Global Chat -->
-      <section id="global" class="section">
-        <div class="card">
-          <h2 class="text-xl font-bold mb-2">Global Chat</h2>
-          <div id="globalMessages" class="message-box"></div>
-          <div class="flex gap-2">
-            <input id="globalInput" placeholder="Type message..." />
-            <button onclick="sendGlobal()" class="btn">Send</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Private Chat -->
-      <section id="private" class="section">
-        <div class="card">
-          <h2 class="text-xl font-bold mb-2">Private Chat</h2>
-          <div class="flex gap-2 mb-2">
-            <select id="dmSelect"></select>
-            <button class="btn-ghost" onclick="openSelectedDM()">Open</button>
-          </div>
-          <div id="privateMessages" class="message-box"></div>
-          <div class="flex gap-2">
-            <input id="privateInput" placeholder="Message..." />
-            <button onclick="sendPrivate()" class="btn">Send</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Friends -->
-      <section id="friends" class="section">
-        <div class="card">
-          <h2 class="text-xl font-bold mb-3">Friend Requests</h2>
-          <div id="friendRequests" class="space-y-2"></div>
-          <div class="divider"></div>
-          <h3 class="text-lg font-semibold mb-2">Your Friends</h3>
-          <div id="friendList" class="space-y-2"></div>
-        </div>
-      </section>
-
-      <!-- Search Users -->
-      <section id="search" class="section">
-        <div class="card">
-          <h2 class="text-xl font-bold mb-3">Search Users</h2>
-          <div class="flex gap-2 mb-2">
-            <input id="searchInput" placeholder="Search by exact nickname..." />
-            <button class="btn" onclick="searchUsers()">Search</button>
-          </div>
-          <div id="searchResults" class="space-y-2"></div>
-        </div>
-      </section>
-
-      <!-- Notifications -->
-      <section id="notifications" class="section">
-        <div class="card">
-          <h2 class="text-xl font-bold mb-3">Notifications</h2>
-          <div class="flex gap-2 mb-3">
-            <button class="btn-ghost" onclick="markAllNotificationsRead()">Mark all as read</button>
-            <button class="btn-ghost" onclick="clearAllNotifications()">Clear all</button>
-          </div>
-          <div id="notifList" class="space-y-2"></div>
-        </div>
-      </section>
-
-      <!-- Trending -->
-      <section id="trending" class="section">
-        <div class="card">
-          <h2 class="text-xl font-bold mb-3">Trending Posts</h2>
-          <div class="flex gap-2 mb-3">
-            <button class="btn-ghost active" onclick="filterTrending('all')">All</button>
-            <button class="btn-ghost" onclick="filterTrending('today')">Today</button>
-            <button class="btn-ghost" onclick="filterTrending('week')">This Week</button>
-          </div>
-          <div id="trendingList" class="space-y-2"></div>
-        </div>
-      </section>
-
-      <!-- Leaderboard -->
-      <section id="leaderboard" class="section">
-        <div class="card">
-          <h2 class="text-xl font-bold mb-3">Top Players</h2>
-          <div class="flex gap-2 mb-3">
-            <button class="btn-ghost active" onclick="filterLeaderboard('all')">All Time</button>
-            <button class="btn-ghost" onclick="filterLeaderboard('month')">This Month</button>
-            <button class="btn-ghost" onclick="filterLeaderboard('week')">This Week</button>
-          </div>
-          <div id="leaderboardList" class="space-y-2"></div>
-        </div>
-      </section>
-
-      <!-- Settings -->
-      <section id="settings" class="section">
-        <div class="card">
-          <h2 class="text-xl font-bold mb-3">Account Settings</h2>
-          <input id="nicknameInput" placeholder="New nickname" />
-          <input id="photoInput" placeholder="Profile Photo URL" />
-          <textarea id="bioInput" placeholder="Bio"></textarea>
-          <button onclick="saveAccount()" class="btn">Save</button>
-          
-          <div class="divider"></div>
-          
-          <h3 class="text-lg font-semibold mb-2">Appearance</h3>
-          <div class="flex items-center gap-2 mb-3">
-            <span>Dark Mode</span>
-            <label class="switch">
-              <input type="checkbox" checked>
-              <span class="slider"></span>
-            </label>
-          </div>
-          
-          <h3 class="text-lg font-semibold mb-2">Privacy</h3>
-          <div class="flex items-center gap-2 mb-3">
-            <span>Show online status</span>
-            <label class="switch">
-              <input type="checkbox" checked>
-              <span class="slider"></span>
-            </label>
-          </div>
-        </div>
-      </section>
-
-      <!-- Profile (view other users) -->
-      <section id="profile" class="section">
-        <div class="card" id="profileBox">
-          <!-- filled dynamically -->
-        </div>
-      </section>
-    </div>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <button onclick="showSection('home')" title="Home">🏠</button>
+    <button onclick="showSection('posts')" title="Posts">🖊</button>
+    <button onclick="showSection('global')" title="Global Chat">💬</button>
+    <button onclick="showSection('private')" title="DM">📨</button>
+    <button onclick="showSection('friends')" title="Friends">👥</button>
+    <button onclick="showSection('leaderboard')" title="Leaderboard">🏆</button>
+    <button onclick="showSection('settings')" title="Settings">⚙️</button>
   </div>
 
-  <div id="toast" class="toast"></div>
+  <!-- Main area -->
+  <div class="main-area">
+    <!-- Home Section -->
+    <div id="home" class="section active-section">
+      <h1 class="text-2xl font-bold mb-2">Welcome, <span id="nicknameDisplay">Player</span>!</h1>
+      <p>Points: <span id="pointsDisplay">0</span></p>
+      <p>Rank: <span id="rankDisplay">Rookie</span></p>
+      <!-- XP Bar -->
+      <div class="xp-bar-bg">
+        <div class="xp-bar-fill"></div>
+      </div>
 
-  <!-- Firebase SDKs (compat) -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+      <!-- Quick Buttons -->
+      <div class="mt-4">
+        <button onclick="showSection('posts')" class="bg-cyan-500 text-black px-4 py-2 rounded mr-2">+ New Post</button>
+        <button onclick="showSection('global')" class="bg-cyan-500 text-black px-4 py-2 rounded">Open Global Chat</button>
+      </div>
+    </div><!-- POSTS Section -->
+    <div id="posts" class="section">
+      <h2 class="text-xl font-bold mb-4">Create Post</h2>
+      <textarea id="postText" rows="3" class="w-full bg-[#1a1a1a] rounded p-2 mb-2" placeholder="What's on your mind?"></textarea>
+      <input id="postUrl" class="w-full bg-[#1a1a1a] rounded p-2 mb-2" placeholder="Image or Link URL (optional)">
+      <button onclick="createPost()" class="bg-cyan-500 text-black px-4 py-2 rounded mb-4">Post</button>
 
-  <script>
-    // Your existing JavaScript code goes here, but I've added some new functions
-    // for the additional features
-    
-    // Toggle sidebar collapse/expand
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('collapsed');
-      sidebar.classList.toggle('expanded');
-      
-      // Save preference to localStorage
-      localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-    }
-    
-    // Clear post form
-    function clearPostForm() {
-      document.getElementById('postText').value = '';
-      document.getElementById('postUrl').value = '';
-      document.getElementById('pollInput').value = '';
-    }
-    
-    // Clear all notifications
-    function clearAllNotifications() {
-      if (confirm('Are you sure you want to clear all notifications?')) {
-        // Implementation would go here
-        showToast('Notifications cleared');
-      }
-    }
-    
-    // Filter trending posts
-    function filterTrending(timeframe) {
-      // Implementation would go here
-      showToast(`Showing trending posts for ${timeframe}`);
-    }
-    
-    // Filter leaderboard
-    function filterLeaderboard(timeframe) {
-      // Implementation would go here
-      showToast(`Showing leaderboard for ${timeframe}`);
-    }
-    
-    // Check saved sidebar state on load
-    window.addEventListener('DOMContentLoaded', function() {
-      const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-      const sidebar = document.getElementById('sidebar');
-      
-      if (sidebarCollapsed) {
-        sidebar.classList.add('collapsed');
-        sidebar.classList.remove('expanded');
-      } else {
-        sidebar.classList.add('expanded');
-        sidebar.classList.remove('collapsed');
+      <h3 class="text-lg font-semibold mb-2">Recent Posts</h3>
+      <div id="postFeed"></div>
+    </div>
+
+    <!-- GLOBAL CHAT Section -->
+    <div id="global" class="section">
+      <h2 class="text-xl font-bold mb-4">Global Chat</h2>
+      <div id="globalMessages" class="bg-[#1a1a1a] rounded p-2 mb-2" style="height:300px; overflow-y:auto;">
+        <!-- Global chat messages will go here -->
+      </div>
+      <div class="flex gap-2">
+        <input id="globalInput" class="flex-1 bg-[#1a1a1a] rounded p-2" placeholder="Type a message...">
+        <button onclick="sendGlobal()" class="bg-cyan-500 text-black px-4 py-2 rounded">Send</button>
+      </div>
+    </div>
+
+    <!-- PRIVATE CHAT Section -->
+    <div id="private" class="section">
+      <h2 class="text-xl font-bold mb-4">Private Chat</h2>
+      <label class="text-sm">Select Friend:</label>
+      <select id="dmSelect" class="mb-2 p-2 bg-[#1a1a1a] rounded"></select>
+      <div id="privateMessages" class="bg-[#1a1a1a] rounded p-2 mb-2" style="height:300px; overflow-y:auto;"></div>
+      <input id="privateInput" placeholder="Message..." class="mb-2 p-2 bg-[#1a1a1a] rounded"/>
+      <button onclick="sendPrivate()" class="bg-cyan-500 text-black px-4 py-2 rounded">Send</button>
+    </div>
+
+    <!-- FRIENDS Section -->
+    <div id="friends" class="section">
+      <h2 class="text-xl font-bold mb-4">Friends List</h2>
+      <div id="friendList"></div>
+    </div>
+
+    <!-- LEADERBOARD Section -->
+    <div id="leaderboard" class="section">
+      <h2 class="text-xl font-bold mb-4">Leaderboard</h2>
+      <div id="leaderboardList"></div>
+    </div>
+
+    <!-- ACCOUNT SETTINGS Section -->
+    <div id="settings" class="section">
+      <h2 class="text-xl font-bold mb-4">Account Settings</h2>
+      <input id="nicknameInput" class="bg-[#1a1a1a] rounded p-2 mb-2" placeholder="Nickname"/>
+      <input id="photoInput" class="bg-[#1a1a1a] rounded p-2 mb-2" placeholder="Photo URL"/>
+      <textarea id="bioInput" rows="3" class="bg-[#1a1a1a] rounded p-2 mb-2" placeholder="Bio"></textarea>
+      <button onclick="saveAccount()" class="bg-cyan-500 text-black px-4 py-2 rounded">Save</button>
+    </div>
+
+  </div> <!-- end .main-area -->
+
+  <!-- Toast popup -->
+  <div id="toast"></div><!-- START OF FULL JAVASCRIPT -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+// ---- Firebase Config (replace these!)
+const firebaseConfig = {
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+const ADMIN_UID = "YOUR_ADMIN_UID_HERE";
+
+// ---- Global Functions ----
+window.showSection = function(id){
+  document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active-section'));
+  document.getElementById(id).classList.add('active-section');
+  if(id === 'global'){
+    newGlobalCount = 0;
+    document.querySelector("button[onclick*='showSection(\\'global\\')']").textContent = "💬";
+  }
+};
+
+function linkify(text){
+  return text.replace(/(https?:\/\/\S+)/g, function(url){
+    return `<a href="${url}" target="_blank">${url}</a>`;
+  });
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.innerText = msg;
+  t.style.display = 'block';
+  setTimeout(()=>{ t.style.display='none'; }, 2000);
+}
+
+/* USER */
+let user = null;
+let userData = {};
+let friends = [];
+
+/* AUTH & INIT */
+auth.onAuthStateChanged(async function(u){
+  if(!u) return window.location.href='auth.html';
+  user = u;
+  const docRef = db.collection("users").doc(u.uid);
+  const docSnap = await docRef.get();
+  if(!docSnap.exists()){
+    await docRef.set({
+      nickname: u.email.split('@')[0],
+      points: 0,
+      rank: 'Rookie',
+      friends: []
+    });
+  }
+  userData = (await docRef.get()).data();
+  document.getElementById('nicknameDisplay').innerText = userData.nickname;
+  document.getElementById('pointsDisplay').innerText   = userData.points;
+  document.getElementById('rankDisplay').innerText     = userData.rank;
+  friends = userData.friends || [];
+
+  loadPosts();
+  loadGlobalChat();
+  loadLeaderboard();
+  loadFriendsList();
+  loadPrivateFriendSelector();
+  updateXPandRank();
+});
+
+function logout(){ auth.signOut(); }
+
+/* ACCOUNT UPDATE */
+async function saveAccount(){
+  const nickname = document.getElementById('nicknameInput').value;
+  const photo    = document.getElementById('photoInput').value;
+  const bio      = document.getElementById('bioInput').value;
+  await db.collection("users").doc(user.uid).update({
+    nickname, profilePhoto: photo, bio
+  });
+  showToast("Saved!");
+  document.getElementById('nicknameDisplay').innerText = nickname;
+}
+/* CREATE & LOAD POSTS */
+function createPost(){
+  const text  = document.getElementById('postText').value.trim();
+  const media = document.getElementById('postUrl').value.trim();
+  if(!text) return;
+  db.collection("posts").add({
+    uid: user.uid,
+    author: userData.nickname,
+    text,
+    media,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    likes: []
+  });
+  db.collection("users").doc(user.uid).update({
+    points: firebase.firestore.FieldValue.increment(5)
+  });
+  showToast("+5 Points (Post)");
+  document.getElementById('postText').value  = "";
+  document.getElementById('postUrl').value   = "";
+  updateXPandRank();
+}
+
+function loadPosts(){
+  db.collection("posts").orderBy("createdAt","desc")
+    .onSnapshot(snap => {
+      const feed = document.getElementById('postFeed');
+      feed.innerHTML = "";
+      snap.forEach(doc => {
+        const p = doc.data();
+        const div = document.createElement("div");
+        div.className = "bg-[#1a1a1a] border border-cyan-500 p-3 rounded mb-3";
+        div.innerHTML = `
+          <p class="font-bold">${p.author}</p>
+          <p>${linkify(p.text)}</p>
+          ${p.media ? `<a class="text-cyan-300" href="${p.media}" target="_blank">View Media</a>` : ""}
+          <button onclick="likePost('${doc.id}')">👍 ${p.likes.length}</button>
+          ${(user.uid===ADMIN_UID || user.uid===p.uid) ? `<button onclick="deletePost('${doc.id}')">🗑</button>` : ""}
+        `;
+        feed.appendChild(div);
+      });
+    });
+}
+
+function likePost(id){
+  db.collection("posts").doc(id).update({
+    likes: firebase.firestore.FieldValue.arrayUnion(user.uid)
+  });
+  db.collection("users").doc(user.uid).update({
+    points: firebase.firestore.FieldValue.increment(1)
+  });
+  updateXPandRank();
+}
+
+function deletePost(id){
+  db.collection("posts").doc(id).delete();
+}
+
+/* GLOBAL CHAT */
+let newGlobalCount = 0;
+
+function sendGlobal(){
+  const text = document.getElementById('globalInput').value.trim();
+  if(!text) return;
+  db.collection("globalChat").add({
+    author: userData.nickname,
+    text,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  db.collection("users").doc(user.uid).update({
+    points: firebase.firestore.FieldValue.increment(1)
+  });
+  document.getElementById('globalInput').value = "";
+  updateXPandRank();
+}
+
+function loadGlobalChat(){
+  db.collection("globalChat").orderBy("createdAt")
+    .onSnapshot(snap => {
+      const box = document.getElementById('globalMessages');
+      box.innerHTML = "";
+      snap.forEach(doc => {
+        const m = doc.data();
+        const p = document.createElement("p");
+        p.innerHTML = `<b>${m.author}</b>: ${linkify(m.text)}`;
+        box.appendChild(p);
+      });
+      box.scrollTop = box.scrollHeight;
+
+      // notify badge
+      if(!document.getElementById('global').classList.contains('active-section')){
+        newGlobalCount++;
+        document.querySelector("button[onclick*='showSection(\\'global\\')']").textContent = "💬(" + newGlobalCount + ")";
       }
     });
-    
-    // Your existing Firebase and other functions would follow here
-    // ... [rest of your JavaScript code]
-  </script>
+}
+
+/* PRIVATE CHAT */
+function loadPrivateFriendSelector(){
+  const s = document.getElementById('dmSelect');
+  s.innerHTML = "";
+  friends.forEach(f=>{
+    const opt = document.createElement("option");
+    opt.value = f; opt.textContent = f;
+    s.appendChild(opt);
+  });
+}
+
+function sendPrivate(){
+  const fuid = document.getElementById('dmSelect').value;
+  const text = document.getElementById('privateInput').value.trim();
+  if(!text) return;
+  const chatId = ([user.uid,fuid]).sort().join("_");
+  db.collection("privateChats").doc(chatId).collection("messages")
+    .add({
+      uid: user.uid,
+      author: userData.nickname,
+      text,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  document.getElementById('privateInput').value = "";
+}
+
+document.getElementById('dmSelect')?.addEventListener('change', ()=>{
+  const f = document.getElementById('dmSelect').value;
+  const chatId = ([user.uid,f]).sort().join("_");
+  db.collection("privateChats").doc(chatId).collection("messages")
+    .orderBy("createdAt")
+    .onSnapshot(snap => {
+      const box = document.getElementById('privateMessages');
+      box.innerHTML = "";
+      snap.forEach(mdoc => {
+        const m = mdoc.data();
+        const row = document.createElement("p");
+        row.innerHTML = `<b>${m.author}</b>: ${linkify(m.text)}`;
+        box.appendChild(row);
+      });
+      box.scrollTop = box.scrollHeight;
+    });
+});
+
+/* FRIEND LIST */
+function loadFriendsList(){
+  const list = document.getElementById('friendList');
+  list.innerHTML = "";
+  friends.forEach(async f=>{
+    const fd = await db.collection("users").doc(f).get();
+    const data = fd.data();
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <b>${data.nickname || f}</b>
+      <button onclick="startDM('${f}')" class="ml-2 text-xs bg-cyan-500 text-black px-2 py-1 rounded">Chat</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function startDM(uid){
+  document.getElementById('dmSelect').value = uid;
+  showSection('private');
+  const evt = new Event('change');
+  document.getElementById('dmSelect').dispatchEvent(evt);
+}
+
+/* LEADERBOARD */
+function loadLeaderboard(){
+  db.collection("users").orderBy("points","desc").limit(10).onSnapshot(snap=>{
+    const list = document.getElementById('leaderboardList');
+    list.innerHTML="";
+    snap.forEach(doc=>{
+      const d=doc.data();
+      const row=document.createElement("div");
+      row.innerHTML = `<b>${d.nickname}</b> - ${d.points} pts`;
+      list.appendChild(row);
+    });
+  });
+}
+
+/* XP / Rank update */
+function updateXPandRank(){
+  const pts = userData.points || 0;
+  const fill = document.querySelector('.xp-bar-fill');
+  const percent = Math.min((pts%100)/100*100,100);
+  fill.style.width = percent + '%';
+  // rank text is handled above on auth
+}
+
+/* SIDEBAR TOGGLE */
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+</script>
+<!-- END SCRIPT --><footer class="text-center text-gray-500 py-4">
+  © 2024 Mod Hive. All rights reserved.
+</footer><!-- Closing all -->
+  <!-- Toast element is already included above -->
+
 </body>
 </html>

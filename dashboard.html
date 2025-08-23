@@ -1,196 +1,315 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" class="h-full">
 <head>
-  <meta charset="UTF-8">
-  <title>Mod Hive Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mod Hive — Dashboard</title>
+
+  <!-- Tailwind (CDN build) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Dark theme + small extras -->
   <style>
-    body {
-      background-color: #0f0f0f;
-      color: #ffffff;
-      font-family: 'Montserrat', sans-serif;
+    :root{
+      --mh-primary:#6c5ce7; --mh-primary-2:#5649c0;
+      --mh-accent:#00cec9;  --mh-pink:#fd79a8;
+      --mh-dark:#0e1217;    --mh-darker:#0b0f13; --mh-panel:#151b22;
+      --mh-muted:#93a1b1;   --mh-soft:#222a35;   --mh-ok:#10b981; --mh-warn:#f59e0b; --mh-danger:#ef4444;
     }
-
-    .sidebar {
-      width: 60px;
-      background: #111;
-      border-right: 2px solid #00f0ff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 10px;
-      min-height: 100vh;
-      transition: width 0.3s;
-    }
-
-    .sidebar button {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #1a1a1a;
-      border: 2px solid #00f0ff;
-      color: #00f0ff;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      transition: 0.3s;
-    }
-
-    .sidebar button:hover {
-      background: #00f0ff;
-      color: #000;
-      transform: scale(1.05);
-    }
-
-    .collapsed {
-      width: 0 !important;
-      overflow: hidden !important;
-    }
-
-    .main-area {
-      margin-left: 70px;
-      padding: 2rem;
-    }
-
-    .section {
-      display: none;
-    }
-
-    .active-section {
-      display: block;
-    }
-
-    .xp-bar-bg {
-      width: 100%;
-      height: 12px;
-      background: #333;
-      border-radius: 6px;
-      margin-top: 6px;
-    }
-
-    .xp-bar-fill {
-      height: 100%;
-      background: #00f0ff;
-      width: 40%;
-      border-radius: 6px;
-    }
-
-    #toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #00f0ff;
-      color: #000;
-      padding: 8px 16px;
-      border-radius: 6px;
-      display: none;
-    }
+    html,body{background:var(--mh-dark); color:#e8eef6;}
+    .glass{background:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,.06)}
+    .btn{transition: transform .12s ease, box-shadow .12s ease}
+    .btn:active{transform: scale(.98)}
+    .nav-active{background: rgba(255,255,255,.06)}
+    .fade-in{animation:fade .25s ease both}
+    @keyframes fade{from{opacity:0; transform: translateY(4px)} to{opacity:1; transform:none}}
+    .ellipsis-2{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+    .like-on{color:var(--mh-primary)}
+    .scroll-y{scrollbar-width:thin}
+    .twinkle{box-shadow:0 0 0 0 rgba(108,92,231,.6); animation:tw 1.6s ease infinite}
+    @keyframes tw {to{box-shadow:0 0 0 18px rgba(108,92,231,0)}}
+    .reaction-btn{min-width:3.5rem}
   </style>
 </head>
 
-<body>
-
-  <!-- Toggle button for sidebar -->
-  <button onclick="toggleSidebar()" class="fixed top-2 left-2 z-50 bg-[#111] p-2 rounded text-cyan-400">☰</button>
-
-  <!-- Sidebar -->
-  <div class="sidebar" id="sidebar">
-    <button onclick="showSection('home')" title="Home">🏠</button>
-    <button onclick="showSection('posts')" title="Posts">🖊</button>
-    <button onclick="showSection('global')" title="Global Chat">💬</button>
-    <button onclick="showSection('private')" title="DM">📨</button>
-    <button onclick="showSection('friends')" title="Friends">👥</button>
-    <button onclick="showSection('leaderboard')" title="Leaderboard">🏆</button>
-    <button onclick="showSection('settings')" title="Settings">⚙️</button>
+<body class="h-full">
+  <!-- Auth Gate (shows while we check auth) -->
+  <div id="gate" class="fixed inset-0 flex items-center justify-center bg-[var(--mh-dark)] z-50">
+    <div class="glass p-8 rounded-xl w-[92%] max-w-md text-center">
+      <h1 class="text-2xl font-semibold mb-2">Mod Hive</h1>
+      <p class="text-sm text-[var(--mh-muted)]">Checking session…</p>
+    </div>
   </div>
 
-  <!-- Main area -->
-  <div class="main-area">
-    <!-- Home Section -->
-    <div id="home" class="section active-section">
-      <h1 class="text-2xl font-bold mb-2">Welcome, <span id="nicknameDisplay">Player</span>!</h1>
-      <p>Points: <span id="pointsDisplay">0</span></p>
-      <p>Rank: <span id="rankDisplay">Rookie</span></p>
-      <!-- XP Bar -->
-      <div class="xp-bar-bg">
-        <div class="xp-bar-fill"></div>
+  <!-- App -->
+  <div id="app" class="min-h-screen hidden">
+    <!-- Top Bar -->
+    <header class="w-full sticky top-0 z-40 bg-[var(--mh-darker)]/90 backdrop-blur border-b border-white/5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <button id="btnOpenSidebar" class="md:hidden p-2 rounded hover:bg-white/10" aria-label="Open menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[var(--mh-primary)] text-white font-bold">MH</span>
+            <h1 class="text-lg font-semibold tracking-wide">Mod Hive</h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Search (client only) -->
+          <div class="hidden md:flex items-center bg-[var(--mh-panel)] rounded px-3 py-1">
+            <i class="fa-solid fa-magnifying-glass text-white/50 mr-2"></i>
+            <input id="searchBox" placeholder="Search posts, users…" class="bg-transparent outline-none text-sm placeholder-white/40 w-64" />
+          </div>
+
+          <!-- Notifications -->
+          <button id="btnOpenNotifications" class="relative p-2 rounded hover:bg-white/10">
+            <i class="fa-regular fa-bell"></i>
+            <span id="notifDot" class="hidden absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[var(--mh-pink)]"></span>
+          </button>
+
+          <!-- Profile dropdown -->
+          <div class="relative">
+            <button id="profileToggle" class="flex items-center gap-3 hover:bg-white/10 px-2 py-1 rounded">
+              <img id="navAvatar" class="w-8 h-8 rounded object-cover" src="https://i.pravatar.cc/80?img=3" alt="">
+              <div class="hidden sm:block text-left">
+                <div id="navNick" class="text-sm font-medium">Player</div>
+                <div class="text-[11px] text-white/50">Level <span id="navRank">1</span> · <span id="navPoints">0</span> pts</div>
+              </div>
+              <i class="fa-solid fa-chevron-down text-xs ml-1"></i>
+            </button>
+            <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 glass rounded-lg p-2">
+              <button data-section="profile" class="w-full text-left px-3 py-2 rounded hover:bg-white/10">Profile / Settings</button>
+              <button data-section="notifications" class="w-full text-left px-3 py-2 rounded hover:bg-white/10">Notifications</button>
+              <button id="btnLogout" class="w-full text-left px-3 py-2 rounded hover:bg-white/10 text-red-400">Log out</button>
+            </div>
+          </div>
+        </div>
       </div>
+    </header>
 
-      <!-- Quick Buttons -->
-      <div class="mt-4">
-        <button onclick="showSection('posts')" class="bg-cyan-500 text-black px-4 py-2 rounded mr-2">+ New Post</button>
-        <button onclick="showSection('global')" class="bg-cyan-500 text-black px-4 py-2 rounded">Open Global Chat</button>
-      </div>
-    </div><!-- POSTS Section -->
-    <div id="posts" class="section">
-      <h2 class="text-xl font-bold mb-4">Create Post</h2>
-      <textarea id="postText" rows="3" class="w-full bg-[#1a1a1a] rounded p-2 mb-2" placeholder="What's on your mind?"></textarea>
-      <input id="postUrl" class="w-full bg-[#1a1a1a] rounded p-2 mb-2" placeholder="Image or Link URL (optional)">
-      <button onclick="createPost()" class="bg-cyan-500 text-black px-4 py-2 rounded mb-4">Post</button>
+    <!-- Layout -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-12 gap-6">
+      <!-- Sidebar -->
+      <aside id="sidebar" class="fixed md:static inset-y-0 left-0 w-72 md:w-auto md:col-span-3 bg-[var(--mh-darker)] md:bg-transparent md:translate-x-0 -translate-x-full transition-transform z-40">
+        <div class="md:sticky md:top-20 p-4 md:p-0 h-full overflow-y-auto scroll-y">
+          <nav class="space-y-2">
+            <button data-section="feed" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg glass nav-active">
+              <i class="fa-solid fa-house"></i><span>Feed</span>
+            </button>
+            <button data-section="chat" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg glass">
+              <i class="fa-solid fa-message"></i><span>Chat</span>
+            </button>
+            <button data-section="friends" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg glass">
+              <i class="fa-solid fa-user-group"></i><span>Friends</span>
+            </button>
+            <button data-section="leaderboard" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg glass">
+              <i class="fa-solid fa-trophy"></i><span>Leaderboard</span>
+            </button>
+            <button data-section="notifications" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg glass">
+              <i class="fa-solid fa-bell"></i><span>Notifications</span>
+            </button>
+            <button data-section="profile" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg glass">
+              <i class="fa-solid fa-id-card"></i><span>Profile</span>
+            </button>
+            <a href="main.html" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg glass hover:bg-white/10">
+              <i class="fa-solid fa-rotate-left"></i><span>Back to Main</span>
+            </a>
+          </nav>
 
-      <h3 class="text-lg font-semibold mb-2">Recent Posts</h3>
-      <div id="postFeed"></div>
+          <!-- Quick status -->
+          <div class="mt-6 glass rounded-xl p-4">
+            <div class="flex items-center gap-3">
+              <div class="relative">
+                <img id="sideAvatar" class="w-12 h-12 rounded object-cover" src="https://i.pravatar.cc/80?img=4" />
+                <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-[var(--mh-ok)] rounded-full border-2 border-[var(--mh-darker)]"></span>
+              </div>
+              <div>
+                <div id="sideNick" class="font-semibold">Player</div>
+                <div class="text-xs text-white/50">Points: <span id="sidePoints">0</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Overlay (mobile) -->
+      <div id="overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
+
+      <!-- Main -->
+      <main class="col-span-12 md:col-span-9 space-y-6">
+        <!-- FEED -->
+        <section id="section-feed" class="space-y-6 fade-in">
+          <!-- Create Post -->
+          <div class="glass rounded-xl p-4">
+            <div class="flex items-start gap-3">
+              <img id="cpAvatar" class="w-10 h-10 rounded object-cover" src="https://i.pravatar.cc/80?img=5" />
+              <div class="flex-1">
+                <textarea id="postText" class="w-full bg-[var(--mh-panel)] rounded-lg p-3 outline-none" rows="2" placeholder="Share your gaming moment…"></textarea>
+                <div class="mt-3 flex flex-wrap items-center gap-2">
+                  <label class="cursor-pointer px-3 py-1.5 rounded bg-white/5 hover:bg-white/10">
+                    <i class="fa-regular fa-image mr-2"></i> Image
+                    <input id="postImage" type="file" accept="image/*" class="hidden">
+                  </label>
+                  <div class="flex items-center gap-2 bg-[var(--mh-panel)] rounded px-3 py-1.5">
+                    <i class="fa-solid fa-link text-white/60"></i>
+                    <input id="postLink" placeholder="Link (optional)" class="bg-transparent outline-none text-sm w-56"/>
+                  </div>
+                  <button id="btnPost" class="ml-auto btn px-4 py-2 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)]">Post</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Posts -->
+          <div id="feedList" class="space-y-4"></div>
+          <button id="btnMore" class="hidden mx-auto block px-4 py-2 glass rounded hover:bg-white/10">Load more</button>
+        </section>
+
+        <!-- CHAT -->
+        <section id="section-chat" class="hidden space-y-4 fade-in">
+          <div class="grid md:grid-cols-12 gap-4">
+            <!-- Left: friend list -->
+            <div class="md:col-span-4 glass rounded-xl p-4">
+              <div class="flex items-center gap-2 mb-3">
+                <i class="fa-solid fa-message"></i><h3 class="font-semibold">Private Chats</h3>
+              </div>
+              <input id="chatSearch" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none mb-3" placeholder="Search user…"/>
+              <div id="chatUsers" class="space-y-2 max-h-[60vh] overflow-y-auto scroll-y"></div>
+            </div>
+
+            <!-- Right: conversation -->
+            <div class="md:col-span-8 glass rounded-xl p-4 flex flex-col h-[70vh]">
+              <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                <div class="flex items-center gap-3">
+                  <img id="chatPeerAvatar" class="w-10 h-10 rounded object-cover" src="https://i.pravatar.cc/80?img=6">
+                  <div>
+                    <div id="chatPeerNick" class="font-semibold">Select a friend</div>
+                    <div id="chatPeerStatus" class="text-xs text-white/50">—</div>
+                  </div>
+                </div>
+                <div class="text-white/50 text-sm">Encrypted 1-on-1</div>
+              </div>
+
+              <div id="chatStream" class="flex-1 my-3 overflow-y-auto scroll-y space-y-3"></div>
+
+              <div class="mt-2 flex items-center gap-2">
+                <input id="chatInput" class="flex-1 bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Type a message… (Enter to send)">
+                <button id="btnSendChat" class="btn px-3 py-2 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)]"><i class="fa-solid fa-paper-plane"></i></button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FRIENDS -->
+        <section id="section-friends" class="hidden space-y-4 fade-in">
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Suggestions -->
+            <div class="glass rounded-xl p-4">
+              <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-user-plus"></i><h3 class="font-semibold">Friend Suggestions</h3></div>
+              <div id="friendSuggestions" class="grid sm:grid-cols-2 gap-3"></div>
+            </div>
+            <!-- Requests -->
+            <div class="glass rounded-xl p-4">
+              <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-inbox"></i><h3 class="font-semibold">Requests</h3></div>
+              <div id="incomingRequests" class="space-y-2"></div>
+            </div>
+          </div>
+          <!-- Your Friends -->
+          <div class="glass rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-user-group"></i><h3 class="font-semibold">Your Friends</h3></div>
+            <div id="friendList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+          </div>
+        </section>
+
+        <!-- LEADERBOARD -->
+        <section id="section-leaderboard" class="hidden space-y-4 fade-in">
+          <div class="glass rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-4"><i class="fa-solid fa-trophy text-yellow-400"></i><h3 class="font-semibold">Top Players</h3></div>
+            <div class="overflow-auto">
+              <table class="min-w-full text-sm">
+                <thead class="text-white/60">
+                  <tr><th class="text-left py-2 px-2">#</th><th class="text-left py-2 px-2">Player</th><th class="text-left py-2 px-2">Nickname</th><th class="text-left py-2 px-2">Points</th><th class="text-left py-2 px-2">Rank</th></tr>
+                </thead>
+                <tbody id="leaderRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- NOTIFICATIONS -->
+        <section id="section-notifications" class="hidden space-y-4 fade-in">
+          <div class="glass rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-bell"></i><h3 class="font-semibold">Notifications</h3></div>
+            <div id="notifList" class="space-y-2"></div>
+          </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="section-profile" class="hidden space-y-4 fade-in">
+          <div class="glass rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-4"><i class="fa-solid fa-id-card"></i><h3 class="font-semibold">Profile & Account</h3></div>
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label class="text-sm text-white/70">Gamer Nickname</label>
+                <input id="setNick" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Your nickname">
+              </div>
+              <div>
+                <label class="text-sm text-white/70">Status</label>
+                <select id="setStatus" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none">
+                  <option value="online">Online</option>
+                  <option value="ingame">In-game</option>
+                  <option value="offline">Offline</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-sm text-white/70">Avatar (base64 — free)</label>
+                <input id="setAvatar" type="file" accept="image/*" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none">
+                <p class="text-xs text-white/50 mt-1">No paid Storage: we save a compressed base64 avatar in Firestore.</p>
+              </div>
+              <div>
+                <label class="text-sm text-white/70">Bio</label>
+                <textarea id="setBio" rows="3" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Tell others about your gaming…"></textarea>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2">
+              <button id="btnSaveProfile" class="btn px-4 py-2 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)]">Save</button>
+              <span id="profileSaved" class="hidden text-[var(--mh-ok)] text-sm">Saved ✓</span>
+            </div>
+          </div>
+
+          <!-- Admin tools -->
+          <div class="glass rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-2"><i class="fa-solid fa-shield-halved text-red-400"></i><h3 class="font-semibold">Admin Tools</h3></div>
+            <p class="text-sm text-white/60">Delete posts/comments globally. Only works for your admin UID.</p>
+            <div class="mt-3 grid sm:grid-cols-2 gap-3">
+              <input id="adminDeletePostId" class="bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Post ID to delete">
+              <button id="btnAdminDeletePost" class="btn px-4 py-2 rounded bg-[var(--mh-danger)] hover:bg-red-600">Delete Post</button>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
+  </div>
 
-    <!-- GLOBAL CHAT Section -->
-    <div id="global" class="section">
-      <h2 class="text-xl font-bold mb-4">Global Chat</h2>
-      <div id="globalMessages" class="bg-[#1a1a1a] rounded p-2 mb-2" style="height:300px; overflow-y:auto;">
-        <!-- Global chat messages will go here -->
-      </div>
-      <div class="flex gap-2">
-        <input id="globalInput" class="flex-1 bg-[#1a1a1a] rounded p-2" placeholder="Type a message...">
-        <button onclick="sendGlobal()" class="bg-cyan-500 text-black px-4 py-2 rounded">Send</button>
-      </div>
-    </div>
+  <!-- Firebase SDKs -->
+  <script type="module">
+    /************* Firebase bootstrap *************/
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import {
+      getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, serverTimestamp,
+      onSnapshot, query, where, orderBy, limit, startAfter, getDocs, deleteDoc, arrayUnion, arrayRemove, increment
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-    <!-- PRIVATE CHAT Section -->
-    <div id="private" class="section">
-      <h2 class="text-xl font-bold mb-4">Private Chat</h2>
-      <label class="text-sm">Select Friend:</label>
-      <select id="dmSelect" class="mb-2 p-2 bg-[#1a1a1a] rounded"></select>
-      <div id="privateMessages" class="bg-[#1a1a1a] rounded p-2 mb-2" style="height:300px; overflow-y:auto;"></div>
-      <input id="privateInput" placeholder="Message..." class="mb-2 p-2 bg-[#1a1a1a] rounded"/>
-      <button onclick="sendPrivate()" class="bg-cyan-500 text-black px-4 py-2 rounded">Send</button>
-    </div>
-
-    <!-- FRIENDS Section -->
-    <div id="friends" class="section">
-      <h2 class="text-xl font-bold mb-4">Friends List</h2>
-      <div id="friendList"></div>
-    </div>
-
-    <!-- LEADERBOARD Section -->
-    <div id="leaderboard" class="section">
-      <h2 class="text-xl font-bold mb-4">Leaderboard</h2>
-      <div id="leaderboardList"></div>
-    </div>
-
-    <!-- ACCOUNT SETTINGS Section -->
-    <div id="settings" class="section">
-      <h2 class="text-xl font-bold mb-4">Account Settings</h2>
-      <input id="nicknameInput" class="bg-[#1a1a1a] rounded p-2 mb-2" placeholder="Nickname"/>
-      <input id="photoInput" class="bg-[#1a1a1a] rounded p-2 mb-2" placeholder="Photo URL"/>
-      <textarea id="bioInput" rows="3" class="bg-[#1a1a1a] rounded p-2 mb-2" placeholder="Bio"></textarea>
-      <button onclick="saveAccount()" class="bg-cyan-500 text-black px-4 py-2 rounded">Save</button>
-    </div>
-
-  </div> <!-- end .main-area -->
-
-  <!-- Toast popup -->
-  <div id="toast"></div><!-- START OF FULL JAVASCRIPT -->
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
-<script>
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    /* ========= 1) CONFIG — REPLACE THIS ========= */
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAgx0jy6we6cvnIgKbS1fBoeRfSD2MDszo",
   authDomain: "mod-hive.firebaseapp.com",
@@ -200,275 +319,625 @@ const firebaseConfig = {
   appId: "1:982583858832:web:44d5e4e2edd77fac06ea15",
   measurementId: "G-PK2DRED7FB"
 };
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db   = firebase.firestore();
-const ADMIN_UID = "7aTPZ6wEIpQaPjlXWDrz5Ajc4By1";
+    const ADMIN_UID = "7aTPZ6wEIpQaPjlXWDrz5Ajc4By1"; // <- put your admin uid here
 
-// ---- Global Functions ----
-window.showSection = function(id){
-  document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active-section'));
-  document.getElementById(id).classList.add('active-section');
-  if(id === 'global'){
-    newGlobalCount = 0;
-    document.querySelector("button[onclick*='showSection(\\'global\\')']").textContent = "💬";
-  }
-};
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-function linkify(text){
-  return text.replace(/(https?:\/\/\S+)/g, function(url){
-    return `<a href="${url}" target="_blank">${url}</a>`;
-  });
-}
+    /* ========= 2) STATE ========= */
+    let me = null;                  // current user auth object
+    let meDoc = null;               // cached user document data
+    let feedCursor = null;          // pagination
+    let activeSection = "feed";     // current UI section
+    let chatPeer = null;            // current peer (user object)
+    let chatUnsub = null;           // unsubscribe function for chat stream
+    let feedUnsub = null;           // unsubscribe for feed
+    let notifUnsub = null;          // unsubscribe for notifications
 
-function showToast(msg){
-  const t = document.getElementById('toast');
-  t.innerText = msg;
-  t.style.display = 'block';
-  setTimeout(()=>{ t.style.display='none'; }, 2000);
-}
+    /* ========= 3) Helpers ========= */
+    const $  = sel => document.querySelector(sel);
+    const $$ = sel => [...document.querySelectorAll(sel)];
+    const byId = id => document.getElementById(id);
+    const sleep = ms => new Promise(r=>setTimeout(r,ms));
+    const nowTs = () => serverTimestamp();
 
-/* USER */
-let user = null;
-let userData = {};
-let friends = [];
-
-/* AUTH & INIT */
-auth.onAuthStateChanged(async function(u){
-  if(!u) return window.location.href='auth.html';
-  user = u;
-  const docRef = db.collection("users").doc(u.uid);
-  const docSnap = await docRef.get();
-  if(!docSnap.exists()){
-    await docRef.set({
-      nickname: u.email.split('@')[0],
-      points: 0,
-      rank: 'Rookie',
-      friends: []
-    });
-  }
-  userData = (await docRef.get()).data();
-  document.getElementById('nicknameDisplay').innerText = userData.nickname;
-  document.getElementById('pointsDisplay').innerText   = userData.points;
-  document.getElementById('rankDisplay').innerText     = userData.rank;
-  friends = userData.friends || [];
-
-  loadPosts();
-  loadGlobalChat();
-  loadLeaderboard();
-  loadFriendsList();
-  loadPrivateFriendSelector();
-  updateXPandRank();
-});
-
-function logout(){ auth.signOut(); }
-
-/* ACCOUNT UPDATE */
-async function saveAccount(){
-  const nickname = document.getElementById('nicknameInput').value;
-  const photo    = document.getElementById('photoInput').value;
-  const bio      = document.getElementById('bioInput').value;
-  await db.collection("users").doc(user.uid).update({
-    nickname, profilePhoto: photo, bio
-  });
-  showToast("Saved!");
-  document.getElementById('nicknameDisplay').innerText = nickname;
-}
-/* CREATE & LOAD POSTS */
-function createPost(){
-  const text  = document.getElementById('postText').value.trim();
-  const media = document.getElementById('postUrl').value.trim();
-  if(!text) return;
-  db.collection("posts").add({
-    uid: user.uid,
-    author: userData.nickname,
-    text,
-    media,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-    likes: []
-  });
-  db.collection("users").doc(user.uid).update({
-    points: firebase.firestore.FieldValue.increment(5)
-  });
-  showToast("+5 Points (Post)");
-  document.getElementById('postText').value  = "";
-  document.getElementById('postUrl').value   = "";
-  updateXPandRank();
-}
-
-function loadPosts(){
-  db.collection("posts").orderBy("createdAt","desc")
-    .onSnapshot(snap => {
-      const feed = document.getElementById('postFeed');
-      feed.innerHTML = "";
-      snap.forEach(doc => {
-        const p = doc.data();
-        const div = document.createElement("div");
-        div.className = "bg-[#1a1a1a] border border-cyan-500 p-3 rounded mb-3";
-        div.innerHTML = `
-          <p class="font-bold">${p.author}</p>
-          <p>${linkify(p.text)}</p>
-          ${p.media ? `<a class="text-cyan-300" href="${p.media}" target="_blank">View Media</a>` : ""}
-          <button onclick="likePost('${doc.id}')">👍 ${p.likes.length}</button>
-          ${(user.uid===ADMIN_UID || user.uid===p.uid) ? `<button onclick="deletePost('${doc.id}')">🗑</button>` : ""}
-        `;
-        feed.appendChild(div);
+    function sectionTo(elOrName){
+      const name = typeof elOrName === 'string' ? elOrName : elOrName.dataset.section;
+      activeSection = name;
+      $$("#sidebar .nav-link").forEach(b=>b.classList.remove("nav-active"));
+      $(`[data-section="${name}"]`)?.classList.add("nav-active");
+      ["feed","chat","friends","leaderboard","notifications","profile"].forEach(s=>{
+        byId(`section-${s}`).classList.toggle("hidden", s!==name);
       });
-    });
-}
+      closeSidebar();
+    }
 
-function likePost(id){
-  db.collection("posts").doc(id).update({
-    likes: firebase.firestore.FieldValue.arrayUnion(user.uid)
-  });
-  db.collection("users").doc(user.uid).update({
-    points: firebase.firestore.FieldValue.increment(1)
-  });
-  updateXPandRank();
-}
+    function closeSidebar(){
+      byId('sidebar').classList.add('-translate-x-full');
+      byId('overlay').classList.add('hidden');
+    }
+    function openSidebar(){
+      byId('sidebar').classList.remove('-translate-x-full');
+      byId('overlay').classList.remove('hidden');
+    }
 
-function deletePost(id){
-  db.collection("posts").doc(id).delete();
-}
+    function shortId(id){ return id.slice(0,6)+"…"; }
 
-/* GLOBAL CHAT */
-let newGlobalCount = 0;
+    function rankFromPoints(p=0){
+      if(p>2000) return 10;
+      if(p>1000) return 9;
+      if(p>600) return 8;
+      if(p>400) return 7;
+      if(p>250) return 6;
+      if(p>150) return 5;
+      if(p>90) return 4;
+      if(p>50) return 3;
+      if(p>20) return 2;
+      return 1;
+    }
 
-function sendGlobal(){
-  const text = document.getElementById('globalInput').value.trim();
-  if(!text) return;
-  db.collection("globalChat").add({
-    author: userData.nickname,
-    text,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  });
-  db.collection("users").doc(user.uid).update({
-    points: firebase.firestore.FieldValue.increment(1)
-  });
-  document.getElementById('globalInput').value = "";
-  updateXPandRank();
-}
+    async function ensureUserDoc(user){
+      const ref = doc(db, "users", user.uid);
+      const snap = await getDoc(ref);
+      if(!snap.exists()){
+        await setDoc(ref, {
+          uid:user.uid, email:user.email||null,
+          nickname: user.displayName || ("Player_"+user.uid.slice(0,4)),
+          avatar: user.photoURL || null,
+          bio: "", status: "online",
+          points: 0, createdAt: nowTs(), updatedAt: nowTs(),
+          friends: [], friendRequests: []
+        });
+      }
+      return (await getDoc(ref)).data();
+    }
 
-function loadGlobalChat(){
-  db.collection("globalChat").orderBy("createdAt")
-    .onSnapshot(snap => {
-      const box = document.getElementById('globalMessages');
-      box.innerHTML = "";
-      snap.forEach(doc => {
-        const m = doc.data();
-        const p = document.createElement("p");
-        p.innerHTML = `<b>${m.author}</b>: ${linkify(m.text)}`;
-        box.appendChild(p);
+    // base64 read & small compression
+    function fileToBase64(file, maxW=720, quality=0.8){
+      return new Promise((resolve,reject)=>{
+        const reader = new FileReader();
+        reader.onload = e=>{
+          const img = new Image();
+          img.onload = ()=>{
+            const scale = Math.min(1, maxW/img.width);
+            const w = Math.round(img.width*scale);
+            const h = Math.round(img.height*scale);
+            const canvas = document.createElement('canvas');
+            canvas.width=w; canvas.height=h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img,0,0,w,h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
       });
-      box.scrollTop = box.scrollHeight;
+    }
 
-      // notify badge
-      if(!document.getElementById('global').classList.contains('active-section')){
-        newGlobalCount++;
-        document.querySelector("button[onclick*='showSection(\\'global\\')']").textContent = "💬(" + newGlobalCount + ")";
+    function tsToText(ts){
+      try{
+        const d = ts?.toDate ? ts.toDate() : new Date(ts);
+        return d.toLocaleString();
+      }catch{ return "just now"; }
+    }
+
+    /* ========= 4) AUTH GATE ========= */
+    onAuthStateChanged(auth, async (user)=>{
+      if(!user){
+        // not logged in -> send to auth page
+        location.href = "auth.html";
+        return;
+      }
+      me = user;
+      meDoc = await ensureUserDoc(user);
+      // hydrate header + sidebar
+      byId("navAvatar").src = meDoc.avatar || "https://i.pravatar.cc/80?img=7";
+      byId("cpAvatar").src  = meDoc.avatar || "https://i.pravatar.cc/80?img=8";
+      byId("sideAvatar").src= meDoc.avatar || "https://i.pravatar.cc/80?img=9";
+      byId("navNick").textContent = meDoc.nickname || "Player";
+      byId("sideNick").textContent= meDoc.nickname || "Player";
+      byId("navPoints").textContent= meDoc.points||0;
+      byId("sidePoints").textContent= meDoc.points||0;
+      byId("navRank").textContent = rankFromPoints(meDoc.points||0);
+
+      // Live listeners
+      startFeed();
+      startNotifications();
+      loadSuggestions();
+      loadFriendAssets();
+      loadLeaderboard();
+
+      // UI up
+      byId("gate").classList.add("hidden");
+      byId("app").classList.remove("hidden");
+    });
+
+    byId("btnLogout").addEventListener("click", ()=> signOut(auth));
+
+    /* ========= 5) NAV + overlays ========= */
+    byId("btnOpenSidebar").addEventListener("click", openSidebar);
+    byId("overlay").addEventListener("click", closeSidebar);
+    $$("#sidebar .nav-link").forEach(b=> b.addEventListener("click", ()=> sectionTo(b)));
+
+    // Profile dropdown
+    const profileToggle = byId("profileToggle");
+    const profileMenu   = byId("profileMenu");
+    profileToggle.addEventListener("click", ()=>{
+      profileMenu.classList.toggle("hidden");
+    });
+    document.addEventListener("click", (e)=>{
+      if(!profileToggle.contains(e.target) && !profileMenu.contains(e.target)){
+        profileMenu.classList.add("hidden");
       }
     });
-}
 
-/* PRIVATE CHAT */
-function loadPrivateFriendSelector(){
-  const s = document.getElementById('dmSelect');
-  s.innerHTML = "";
-  friends.forEach(f=>{
-    const opt = document.createElement("option");
-    opt.value = f; opt.textContent = f;
-    s.appendChild(opt);
-  });
-}
+    /* ========= 6) POSTS (feed) ========= */
+    const feedList = byId("feedList");
+    const btnPost  = byId("btnPost");
+    const postText = byId("postText");
+    const postImage= byId("postImage");
+    const postLink = byId("postLink");
 
-function sendPrivate(){
-  const fuid = document.getElementById('dmSelect').value;
-  const text = document.getElementById('privateInput').value.trim();
-  if(!text) return;
-  const chatId = ([user.uid,fuid]).sort().join("_");
-  db.collection("privateChats").doc(chatId).collection("messages")
-    .add({
-      uid: user.uid,
-      author: userData.nickname,
-      text,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    let pendingImgBase64 = null;
+    postImage.addEventListener("change", async (e)=>{
+      const f = e.target.files?.[0];
+      if(!f) { pendingImgBase64=null; return; }
+      pendingImgBase64 = await fileToBase64(f, 1000, .82);
     });
-  document.getElementById('privateInput').value = "";
-}
 
-document.getElementById('dmSelect')?.addEventListener('change', ()=>{
-  const f = document.getElementById('dmSelect').value;
-  const chatId = ([user.uid,f]).sort().join("_");
-  db.collection("privateChats").doc(chatId).collection("messages")
-    .orderBy("createdAt")
-    .onSnapshot(snap => {
-      const box = document.getElementById('privateMessages');
-      box.innerHTML = "";
-      snap.forEach(mdoc => {
-        const m = mdoc.data();
-        const row = document.createElement("p");
-        row.innerHTML = `<b>${m.author}</b>: ${linkify(m.text)}`;
-        box.appendChild(row);
+    btnPost.addEventListener("click", async ()=>{
+      const text = postText.value.trim();
+      const link = postLink.value.trim() || null;
+      if(!text && !pendingImgBase64 && !link){ alert("Write something, add image or link."); return; }
+      const ref = collection(db, "posts");
+      const docRef = await addDoc(ref, {
+        uid: me.uid,
+        nickname: meDoc.nickname || "Player",
+        avatar: meDoc.avatar || null,
+        text, link: link || null,
+        image: pendingImgBase64 || null, // base64
+        createdAt: nowTs(),
+        likes: 0, comments: 0, shares: 0
       });
-      box.scrollTop = box.scrollHeight;
+      // reward points: +5 for posting
+      await updateDoc(doc(db, "users", me.uid), { points: increment(5), updatedAt: nowTs() });
+      postText.value=""; postLink.value=""; postImage.value=""; pendingImgBase64=null;
     });
-});
 
-/* FRIEND LIST */
-function loadFriendsList(){
-  const list = document.getElementById('friendList');
-  list.innerHTML = "";
-  friends.forEach(async f=>{
-    const fd = await db.collection("users").doc(f).get();
-    const data = fd.data();
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <b>${data.nickname || f}</b>
-      <button onclick="startDM('${f}')" class="ml-2 text-xs bg-cyan-500 text-black px-2 py-1 rounded">Chat</button>
-    `;
-    list.appendChild(div);
-  });
-}
+    function renderPost(id, p){
+      const mine = p.uid===me.uid;
+      const likedId = `like-${id}`;
+      const wrap = document.createElement("div");
+      wrap.className = "glass rounded-xl p-4 fade-in";
+      wrap.innerHTML = `
+        <div class="flex items-start gap-3">
+          <img class="w-12 h-12 rounded object-cover" src="${p.avatar || 'https://i.pravatar.cc/80?img=10'}">
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="font-semibold">${p.nickname || 'Player'} <span class="text-white/40 text-xs ml-2">(${shortId(p.uid)})</span></div>
+                <div class="text-xs text-white/50">${tsToText(p.createdAt)}</div>
+              </div>
+              <div class="text-white/40">
+                <button class="px-2 py-1 rounded hover:bg-white/10" data-more="${id}"><i class="fa-solid fa-ellipsis"></i></button>
+              </div>
+            </div>
+            ${p.text ? `<p class="mt-2">${p.text}</p>` : ``}
+            ${p.link ? `<a class="block mt-2 text-[var(--mh-accent)] underline" target="_blank" href="${p.link}">${p.link}</a>` : ``}
+            ${p.image ? `<img class="mt-3 rounded-lg max-h-[420px] object-cover w-full" src="${p.image}">` : ``}
+            <div class="flex items-center justify-between mt-3 text-white/60 text-sm">
+              <div><span id="likes-${id}">${p.likes||0}</span> likes · <span id="cmts-${id}">${p.comments||0}</span> comments</div>
+            </div>
+            <div class="mt-2 grid grid-cols-3 gap-2">
+              <button class="reaction-btn px-3 py-2 rounded hover:bg-white/10" data-like="${id}"><i class="fa-regular fa-thumbs-up"></i> Like</button>
+              <button class="reaction-btn px-3 py-2 rounded hover:bg-white/10" data-cmt-open="${id}"><i class="fa-regular fa-comment"></i> Comment</button>
+              <button class="reaction-btn px-3 py-2 rounded hover:bg-white/10" data-share="${id}"><i class="fa-solid fa-share"></i> Share</button>
+            </div>
+            <div id="cbox-${id}" class="mt-3 hidden">
+              <div id="cList-${id}" class="space-y-2"></div>
+              <div class="flex items-center gap-2 mt-2">
+                <input id="cInput-${id}" class="flex-1 bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Write a comment">
+                <button class="px-3 py-2 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)]" data-cmt="${id}">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      // Events
+      wrap.querySelector(`[data-cmt-open="${id}"]`).addEventListener("click", ()=>{
+        byId(`cbox-${id}`).classList.toggle("hidden");
+      });
+      wrap.querySelector(`[data-like="${id}"]`).addEventListener("click", ()=> toggleLike(id, p.uid));
+      wrap.querySelector(`[data-cmt="${id}"]`).addEventListener("click", ()=>{
+        const ip = byId(`cInput-${id}`); const txt = ip.value.trim(); if(!txt) return;
+        addComment(id, txt, p.uid); ip.value="";
+      });
+      // Admin menu
+      wrap.querySelector(`[data-more="${id}"]`).addEventListener("click", async ()=>{
+        const isAdmin = me.uid===ADMIN_UID;
+        if(mine || isAdmin){
+          if(confirm("Delete this post?")){
+            await deleteDoc(doc(db,"posts",id));
+          }
+        } else {
+          alert("Report sent. (placeholder)");
+        }
+      });
 
-function startDM(uid){
-  document.getElementById('dmSelect').value = uid;
-  showSection('private');
-  const evt = new Event('change');
-  document.getElementById('dmSelect').dispatchEvent(evt);
-}
+      // live comments
+      const q = query(collection(db,"posts",id,"comments"), orderBy("createdAt","asc"), limit(50));
+      onSnapshot(q, (snap)=>{
+        const list = byId(`cList-${id}`);
+        list.innerHTML = "";
+        snap.forEach(d=>{
+          const c = d.data();
+          const li = document.createElement("div");
+          li.className = "flex items-start gap-2";
+          li.innerHTML = `
+            <img class="w-8 h-8 rounded object-cover" src="${c.avatar || 'https://i.pravatar.cc/80?img=11'}">
+            <div class="flex-1 bg-white/5 rounded px-3 py-2">
+              <div class="text-sm"><span class="font-semibold">${c.nickname||'Player'}</span> <span class="text-xs text-white/40 ml-2">${tsToText(c.createdAt)}</span></div>
+              <div class="text-sm">${c.text}</div>
+            </div>
+          `;
+          list.appendChild(li);
+        });
+      });
 
-/* LEADERBOARD */
-function loadLeaderboard(){
-  db.collection("users").orderBy("points","desc").limit(10).onSnapshot(snap=>{
-    const list = document.getElementById('leaderboardList');
-    list.innerHTML="";
-    snap.forEach(doc=>{
-      const d=doc.data();
-      const row=document.createElement("div");
-      row.innerHTML = `<b>${d.nickname}</b> - ${d.points} pts`;
-      list.appendChild(row);
+      return wrap;
+    }
+
+    async function addComment(postId, text, ownerUid){
+      await addDoc(collection(db,"posts",postId,"comments"),{
+        uid: me.uid, nickname: meDoc.nickname, avatar: meDoc.avatar || null,
+        text, createdAt: nowTs()
+      });
+      await updateDoc(doc(db,"posts",postId), { comments: increment(1) });
+      // points: +1 comment to commenter
+      await updateDoc(doc(db, "users", me.uid), { points: increment(1) });
+      // notify owner
+      if(ownerUid !== me.uid){
+        await addDoc(collection(db,"users",ownerUid,"notifications"),{
+          type:"comment", fromUid: me.uid, fromNick: meDoc.nickname, postId, text,
+          createdAt: nowTs(), seen:false
+        });
+      }
+    }
+
+    async function toggleLike(postId, ownerUid){
+      const likeRef = doc(db, "posts", postId, "likes", me.uid);
+      const snap = await getDoc(likeRef);
+      if(snap.exists()){
+        // unlike
+        await deleteDoc(likeRef);
+        await updateDoc(doc(db,"posts",postId), { likes: increment(-1) });
+      } else {
+        // like
+        await setDoc(likeRef, { uid: me.uid, createdAt: nowTs() });
+        await updateDoc(doc(db,"posts",postId), { likes: increment(1) });
+        // give +1 like point to owner (not to self)
+        if(ownerUid!==me.uid){
+          await updateDoc(doc(db,"users",ownerUid), { points: increment(1) });
+          await addDoc(collection(db,"users",ownerUid,"notifications"),{
+            type:"like", fromUid: me.uid, fromNick: meDoc.nickname, postId,
+            createdAt: nowTs(), seen:false
+          });
+        }
+      }
+    }
+
+    function startFeed(){
+      if(feedUnsub) feedUnsub();
+      const qFeed = query(collection(db,"posts"), orderBy("createdAt","desc"), limit(20));
+      feedUnsub = onSnapshot(qFeed, (snap)=>{
+        feedList.innerHTML = "";
+        snap.forEach(d=>{
+          const el = renderPost(d.id, d.data());
+          feedList.appendChild(el);
+        });
+      });
+    }
+
+    /* ========= 7) FRIENDS ========= */
+    async function loadSuggestions(){
+      const qS = query(collection(db,"users"), orderBy("createdAt","desc"), limit(12));
+      const s  = await getDocs(qS);
+      const box = byId("friendSuggestions");
+      box.innerHTML = "";
+      s.forEach(d=>{
+        const u = d.data(); if(u.uid===me.uid) return;
+        const card = document.createElement("div");
+        card.className="glass rounded-lg p-3";
+        card.innerHTML=`
+          <div class="flex items-center gap-3">
+            <img class="w-10 h-10 rounded object-cover" src="${u.avatar || 'https://i.pravatar.cc/80?img=12'}">
+            <div class="flex-1">
+              <div class="font-semibold">${u.nickname||'Player'}</div>
+              <div class="text-xs text-white/50">${shortId(u.uid)}</div>
+            </div>
+            <button class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20" data-add="${u.uid}">Add</button>
+          </div>
+        `;
+        card.querySelector(`[data-add="${u.uid}"]`).addEventListener("click",()=> sendFriendRequest(u.uid));
+        box.appendChild(card);
+      });
+    }
+
+    async function loadFriendAssets(){
+      // incoming requests
+      const qIn = query(collection(db,"friendRequests"), where("to","==",me.uid), orderBy("createdAt","desc"), limit(20));
+      onSnapshot(qIn, (snap)=>{
+        const box = byId("incomingRequests");
+        box.innerHTML="";
+        snap.forEach(d=>{
+          const r = d.data();
+          const row = document.createElement("div");
+          row.className="glass rounded p-3 flex items-center justify-between";
+          row.innerHTML=`
+            <div class="flex items-center gap-3">
+              <img class="w-10 h-10 rounded object-cover" src="${r.fromAvatar || 'https://i.pravatar.cc/80?u='+r.from}">
+              <div>
+                <div class="font-semibold">${r.fromNick || shortId(r.from)}</div>
+                <div class="text-xs text-white/50">${tsToText(r.createdAt)}</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="px-3 py-1.5 rounded bg-[var(--mh-ok)]/20 hover:bg-[var(--mh-ok)]/30" data-accept="${d.id}">Accept</button>
+              <button class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20" data-decline="${d.id}">Decline</button>
+            </div>
+          `;
+          row.querySelector(`[data-accept="${d.id}"]`).addEventListener("click",()=> acceptFriend(d.id,r));
+          row.querySelector(`[data-decline="${d.id}"]`).addEventListener("click",()=> deleteDoc(doc(db,"friendRequests",d.id)));
+          box.appendChild(row);
+        });
+      });
+
+      // friends list
+      const qFr = query(collection(db,"friends"), where("uids","array-contains", me.uid));
+      onSnapshot(qFr, (snap)=>{
+        const box = byId("friendList");
+        const chatBox = byId("chatUsers");
+        box.innerHTML=""; chatBox.innerHTML="";
+        snap.forEach(d=>{
+          const fr = d.data();
+          const peerUid = fr.uids.find(u=>u!==me.uid);
+          // small profile fetch (no join in Firestore -> do one get)
+          getDoc(doc(db,"users",peerUid)).then(su=>{
+            const u = su.data()||{uid:peerUid, nickname:"Player", avatar:null};
+            // card
+            const c = document.createElement("div");
+            c.className="glass rounded-lg p-3 flex items-center justify-between";
+            c.innerHTML=`
+              <div class="flex items-center gap-3">
+                <img class="w-10 h-10 rounded object-cover" src="${u.avatar || 'https://i.pravatar.cc/80?u='+u.uid}">
+                <div>
+                  <div class="font-semibold">${u.nickname||'Player'}</div>
+                  <div class="text-xs text-white/50">${shortId(u.uid)}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20" data-pm="${u.uid}">Message</button>
+                <button class="px-3 py-1.5 rounded bg-red-500/20 hover:bg-red-500/30" data-unf="${u.uid}">Unfriend</button>
+              </div>
+            `;
+            c.querySelector(`[data-pm="${u.uid}"]`).addEventListener("click", ()=>{
+              sectionTo("chat");
+              openChatWith(u);
+            });
+            c.querySelector(`[data-unf="${u.uid}"]`).addEventListener("click", ()=> unfriend(u.uid));
+            box.appendChild(c);
+
+            // chat list item
+            const li = document.createElement("div");
+            li.className="glass rounded-lg p-3 flex items-center justify-between";
+            li.innerHTML=`
+              <div class="flex items-center gap-3">
+                <img class="w-9 h-9 rounded object-cover" src="${u.avatar || 'https://i.pravatar.cc/80?u='+u.uid}">
+                <div>
+                  <div class="font-semibold text-sm">${u.nickname||'Player'}</div>
+                  <div class="text-[11px] text-white/50">Tap to chat</div>
+                </div>
+              </div>
+              <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/20" data-pm="${u.uid}"><i class="fa-regular fa-comment"></i></button>
+            `;
+            li.querySelector(`[data-pm="${u.uid}"]`).addEventListener("click", ()=> openChatWith(u));
+            chatBox.appendChild(li);
+          });
+        });
+      });
+    }
+
+    async function sendFriendRequest(toUid){
+      const meRef = doc(db,"users",me.uid);
+      const toRef = doc(db,"users",toUid);
+      const toSnap= await getDoc(toRef);
+      const toDoc = toSnap.data();
+      await addDoc(collection(db,"friendRequests"),{
+        from: me.uid, to:toUid, fromNick: meDoc.nickname, fromAvatar: meDoc.avatar || null,
+        createdAt: nowTs()
+      });
+      await addDoc(collection(db,"users",toUid,"notifications"),{
+        type:"friend-request", fromUid: me.uid, fromNick: meDoc.nickname, createdAt: nowTs(), seen:false
+      });
+    }
+
+    async function acceptFriend(reqId, req){
+      // create symmetric friendship document
+      const pair = [req.from, req.to].sort();
+      await setDoc(doc(db,"friends", pair.join("_")), { uids: pair, since: nowTs() });
+      await deleteDoc(doc(db,"friendRequests", reqId));
+    }
+
+    async function unfriend(peerUid){
+      const pair = [me.uid, peerUid].sort().join("_");
+      await deleteDoc(doc(db,"friends",pair));
+    }
+
+    /* ========= 8) PRIVATE CHAT ========= */
+    function convoIdFor(a,b){ return [a,b].sort().join("_"); }
+
+    function openChatWith(u){
+      chatPeer = u;
+      byId("chatPeerNick").textContent = u.nickname || "Player";
+      byId("chatPeerAvatar").src = u.avatar || "https://i.pravatar.cc/80?u="+u.uid;
+      byId("chatPeerStatus").textContent = "Online"; // simple placeholder
+
+      if(chatUnsub) chatUnsub();
+      const cid = convoIdFor(me.uid, u.uid);
+      const qMsgs = query(collection(db,"chats",cid,"messages"), orderBy("createdAt","asc"), limit(200));
+      chatUnsub = onSnapshot(qMsgs, (snap)=>{
+        const box = byId("chatStream"); box.innerHTML="";
+        snap.forEach(d=>{
+          const m = d.data();
+          const row = document.createElement("div");
+          const mine = m.from===me.uid;
+          row.className = `max-w-[78%] ${mine?'ml-auto':''}`;
+          row.innerHTML = `
+            <div class="${mine?'bg-[var(--mh-primary)]':'bg-white/10'} rounded-lg px-3 py-2">
+              <div class="text-sm">${m.text||''}</div>
+              <div class="text-[10px] text-white/70 mt-1">${tsToText(m.createdAt)}</div>
+            </div>
+          `;
+          box.appendChild(row);
+        });
+        box.scrollTop = box.scrollHeight;
+      });
+    }
+
+    byId("btnSendChat").addEventListener("click", sendChat);
+    byId("chatInput").addEventListener("keydown", (e)=>{ if(e.key==="Enter") sendChat(); });
+    async function sendChat(){
+      const ip = byId("chatInput"); const text = ip.value.trim();
+      if(!text || !chatPeer) return;
+      const cid = convoIdFor(me.uid, chatPeer.uid);
+      await setDoc(doc(db,"chats",cid), { uids: [me.uid, chatPeer.uid], updatedAt: nowTs() }, { merge:true });
+      await addDoc(collection(db,"chats",cid,"messages"),{
+        from: me.uid, to: chatPeer.uid, text, createdAt: nowTs()
+      });
+      // notify
+      await addDoc(collection(db,"users",chatPeer.uid,"notifications"),{
+        type:"dm", fromUid: me.uid, fromNick: meDoc.nickname, text, createdAt: nowTs(), seen:false
+      });
+      ip.value="";
+    }
+
+    /* ========= 9) NOTIFICATIONS ========= */
+    function startNotifications(){
+      if(notifUnsub) notifUnsub();
+      const qN = query(collection(db,"users",me.uid,"notifications"), orderBy("createdAt","desc"), limit(50));
+      notifUnsub = onSnapshot(qN, (snap)=>{
+        const list = byId("notifList"); list.innerHTML="";
+        let unseen = 0;
+        snap.forEach(d=>{
+          const n = d.data(); if(!n.seen) unseen++;
+          const row = document.createElement("div");
+          row.className = "glass rounded p-3 flex items-start gap-3";
+          row.innerHTML = `
+            <div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center">
+              <i class="fa-solid ${n.type==='like'?'fa-thumbs-up': n.type==='comment'?'fa-comment': n.type==='dm'?'fa-message':'fa-user-plus'}"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-sm">
+                <span class="font-semibold">${n.fromNick || 'Someone'}</span>
+                ${n.type==='like'?'liked your post': n.type==='comment'?'commented on your post': n.type==='dm'?'messaged you':'sent a friend request'}
+              </div>
+              ${n.text? `<div class="text-sm text-white/80 mt-1 ellipsis-2">${n.text}</div>`:''}
+              <div class="text-[11px] text-white/50 mt-1">${tsToText(n.createdAt)}</div>
+            </div>
+            <button class="px-2 py-1 text-xs rounded bg-white/10 hover:bg-white/20" data-seen="${d.id}">Mark seen</button>
+          `;
+          row.querySelector(`[data-seen="${d.id}"]`).addEventListener("click", ()=> updateDoc(doc(db,"users",me.uid,"notifications",d.id), { seen:true }));
+          list.appendChild(row);
+        });
+        byId("notifDot").classList.toggle("hidden", unseen===0);
+      });
+    }
+    byId("btnOpenNotifications").addEventListener("click", ()=> sectionTo("notifications"));
+
+    /* ========= 10) LEADERBOARD ========= */
+    async function loadLeaderboard(){
+      const qL = query(collection(db,"users"), orderBy("points","desc"), limit(50));
+      onSnapshot(qL, (snap)=>{
+        const rows = byId("leaderRows"); rows.innerHTML="";
+        let i=0;
+        snap.forEach(d=>{
+          const u=d.data(); i++;
+          const tr=document.createElement("tr");
+          tr.innerHTML = `
+            <td class="py-2 px-2">${i}</td>
+            <td class="py-2 px-2"><div class="flex items-center gap-2"><img class="w-7 h-7 rounded object-cover" src="${u.avatar || 'https://i.pravatar.cc/80?u='+u.uid}"><span class="text-sm">${shortId(u.uid)}</span></div></td>
+            <td class="py-2 px-2">${u.nickname||'Player'}</td>
+            <td class="py-2 px-2">${u.points||0}</td>
+            <td class="py-2 px-2">Lv ${rankFromPoints(u.points||0)}</td>
+          `;
+          rows.appendChild(tr);
+        });
+      });
+    }
+
+    /* ========= 11) PROFILE ========= */
+    byId("btnSaveProfile").addEventListener("click", saveProfile);
+
+    async function saveProfile(){
+      const nickname = byId("setNick").value.trim() || meDoc.nickname || "Player";
+      const status   = byId("setStatus").value;
+      const bio      = byId("setBio").value.trim();
+
+      let avatarData = meDoc.avatar || null;
+      const file = byId("setAvatar").files?.[0];
+      if(file){ avatarData = await fileToBase64(file, 420, .8); }
+
+      await updateDoc(doc(db,"users", me.uid), {
+        nickname, status, bio, avatar: avatarData, updatedAt: nowTs()
+      });
+      meDoc = (await getDoc(doc(db,"users",me.uid))).data();
+      // update header visuals
+      ["navAvatar","sideAvatar","cpAvatar"].forEach(id=> byId(id).src = meDoc.avatar || "https://i.pravatar.cc/80?img=14");
+      ["navNick","sideNick"].forEach(id=> byId(id).textContent = meDoc.nickname);
+      byId("profileSaved").classList.remove("hidden");
+      await sleep(1200);
+      byId("profileSaved").classList.add("hidden");
+    }
+
+    /* ========= 12) ADMIN ========= */
+    byId("btnAdminDeletePost").addEventListener("click", async ()=>{
+      if(me.uid!==ADMIN_UID){ alert("Not admin."); return; }
+      const postId = byId("adminDeletePostId").value.trim();
+      if(!postId) return;
+      await deleteDoc(doc(db,"posts",postId));
+      alert("Deleted.");
     });
-  });
-}
 
-/* XP / Rank update */
-function updateXPandRank(){
-  const pts = userData.points || 0;
-  const fill = document.querySelector('.xp-bar-fill');
-  const percent = Math.min((pts%100)/100*100,100);
-  fill.style.width = percent + '%';
-  // rank text is handled above on auth
-}
+    /* ========= 13) UI preload profile values ========= */
+    async function preloadProfileInputs(){
+      await sleep(400);
+      byId("setNick").value = meDoc?.nickname || "";
+      byId("setBio").value = meDoc?.bio || "";
+      byId("setStatus").value = meDoc?.status || "online";
+    }
+    // when entering profile section
+    $$('#sidebar [data-section="profile"]').forEach(b=>{
+      b.addEventListener("click", preloadProfileInputs);
+    });
 
-/* SIDEBAR TOGGLE */
-function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('collapsed');
-}
-</script>
-<!-- END SCRIPT --><footer class="text-center text-gray-500 py-4">
-  © 2024 Mod Hive. All rights reserved.
-</footer><!-- Closing all -->
-  <!-- Toast element is already included above -->
+  </script>
+
+  <!-- Tiny fixes (non-module for older mobile browsers) -->
+  <script>
+    // Close sidebar on ESC (mobile)
+    document.addEventListener('keydown', (e)=>{
+      if(e.key==='Escape'){
+        const sb = document.getElementById('sidebar');
+        if(!sb.classList.contains('-translate-x-full')){
+          document.getElementById('overlay').classList.add('hidden');
+          sb.classList.add('-translate-x-full');
+        }
+      }
+    });
+  </script>
 
 </body>
 </html>

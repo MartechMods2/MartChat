@@ -36,6 +36,79 @@
       content: attr(data-tip); position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%);
       background:#111827; color:#fff; font-size:.7rem; padding:.2rem .45rem; border-radius:.25rem; white-space:nowrap; border:1px solid #ffffff22;
     }
+    
+    /* Responsive additions */
+    @media (max-width: 768px) {
+      .container-padding {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+      
+      .mobile-full-width {
+        width: 100vw;
+        margin-left: calc(-50vw + 50%);
+      }
+      
+      .mobile-stack {
+        flex-direction: column;
+      }
+      
+      .mobile-text-sm {
+        font-size: 0.875rem;
+      }
+      
+      .mobile-p-2 {
+        padding: 0.5rem;
+      }
+      
+      .mobile-hidden {
+        display: none;
+      }
+      
+      .mobile-visible {
+        display: block;
+      }
+      
+      .post-actions-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      
+      .chat-input-grid {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.5rem;
+      }
+    }
+    
+    @media (max-width: 640px) {
+      .mobile-collapse {
+        display: none;
+      }
+      
+      .profile-dropdown {
+        position: static;
+      }
+      
+      .search-box {
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      .leaderboard-table {
+        font-size: 0.75rem;
+      }
+      
+      .leaderboard-table th, 
+      .leaderboard-table td {
+        padding: 0.25rem;
+      }
+    }
+    
+    @media (min-width: 769px) {
+      .mobile-visible {
+        display: none;
+      }
+    }
   </style>
 </head>
 
@@ -51,45 +124,45 @@
   <!-- ===== App ===== -->
   <div id="app" class="min-h-screen hidden">
     <!-- Top Bar -->
-    <header class="w-full sticky top-0 z-40 bg-[var(--mh-darker)]/90 backdrop-blur border-b border-white/5">
-      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header class="w-full sticky top-0 z-40 bg-[var(--mh-darker)]/90 backdrop-blur border-b border-white/5 mobile-full-width">
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between container-padding">
         <div class="flex items-center gap-3">
           <button id="btnOpenSidebar" class="md:hidden p-2 rounded hover:bg-white/10" aria-label="Open menu">
             <i class="fa-solid fa-bars"></i>
           </button>
           <div class="flex items-center gap-2">
             <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[var(--mh-primary)] text-white font-bold">MH</span>
-            <h1 class="text-lg font-semibold tracking-wide">Mod Hive</h1>
+            <h1 class="text-lg font-semibold tracking-wide mobile-text-sm">Mod Hive</h1>
           </div>
         </div>
 
         <div class="flex items-center gap-2 sm:gap-3">
           <!-- Search -->
-          <div class="hidden md:flex items-center bg-[var(--mh-panel)] rounded px-3 py-1">
+          <div class="hidden md:flex items-center bg-[var(--mh-panel)] rounded px-3 py-1 search-box">
             <i class="fa-solid fa-magnifying-glass text-white/50 mr-2"></i>
             <input id="searchBox" placeholder="Search posts, users…" class="bg-transparent outline-none text-sm placeholder-white/40 w-60" />
           </div>
 
           <!-- Theme -->
-          <button id="btnTheme" class="p-2 rounded hover:bg-white/10 tooltip" data-tip="Toggle theme">
+          <button id="btnTheme" class="p-2 rounded hover:bg-white/10 tooltip mobile-p-2" data-tip="Toggle theme">
             <i class="fa-regular fa-moon"></i>
           </button>
 
           <!-- Notifications -->
-          <button id="btnOpenNotifications" class="relative p-2 rounded hover:bg-white/10">
+          <button id="btnOpenNotifications" class="relative p-2 rounded hover:bg-white/10 mobile-p-2">
             <i class="fa-regular fa-bell"></i>
             <span id="notifDot" class="hidden absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[var(--mh-pink)]"></span>
           </button>
 
           <!-- Profile dropdown -->
-          <div class="relative">
+          <div class="relative profile-dropdown">
             <button id="profileToggle" class="flex items-center gap-2 sm:gap-3 hover:bg-white/10 px-2 py-1 rounded">
               <img id="navAvatar" class="w-8 h-8 rounded object-cover" src="https://i.pravatar.cc/80?img=3" alt="">
-              <div class="hidden sm:block text-left">
+              <div class="hidden sm:block text-left mobile-collapse">
                 <div id="navNick" class="text-sm font-medium">Player</div>
                 <div class="text-[11px] text-white/50">Level <span id="navRank">1</span> · <span id="navPoints">0</span> pts</div>
               </div>
-              <i class="fa-solid fa-chevron-down text-xs ml-1"></i>
+              <i class="fa-solid fa-chevron-down text-xs ml-1 mobile-collapse"></i>
             </button>
             <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 glass rounded-lg p-2">
               <button data-section="profile" class="w-full text-left px-3 py-2 rounded hover:bg-white/10">Profile / Settings</button>
@@ -102,7 +175,7 @@
     </header>
 
     <!-- Layout -->
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 grid grid-cols-12 gap-6">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 grid grid-cols-12 gap-6 container-padding">
       <!-- Sidebar -->
       <aside id="sidebar" class="fixed md:static inset-y-0 left-0 w-[18.5rem] md:w-auto md:col-span-3 bg-[var(--mh-darker)] md:bg-transparent md:translate-x-0 -translate-x-full transition-transform z-40">
         <div class="md:sticky md:top-20 p-4 md:p-0 h-full overflow-y-auto scroll-y">
@@ -159,16 +232,16 @@
               <img id="cpAvatar" class="w-10 h-10 rounded object-cover" src="https://i.pravatar.cc/80?img=5" />
               <div class="flex-1">
                 <textarea id="postText" class="w-full bg-[var(--mh-panel)] rounded-lg p-3 outline-none" rows="2" placeholder="Share your moment…"></textarea>
-                <div class="mt-3 flex flex-wrap items-center gap-2">
-                  <label class="cursor-pointer px-3 py-1.5 rounded bg-white/5 hover:bg-white/10">
+                <div class="mt-3 flex flex-wrap items-center gap-2 mobile-stack">
+                  <label class="cursor-pointer px-3 py-1.5 rounded bg-white/5 hover:bg-white/10 mobile-full-width mobile-text-center">
                     <i class="fa-regular fa-image mr-2"></i> Image
                     <input id="postImage" type="file" accept="image/*" class="hidden">
                   </label>
-                  <div class="flex items-center gap-2 bg-[var(--mh-panel)] rounded px-3 py-1.5">
+                  <div class="flex items-center gap-2 bg-[var(--mh-panel)] rounded px-3 py-1.5 mobile-full-width">
                     <i class="fa-solid fa-link text-white/60"></i>
-                    <input id="postLink" placeholder="Link (optional)" class="bg-transparent outline-none text-sm w-56"/>
+                    <input id="postLink" placeholder="Link (optional)" class="bg-transparent outline-none text-sm w-56 mobile-full-width"/>
                   </div>
-                  <button id="btnPost" class="ml-auto btn px-4 py-2 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)]">Post</button>
+                  <button id="btnPost" class="ml-auto btn px-4 py-2 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)] mobile-full-width mt-2">Post</button>
                 </div>
               </div>
             </div>
@@ -181,9 +254,9 @@
 
         <!-- ===== CHAT ===== -->
         <section id="section-chat" class="hidden space-y-4 fade-in">
-          <div class="grid md:grid-cols-12 gap-4">
+          <div class="grid md:grid-cols-12 gap-4 mobile-stack">
             <!-- Left: friend list -->
-            <div class="md:col-span-4 glass rounded-xl p-4">
+            <div class="md:col-span-4 glass rounded-xl p-4 mobile-full-width">
               <div class="flex items-center gap-2 mb-3">
                 <i class="fa-solid fa-message"></i><h3 class="font-semibold">Private Chats</h3>
               </div>
@@ -192,8 +265,8 @@
             </div>
 
             <!-- Right: conversation -->
-            <div class="md:col-span-8 glass rounded-xl p-4 flex flex-col h-[70vh]">
-              <div class="flex items-center justify-between border-b border-white/5 pb-2">
+            <div class="md:col-span-8 glass rounded-xl p-4 flex flex-col h-[70vh] mobile-full-width">
+              <div class="flex items-center justify-between border-b border-white/5 pb-2 mobile-stack">
                 <div class="flex items-center gap-3">
                   <img id="chatPeerAvatar" class="w-10 h-10 rounded object-cover" src="https://i.pravatar.cc/80?img=6">
                   <div>
@@ -201,15 +274,15 @@
                     <div id="chatPeerStatus" class="text-xs text-white/50">—</div>
                   </div>
                 </div>
-                <div class="text-white/50 text-sm flex items-center gap-3">
+                <div class="text-white/50 text-sm flex items-center gap-3 mobile-stack mobile-mt-2">
                   <span class="chip" id="typingChip" style="display:none;">typing…</span>
-                  <span class="chip">Encrypted 1-on-1</span>
+                  <span class="chip mobile-hidden">Encrypted 1-on-1</span>
                 </div>
               </div>
 
               <div id="chatStream" class="flex-1 my-3 overflow-y-auto scroll-y space-y-3"></div>
 
-              <div class="mt-2 flex items-center gap-2">
+              <div class="mt-2 flex items-center gap-2 chat-input-grid">
                 <input id="chatInput" class="flex-1 bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Type a message… (Enter to send)">
                 <button id="btnSendChat" class="btn px-3 py-2 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)]"><i class="fa-solid fa-paper-plane"></i></button>
               </div>
@@ -219,20 +292,20 @@
 
         <!-- ===== FRIENDS ===== -->
         <section id="section-friends" class="hidden space-y-4 fade-in">
-          <div class="grid md:grid-cols-2 gap-4">
+          <div class="grid md:grid-cols-2 gap-4 mobile-stack">
             <!-- Suggestions -->
-            <div class="glass rounded-xl p-4">
+            <div class="glass rounded-xl p-4 mobile-full-width">
               <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-user-plus"></i><h3 class="font-semibold">Friend Suggestions</h3></div>
               <div id="friendSuggestions" class="grid sm:grid-cols-2 gap-3"></div>
             </div>
             <!-- Requests -->
-            <div class="glass rounded-xl p-4">
+            <div class="glass rounded-xl p-4 mobile-full-width">
               <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-inbox"></i><h3 class="font-semibold">Requests</h3></div>
               <div id="incomingRequests" class="space-y-2"></div>
             </div>
           </div>
           <!-- Your Friends -->
-          <div class="glass rounded-xl p-4">
+          <div class="glass rounded-xl p-4 mobile-full-width">
             <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-user-group"></i><h3 class="font-semibold">Your Friends</h3></div>
             <div id="friendList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
           </div>
@@ -240,10 +313,10 @@
 
         <!-- ===== LEADERBOARD ===== -->
         <section id="section-leaderboard" class="hidden space-y-4 fade-in">
-          <div class="glass rounded-xl p-4">
+          <div class="glass rounded-xl p-4 mobile-full-width">
             <div class="flex items-center gap-2 mb-4"><i class="fa-solid fa-trophy text-yellow-400"></i><h3 class="font-semibold">Top Players</h3></div>
             <div class="overflow-auto">
-              <table class="min-w-full text-sm">
+              <table class="min-w-full text-sm leaderboard-table">
                 <thead class="text-white/60">
                   <tr><th class="text-left py-2 px-2">#</th><th class="text-left py-2 px-2">Player</th><th class="text-left py-2 px-2">Nickname</th><th class="text-left py-2 px-2">Points</th><th class="text-left py-2 px-2">Rank</th></tr>
                 </thead>
@@ -255,7 +328,7 @@
 
         <!-- ===== NOTIFICATIONS ===== -->
         <section id="section-notifications" class="hidden space-y-4 fade-in">
-          <div class="glass rounded-xl p-4">
+          <div class="glass rounded-xl p-4 mobile-full-width">
             <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-bell"></i><h3 class="font-semibold">Notifications</h3></div>
             <div id="notifList" class="space-y-2"></div>
           </div>
@@ -263,43 +336,43 @@
 
         <!-- ===== PROFILE ===== -->
         <section id="section-profile" class="hidden space-y-4 fade-in">
-          <div class="glass rounded-xl p-4">
+          <div class="glass rounded-xl p-4 mobile-full-width">
             <div class="flex items-center gap-2 mb-4"><i class="fa-solid fa-id-card"></i><h3 class="font-semibold">Profile & Account</h3></div>
 
             <!-- Extended profile -->
-            <div class="grid md:grid-cols-2 gap-6">
-              <div>
+            <div class="grid md:grid-cols-2 gap-6 mobile-stack">
+              <div class="mobile-full-width">
                 <label class="text-sm text-white/70">Gamer Nickname</label>
                 <input id="setNick" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Your nickname">
               </div>
-              <div>
+              <div class="mobile-full-width">
                 <label class="text-sm text-white/70">Gamer Name (display)</label>
                 <input id="setGamer" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Shown on posts">
               </div>
-              <div>
+              <div class="mobile-full-width">
                 <label class="text-sm text-white/70">Sex</label>
                 <select id="setSex" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none">
                   <option value="">Prefer not to say</option>
                   <option>Female</option><option>Male</option><option>Non-binary</option><option>Other</option>
                 </select>
               </div>
-              <div>
+              <div class="mobile-full-width">
                 <label class="text-sm text-white/70">Date of Birth</label>
                 <input id="setDOB" type="date" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none">
               </div>
-              <div>
+              <div class="mobile-full-width">
                 <label class="text-sm text-white/70">Language</label>
                 <input id="setLang" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="e.g., English">
               </div>
-              <div>
+              <div class="mobile-full-width">
                 <label class="text-sm text-white/70">Country</label>
                 <input id="setCountry" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="e.g., Nigeria">
               </div>
-              <div class="md:col-span-2">
+              <div class="md:col-span-2 mobile-full-width">
                 <label class="text-sm text-white/70">Games You Play (comma separated)</label>
                 <input id="setGames" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="e.g., CODM, FIFA, Fortnite">
               </div>
-              <div>
+              <div class="mobile-full-width">
                 <label class="text-sm text-white/70">Status</label>
                 <select id="setStatus" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none">
                   <option value="online">Online</option>
@@ -307,16 +380,16 @@
                   <option value="offline">Offline</option>
                 </select>
               </div>
-              <div>
+              <div class="mobile-full-width">
                 <label class="text-sm text-white/70">Avatar (base64 — free)</label>
                 <input id="setAvatar" type="file" accept="image/*" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none">
                 <p class="text-xs text-white/50 mt-1">Saved as compressed base64 in Firestore (no Storage needed).</p>
               </div>
-              <div class="md:col-span-2">
+              <div class="md:col-span-2 mobile-full-width">
                 <label class="text-sm text-white/70">Bio</label>
                 <textarea id="setBio" rows="3" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Tell others about your gaming…"></textarea>
               </div>
-              <div class="md:col-span-2">
+              <div class="md:col-span-2 mobile-full-width">
                 <label class="text-sm text-white/70">Privacy</label>
                 <div class="mt-2 space-y-2">
                   <label class="flex items-center gap-2 text-sm"><input id="privDOB" type="checkbox" class="accent-[var(--mh-primary)]"> Hide DOB from others</label>
@@ -332,13 +405,13 @@
           </div>
 
           <!-- Admin tools -->
-          <div class="glass rounded-xl p-4">
+          <div class="glass rounded-xl p-4 mobile-full-width">
             <div class="flex items-center gap-2 mb-2"><i class="fa-solid fa-shield-halved text-red-400"></i><h3 class="font-semibold">Admin Tools</h3></div>
             <p class="text-sm text-white/60">Delete posts/comments globally. Only works for your admin UID.</p>
-            <div class="mt-3 grid sm:grid-cols-3 gap-3">
-              <input id="adminDeletePostId" class="bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Post ID to delete">
-              <button id="btnAdminDeletePost" class="btn px-4 py-2 rounded bg-[var(--mh-danger)] hover:bg-red-600">Delete Post</button>
-              <button id="btnBanUser" class="btn px-4 py-2 rounded bg-red-500/40 hover:bg-red-500/60">Soft Ban (toggle)</button>
+            <div class="mt-3 grid sm:grid-cols-3 gap-3 mobile-stack">
+              <input id="adminDeletePostId" class="bg-[var(--mh-panel)] rounded px-3 py-2 outline-none mobile-full-width" placeholder="Post ID to delete">
+              <button id="btnAdminDeletePost" class="btn px-4 py-2 rounded bg-[var(--mh-danger)] hover:bg-red-600 mobile-full-width">Delete Post</button>
+              <button id="btnBanUser" class="btn px-4 py-2 rounded bg-red-500/40 hover:bg-red-500/60 mobile-full-width">Soft Ban (toggle)</button>
             </div>
           </div>
         </section>
@@ -356,24 +429,24 @@
   <div id="profileModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-[60]">
     <div class="glass rounded-xl w-[92vw] max-w-2xl p-4 relative">
       <button id="pmClose" class="absolute top-3 right-3 p-2 rounded bg-white/10 hover:bg-white/20"><i class="fa-solid fa-xmark"></i></button>
-      <div class="flex items-start gap-4">
+      <div class="flex items-start gap-4 mobile-stack">
         <img id="pmAvatar" class="w-20 h-20 rounded object-cover" src="">
         <div class="flex-1">
           <div class="text-xl font-semibold" id="pmName">—</div>
           <div class="text-sm text-white/60" id="pmUid">—</div>
           <div class="flex flex-wrap gap-2 mt-2" id="pmChips"></div>
         </div>
-        <div class="space-x-2">
-          <button id="pmAdd" class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20">Add Friend</button>
-          <button id="pmMsg" class="px-3 py-1.5 rounded bg-[var(--mh-primary)]/70 hover:bg-[var(--mh-primary-2)]/80">Message</button>
+        <div class="space-x-2 mobile-stack mobile-mt-2">
+          <button id="pmAdd" class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20 mobile-full-width">Add Friend</button>
+          <button id="pmMsg" class="px-3 py-1.5 rounded bg-[var(--mh-primary)]/70 hover:bg-[var(--mh-primary-2)]/80 mobile-full-width">Message</button>
         </div>
       </div>
-      <div class="mt-4 grid md:grid-cols-2 gap-4 text-sm">
-        <div>
+      <div class="mt-4 grid md:grid-cols-2 gap-4 text-sm mobile-stack">
+        <div class="mobile-full-width">
           <div class="text-white/70 mb-1">Bio</div>
           <div id="pmBio" class="bg-white/5 rounded p-3 min-h-[64px]"></div>
         </div>
-        <div>
+        <div class="mobile-full-width">
           <div class="text-white/70 mb-1">Public Info</div>
           <div id="pmPublic" class="bg-white/5 rounded p-3"></div>
         </div>
@@ -387,7 +460,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
     import {
       getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, GithubAuthProvider,
-      signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile
+      signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile
     } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
     import {
       getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, serverTimestamp,
@@ -514,737 +587,421 @@ const firebaseConfig = {
           gamer: user.displayName || null,
           avatar: user.photoURL || null,
           bio: "", status: "online",
-          sex:"", dob:"", lang:"", country:"", games:[],
-          priv:{ dob:true, email:true },
-          points: 0, createdAt: nowTs(), updatedAt: nowTs(),
-          banned:false
+          sex:"", dob:"", lang:"", country:"", games:"",
+          privDOB:true, privEmail:true,
+          points:0, rank:1, friends:[], requests:[],
+          createdAt: nowTs(), lastSeen: nowTs()
         });
+        return await getDoc(ref);
       }
-      return (await getDoc(ref)).data();
+      return snap.data();
     }
 
     function hydrateHeader(){
-      byId("navAvatar").src = meDoc.avatar || "https://i.pravatar.cc/80?img=7";
-      byId("cpAvatar").src  = meDoc.avatar || "https://i.pravatar.cc/80?img=8";
-      byId("sideAvatar").src= meDoc.avatar || "https://i.pravatar.cc/80?img=9";
-      byId("navNick").textContent = meDoc.gamer || meDoc.nickname || "Player";
-      byId("sideNick").textContent= meDoc.gamer || meDoc.nickname || "Player";
-      byId("navPoints").textContent= meDoc.points||0;
-      byId("sidePoints").textContent= meDoc.points||0;
-      byId("navRank").textContent = rankFromPoints(meDoc.points||0);
+      byId("navAvatar").src = meDoc.avatar || "https://i.pravatar.cc/80?img=3";
+      byId("navNick").textContent = meDoc.nickname;
+      byId("navRank").textContent = meDoc.rank;
+      byId("navPoints").textContent = meDoc.points;
+      byId("sideAvatar").src = meDoc.avatar || "https://i.pravatar.cc/80?img=4";
+      byId("sideNick").textContent = meDoc.nickname;
+      byId("sidePoints").textContent = meDoc.points;
+      byId("cpAvatar").src = meDoc.avatar || "https://i.pravatar.cc/80?img=5";
     }
 
     /* ========= FEED ========= */
-    const feedList = byId("feedList");
-    const btnPost  = byId("btnPost");
-    const postText = byId("postText");
-    const postImage= byId("postImage");
-    const postLink = byId("postLink");
-
-    let pendingImgBase64 = null;
-    postImage.addEventListener("change", async (e)=>{
-      const f = e.target.files?.[0];
-      if(!f) { pendingImgBase64=null; return; }
-      pendingImgBase64 = await fileToBase64(f, 1000, .82);
-    });
-
-    btnPost.addEventListener("click", async ()=>{
-      if(meDoc?.banned){ alert("Posting disabled for this account."); return; }
-      const text = postText.value.trim();
-      const link = postLink.value.trim() || null;
-      if(!text && !pendingImgBase64 && !link){ alert("Write something, add image or link."); return; }
-      const ref = collection(db, "posts");
-      await addDoc(ref, {
-        uid: me.uid,
-        nickname: meDoc.nickname || "Player",
-        gamer: meDoc.gamer || meDoc.nickname || "Player",
-        avatar: meDoc.avatar || null,
-        text, link: link || null,
-        image: pendingImgBase64 || null, // base64
-        createdAt: nowTs(),
-        likes: 0, comments: 0, shares: 0
+    function startFeed(){
+      if(feedUnsub) feedUnsub();
+      const q = query(collection(db, "posts"), orderBy("createdAt","desc"), limit(10));
+      feedUnsub = onSnapshot(q, snap=>{
+        byId("feedList").innerHTML = "";
+        snap.forEach(doc=> renderPost(doc.id, doc.data()));
       });
-      await updateDoc(doc(db, "users", me.uid), { points: increment(5), updatedAt: nowTs() });
-      postText.value=""; postLink.value=""; postImage.value=""; pendingImgBase64=null;
-    });
-
-    function postMenuHtml(id, p){
-      const mine = p.uid===me.uid;
-      return `
-        <div class="absolute right-0 top-8 w-44 glass rounded shadow-xl text-sm z-10 hidden" id="menu-${id}">
-          <button class="w-full text-left px-3 py-2 hover:bg-white/10" data-menu="add-${id}"><i class="fa-regular fa-user-plus mr-2"></i>Add Friend</button>
-          <button class="w-full text-left px-3 py-2 hover:bg-white/10" data-menu="save-${id}"><i class="fa-regular fa-bookmark mr-2"></i>Save</button>
-          <button class="w-full text-left px-3 py-2 hover:bg-white/10" data-menu="pin-${id}"><i class="fa-solid fa-thumbtack mr-2"></i>Pin</button>
-          <button class="w-full text-left px-3 py-2 hover:bg-white/10" data-menu="share-${id}"><i class="fa-solid fa-share mr-2"></i>Share</button>
-          <button class="w-full text-left px-3 py-2 hover:bg-white/10 text-yellow-300" data-menu="report-${id}"><i class="fa-regular fa-flag mr-2"></i>Report</button>
-          ${(mine || me.uid===ADMIN_UID) ? `<button class="w-full text-left px-3 py-2 hover:bg-white/10 text-red-400" data-menu="delete-${id}"><i class="fa-regular fa-trash-can mr-2"></i>Delete</button>`:''}
-        </div>
-      `;
     }
 
-    function reactionRow(id, p){
-      return `
-        <div class="mt-2 grid grid-cols-3 gap-2">
-          <button class="reaction-btn px-3 py-2 rounded hover:bg-white/10" data-like="${id}"><i class="fa-regular fa-thumbs-up"></i> Like</button>
-          <button class="reaction-btn px-3 py-2 rounded hover:bg-white/10" data-cmt-open="${id}"><i class="fa-regular fa-comment"></i> Comment</button>
-          <button class="reaction-btn px-3 py-2 rounded hover:bg-white/10" data-share="${id}"><i class="fa-solid fa-share"></i> Share</button>
-        </div>
-      `;
-    }
-
-    function renderPost(id, p){
-      const wrap = document.createElement("div");
-      wrap.className = "glass rounded-xl p-4 fade-in relative";
-      wrap.innerHTML = `
+    function renderPost(id, data){
+      const div = document.createElement("div");
+      div.className = "glass rounded-xl p-4";
+      div.innerHTML = `
         <div class="flex items-start gap-3">
-          <img class="w-12 h-12 rounded object-cover cursor-pointer" data-view-profile="${p.uid}" src="${p.avatar || 'https://i.pravatar.cc/80?img=10'}">
+          <img class="w-10 h-10 rounded object-cover cursor-pointer" src="${data.avatar||'https://i.pravatar.cc/80?img=1'}" onclick="viewProfile('${data.uid}')">
           <div class="flex-1">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="font-semibold cursor-pointer" data-view-profile="${p.uid}">
-                  ${p.gamer || p.nickname || 'Player'} <span class="text-white/40 text-xs ml-2">(${shortId(p.uid)})</span>
-                </div>
-                <div class="text-xs text-white/50">${tsToText(p.createdAt)}</div>
-              </div>
-              <div class="relative">
-                <button class="px-2 py-1 rounded hover:bg-white/10" data-more="${id}"><i class="fa-solid fa-ellipsis"></i></button>
-                ${postMenuHtml(id,p)}
-              </div>
+            <div class="flex items-center gap-2">
+              <div class="font-semibold">${data.gamer||data.nickname||'Player'}</div>
+              <span class="text-xs text-white/50">${tsToText(data.createdAt)}</span>
+              ${data.uid===me.uid ? `<button class="ml-auto text-red-400 hover:text-red-300 text-sm" onclick="deletePost('${id}')"><i class="fa-solid fa-trash"></i></button>` : ''}
             </div>
-            ${p.text ? `<p class="mt-2">${md(p.text)}</p>` : ``}
-            ${p.link ? `<a class="block mt-2 text-[var(--mh-accent)] underline break-all" target="_blank" href="${p.link}">${p.link}</a>` : ``}
-            ${p.image ? `<img class="mt-3 rounded-lg max-h-[420px] object-cover w-full cursor-zoom-in" data-zoom src="${p.image}">` : ``}
-            <div class="flex items-center justify-between mt-3 text-white/60 text-sm">
-              <div><span id="likes-${id}">${p.likes||0}</span> likes · <span id="cmts-${id}">${p.comments||0}</span> comments</div>
-            </div>
-            ${reactionRow(id,p)}
-            <div id="cbox-${id}" class="mt-3 hidden">
-              <div id="cList-${id}" class="space-y-2"></div>
-              <div class="flex items-center gap-2 mt-2">
-                <input id="cInput-${id}" class="flex-1 bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Write a comment">
-                <button class="px-3 py-2 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)]" data-cmt="${id}">Send</button>
-              </div>
+            <div class="mt-1">${md(data.text)}</div>
+            ${data.image ? `<img src="${data.image}" class="mt-2 max-h-96 rounded-lg cursor-pointer" onclick="showImage('${data.image}')">` : ''}
+            ${data.link ? `<div class="mt-2"><a href="${data.link}" target="_blank" class="text-[var(--mh-accent)] text-sm">${data.link}</a></div>` : ''}
+            <div class="mt-3 flex items-center gap-4 text-sm text-white/60">
+              <button class="reaction-btn flex items-center gap-1 hover:text-white" onclick="reactPost('${id}','like')">
+                <i class="fa-regular fa-heart"></i> <span>${data.likes?.length||0}</span>
+              </button>
+              <button class="reaction-btn flex items-center gap-1 hover:text-white" onclick="reactPost('${id}','laugh')">
+                <i class="fa-regular fa-face-laugh-beam"></i> <span>${data.laughs?.length||0}</span>
+              </button>
+              <button class="reaction-btn flex items-center gap-1 hover:text-white" onclick="reactPost('${id}','fire')">
+                <i class="fa-solid fa-fire"></i> <span>${data.fires?.length||0}</span>
+              </button>
             </div>
           </div>
         </div>
       `;
-      // Image zoom
-      wrap.querySelectorAll("[data-zoom]").forEach(img=>{
-        img.addEventListener("click", ()=>{
-          byId('imgLarge').src = img.src;
-          byId('imgLight').classList.remove('hidden');
-          document.body.classList.add('modal-open');
-        });
-      });
-      byId('imgClose').onclick = closeImgLight;
-      byId('imgLight').onclick = (e)=>{ if(e.target.id==='imgLight') closeImgLight(); };
-      function closeImgLight(){
-        byId('imgLight').classList.add('hidden');
-        byId('imgLarge').src = "";
-        document.body.classList.remove('modal-open');
-      }
-
-      // 3-dots menu
-      const moreBtn = wrap.querySelector(`[data-more="${id}"]`);
-      const menu    = wrap.querySelector(`#menu-${id}`);
-      moreBtn.addEventListener('click', ()=>{
-        menu.classList.toggle('hidden');
-      });
-      document.addEventListener('click', (e)=>{
-        if(!moreBtn.contains(e.target) && !menu.contains(e.target)) menu.classList.add('hidden');
-      });
-      menu.querySelector(`[data-menu="add-${id}"]`).addEventListener('click', ()=> sendFriendRequest(p.uid));
-      menu.querySelector(`[data-menu="save-${id}"]`).addEventListener('click', ()=> savePost(id));
-      menu.querySelector(`[data-menu="pin-${id}"]`).addEventListener('click', ()=> pinPost(id));
-      menu.querySelector(`[data-menu="share-${id}"]`).addEventListener('click', ()=> sharePost(id));
-      menu.querySelector(`[data-menu="report-${id}"]`).addEventListener('click', ()=> reportPost(id, p.uid));
-      const delBtn = menu.querySelector(`[data-menu="delete-${id}"]`);
-      if(delBtn) delBtn.addEventListener('click', async ()=>{
-        if(confirm("Delete this post?")) await deleteDoc(doc(db,"posts",id));
-      });
-
-      // comment toggler
-      wrap.querySelector(`[data-cmt-open="${id}"]`).addEventListener("click", ()=>{
-        byId(`cbox-${id}`).classList.toggle("hidden");
-      });
-      // like
-      wrap.querySelector(`[data-like="${id}"]`).addEventListener("click", ()=> toggleLike(id, p.uid));
-      // comment send
-      wrap.querySelector(`[data-cmt="${id}"]`).addEventListener("click", ()=>{
-        const ip = byId(`cInput-${id}`); const txt = ip.value.trim(); if(!txt) return;
-        addComment(id, txt, p.uid); ip.value="";
-      });
-      // live comments
-      const q = query(collection(db,"posts",id,"comments"), orderBy("createdAt","asc"), limit(80));
-      onSnapshot(q, (snap)=>{
-        const list = byId(`cList-${id}`); list.innerHTML = "";
-        snap.forEach(d=>{
-          const c = d.data();
-          const li = document.createElement("div");
-          li.className = "flex items-start gap-2";
-          li.innerHTML = `
-            <img class="w-8 h-8 rounded object-cover cursor-pointer" data-view-profile="${c.uid}" src="${c.avatar || 'https://i.pravatar.cc/80?u='+c.uid}">
-            <div class="flex-1 bg-white/5 rounded px-3 py-2">
-              <div class="text-sm"><span class="font-semibold cursor-pointer" data-view-profile="${c.uid}">${c.nickname||'Player'}</span> <span class="text-xs text-white/40 ml-2">${tsToText(c.createdAt)}</span></div>
-              <div class="text-sm">${md(c.text)}</div>
-            </div>
-          `;
-          // open profile on click
-          li.querySelectorAll('[data-view-profile]').forEach(el=>{
-            el.addEventListener('click', ()=> openProfileModal(el.getAttribute('data-view-profile')));
-          });
-          list.appendChild(li);
-        });
-      });
-
-      // open profile from post header/avatar/name
-      wrap.querySelectorAll('[data-view-profile]').forEach(el=>{
-        el.addEventListener('click', ()=> openProfileModal(el.getAttribute('data-view-profile')));
-      });
-
-      return wrap;
+      byId("feedList").appendChild(div);
     }
 
-    async function addComment(postId, text, ownerUid){
-      await addDoc(collection(db,"posts",postId,"comments"),{
-        uid: me.uid, nickname: meDoc.gamer || meDoc.nickname, avatar: meDoc.avatar || null,
-        text, createdAt: nowTs()
+    byId("btnPost").addEventListener("click", async ()=>{
+      const text = byId("postText").value.trim();
+      if(!text) return;
+      const image = byId("postImage").files[0] ? await fileToBase64(byId("postImage").files[0]) : null;
+      const link = byId("postLink").value.trim() || null;
+      await addDoc(collection(db, "posts"), {
+        uid: me.uid, avatar: meDoc.avatar, nickname: meDoc.nickname, gamer: meDoc.gamer,
+        text, image, link, likes:[], laughs:[], fires:[],
+        createdAt: nowTs()
       });
-      await updateDoc(doc(db,"posts",postId), { comments: increment(1) });
-      await updateDoc(doc(db, "users", me.uid), { points: increment(1) });
-      if(ownerUid !== me.uid){
-        await addDoc(collection(db,"users",ownerUid,"notifications"),{
-          type:"comment", fromUid: me.uid, fromNick: meDoc.gamer || meDoc.nickname, postId, text,
-          createdAt: nowTs(), seen:false
-        });
-      }
+      byId("postText").value = "";
+      byId("postImage").value = "";
+      byId("postLink").value = "";
+    });
+
+    window.showImage = (src)=> { byId("imgLarge").src = src; byId("imgLight").classList.remove("hidden"); };
+    byId("imgClose").addEventListener("click", ()=> byId("imgLight").classList.add("hidden"));
+
+    window.deletePost = async (id)=>{
+      if(confirm("Delete this post?")) await deleteDoc(doc(db, "posts", id));
+    };
+
+    window.reactPost = async (id, type)=>{
+      const ref = doc(db, "posts", id);
+      const snap = await getDoc(ref);
+      if(!snap.exists()) return;
+      const data = snap.data();
+      const key = type+"s";
+      const arr = data[key] || [];
+      const idx = arr.indexOf(me.uid);
+      if(idx>=0) arr.splice(idx,1);
+      else arr.push(me.uid);
+      await updateDoc(ref, { [key]: arr });
+    };
+
+    /* ========= CHAT ========= */
+    async function loadChatUsers(){
+      const q = query(collection(db, "users"), where("uid", "in", meDoc.friends||[]));
+      const snap = await getDocs(q);
+      byId("chatUsers").innerHTML = "";
+      snap.forEach(doc=> renderChatUser(doc.id, doc.data()));
     }
 
-    async function toggleLike(postId, ownerUid){
-      // per-user like doc -> prevents multi-like by same user (admin works the same)
-      const likeRef = doc(db, "posts", postId, "likes", me.uid);
-      const snap = await getDoc(likeRef);
-      if(snap.exists()){
-        // unlike
-        await deleteDoc(likeRef);
-        await updateDoc(doc(db,"posts",postId), { likes: increment(-1) });
-      } else {
-        // like
-        await setDoc(likeRef, { uid: me.uid, createdAt: nowTs() });
-        await updateDoc(doc(db,"posts",postId), { likes: increment(1) });
-        if(ownerUid!==me.uid){
-          await updateDoc(doc(db,"users",ownerUid), { points: increment(1) });
-          await addDoc(collection(db,"users",ownerUid,"notifications"),{
-            type:"like", fromUid: me.uid, fromNick: meDoc.gamer || meDoc.nickname, postId,
-            createdAt: nowTs(), seen:false
-          });
+    function renderChatUser(id, data){
+      const div = document.createElement("div");
+      div.className = "flex items-center gap-3 p-2 rounded hover:bg-white/10 cursor-pointer";
+      div.onclick = ()=> openChat(id, data);
+      div.innerHTML = `
+        <img class="w-10 h-10 rounded object-cover" src="${data.avatar||'https://i.pravatar.cc/80?img=2'}">
+        <div class="flex-1">
+          <div class="font-semibold">${data.nickname}</div>
+          <div class="text-xs text-white/50">${data.status||'offline'}</div>
+        </div>
+      `;
+      byId("chatUsers").appendChild(div);
+    }
+
+    function openChat(uid, peerData){
+      chatPeer = {uid, ...peerData};
+      byId("chatPeerAvatar").src = chatPeer.avatar||'https://i.pravatar.cc/80?img=6';
+      byId("chatPeerNick").textContent = chatPeer.nickname;
+      byId("chatPeerStatus").textContent = chatPeer.status||'offline';
+      if(chatUnsub) chatUnsub();
+      const q = query(collection(db, "chats"), where("users", "array-contains", me.uid), where("users", "array-contains", uid), limit(1));
+      getDocs(q).then(snap=>{
+        if(snap.empty){
+          addDoc(collection(db, "chats"), {
+            users: [me.uid, uid], createdAt: nowTs(), messages: []
+          }).then(docRef=> listenChat(docRef.id) );
+        }else{
+          const doc = snap.docs[0];
+          listenChat(doc.id);
         }
-      }
-    }
-
-    function startFeed(){
-      if(feedUnsub) feedUnsub();
-      const qFeed = query(collection(db,"posts"), orderBy("createdAt","desc"), limit(30));
-      feedUnsub = onSnapshot(qFeed, (snap)=>{
-        feedList.innerHTML = "";
-        snap.forEach(d=>{
-          const el = renderPost(d.id, d.data());
-          feedList.appendChild(el);
-        });
       });
     }
 
-    // quick actions
-    async function savePost(postId){
-      await setDoc(doc(db,"users",me.uid,"saved",postId), { postId, savedAt: nowTs() });
-      alert("Saved.");
+    function listenChat(chatId){
+      chatUnsub = onSnapshot(doc(db, "chats", chatId), snap=>{
+        if(!snap.exists()) return;
+        const data = snap.data();
+        byId("chatStream").innerHTML = "";
+        (data.messages||[]).forEach(msg=> renderMessage(msg));
+        byId("chatStream").scrollTop = byId("chatStream").scrollHeight;
+      });
     }
-    async function pinPost(postId){
-      await setDoc(doc(db,"users",me.uid,"pinned",postId), { postId, pinnedAt: nowTs() });
-      alert("Pinned.");
+
+    function renderMessage(msg){
+      const div = document.createElement("div");
+      div.className = `flex ${msg.uid===me.uid ? 'justify-end' : 'justify-start'}`;
+      div.innerHTML = `
+        <div class="max-w-[75%] bg-[var(--mh-panel)] rounded-lg p-3">
+          <div class="text-sm">${md(msg.text)}</div>
+          <div class="text-xs text-white/40 mt-1 text-right">${tsToText(msg.ts)}</div>
+        </div>
+      `;
+      byId("chatStream").appendChild(div);
     }
-    async function sharePost(postId){
-      await addDoc(collection(db,"shares"),{ postId, by: me.uid, createdAt: nowTs() });
-      await updateDoc(doc(db,"posts",postId), { shares: increment(1) });
-      alert("Shared.");
-    }
-    async function reportPost(postId, owner){
-      await addDoc(collection(db,"reports"),{ type:"post", postId, owner, by: me.uid, createdAt: nowTs() });
-      alert("Report submitted.");
+
+    byId("chatInput").addEventListener("keypress", e=>{ if(e.key==="Enter") sendChat(); });
+    byId("btnSendChat").addEventListener("click", sendChat);
+
+    function sendChat(){
+      const text = byId("chatInput").value.trim();
+      if(!text || !chatPeer) return;
+      const q = query(collection(db, "chats"), where("users", "array-contains", me.uid), where("users", "array-contains", chatPeer.uid), limit(1));
+      getDocs(q).then(snap=>{
+        if(snap.empty) return;
+        const doc = snap.docs[0];
+        const msg = {uid:me.uid, text, ts: nowTs()};
+        updateDoc(doc.ref, { messages: arrayUnion(msg) });
+        byId("chatInput").value = "";
+      });
     }
 
     /* ========= FRIENDS ========= */
     async function loadSuggestions(){
-      // fetch latest users and filter out self, existing friends, pending requests
-      const all = await getDocs(query(collection(db,"users"), orderBy("createdAt","desc"), limit(25)));
-      const myFriendsSnap = await getDocs(query(collection(db,"friends"), where("uids","array-contains", me.uid)));
-      const myFriends = new Set();
-      myFriendsSnap.forEach(d=> d.data().uids.forEach(u=> myFriends.add(u)));
-      const myReqSnap = await getDocs(query(collection(db,"friendRequests"), where("from","==",me.uid)));
-      const pendingTo = new Set(); myReqSnap.forEach(d=> pendingTo.add(d.data().to));
-      const box = byId("friendSuggestions");
-      box.innerHTML = "";
-      all.forEach(d=>{
-        const u = d.data(); if(u.uid===me.uid) return;
-        if(myFriends.has(u.uid)) return;
-        if(pendingTo.has(u.uid)) return;
-        const card = document.createElement("div");
-        card.className="glass rounded-lg p-3";
-        card.innerHTML=`
-          <div class="flex items-center gap-3">
-            <img class="w-10 h-10 rounded object-cover cursor-pointer" data-view-profile="${u.uid}" src="${u.avatar || 'https://i.pravatar.cc/80?u='+u.uid}">
-            <div class="flex-1">
-              <div class="font-semibold cursor-pointer" data-view-profile="${u.uid}">${u.gamer||u.nickname||'Player'}</div>
-              <div class="text-xs text-white/50">${shortId(u.uid)}</div>
-            </div>
-            <button class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20" data-add="${u.uid}">Add</button>
-          </div>
+      const q = query(collection(db, "users"), where("uid", "not-in", [...(meDoc.friends||[]), me.uid]), limit(6));
+      const snap = await getDocs(q);
+      byId("friendSuggestions").innerHTML = "";
+      snap.forEach(doc=> renderSuggestion(doc.id, doc.data()));
+    }
+
+    function renderSuggestion(id, data){
+      const div = document.createElement("div");
+      div.className = "flex items-center gap-3 p-3 glass rounded-lg";
+      div.innerHTML = `
+        <img class="w-12 h-12 rounded object-cover" src="${data.avatar||'https://i.pravatar.cc/80?img=7'}">
+        <div class="flex-1">
+          <div class="font-semibold">${data.nickname}</div>
+          <div class="text-xs text-white/50">Level ${data.rank||1} · ${data.points||0} pts</div>
+        </div>
+        <button class="px-3 py-1.5 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)] text-sm" onclick="sendRequest('${id}')">Add</button>
+      `;
+      byId("friendSuggestions").appendChild(div);
+    }
+
+    window.sendRequest = async (uid)=>{
+      const ref = doc(db, "users", uid);
+      const snap = await getDoc(ref);
+      if(!snap.exists()) return;
+      const data = snap.data();
+      const requests = data.requests || [];
+      if(requests.includes(me.uid)) return;
+      await updateDoc(ref, { requests: arrayUnion(me.uid) });
+      alert("Request sent!");
+    };
+
+    async function loadIncomingRequests(){
+      const q = query(collection(db, "users"), where("requests", "array-contains", me.uid));
+      const snap = await getDocs(q);
+      byId("incomingRequests").innerHTML = "";
+      snap.forEach(doc=> renderRequest(doc.id, doc.data()));
+    }
+
+    function renderRequest(id, data){
+      const div = document.createElement("div");
+      div.className = "flex items-center gap-3 p-3 glass rounded-lg";
+      div.innerHTML = `
+        <img class="w-10 h-10 rounded object-cover" src="${data.avatar||'https://i.pravatar.cc/80?img=8'}">
+        <div class="flex-1">
+          <div class="font-semibold">${data.nickname}</div>
+          <div class="text-xs text-white/50">wants to be friends</div>
+        </div>
+        <button class="px-3 py-1.5 rounded bg-[var(--mh-ok)] hover:bg-green-600 text-sm" onclick="acceptRequest('${id}')">Accept</button>
+        <button class="px-3 py-1.5 rounded bg-[var(--mh-danger)] hover:bg-red-600 text-sm" onclick="ignoreRequest('${id}')">Ignore</button>
+      `;
+      byId("incomingRequests").appendChild(div);
+    }
+
+    window.acceptRequest = async (uid)=>{
+      // Remove from my requests, add to my friends
+      const myRef = doc(db, "users", me.uid);
+      await updateDoc(myRef, { friends: arrayUnion(uid), requests: arrayRemove(uid) });
+      // Add me to their friends
+      const theirRef = doc(db, "users", uid);
+      await updateDoc(theirRef, { friends: arrayUnion(me.uid) });
+      loadIncomingRequests();
+      loadFriendList();
+    };
+
+    window.ignoreRequest = async (uid)=>{
+      const myRef = doc(db, "users", me.uid);
+      await updateDoc(myRef, { requests: arrayRemove(uid) });
+      loadIncomingRequests();
+    };
+
+    async function loadFriendList(){
+      const q = query(collection(db, "users"), where("uid", "in", meDoc.friends||[]));
+      const snap = await getDocs(q);
+      byId("friendList").innerHTML = "";
+      snap.forEach(doc=> renderFriend(doc.id, doc.data()));
+    }
+
+    function renderFriend(id, data){
+      const div = document.createElement("div");
+      div.className = "flex items-center gap-3 p-3 glass rounded-lg";
+      div.innerHTML = `
+        <img class="w-12 h-12 rounded object-cover" src="${data.avatar||'https://i.pravatar.cc/80?img=9'}">
+        <div class="flex-1">
+          <div class="font-semibold">${data.nickname}</div>
+          <div class="text-xs text-white/50">${data.status||'offline'}</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="p-2 rounded hover:bg-white/10" onclick="viewProfile('${id}')"><i class="fa-solid fa-user"></i></button>
+          <button class="p-2 rounded hover:bg-white/10" onclick="openChat('${id}')"><i class="fa-solid fa-message"></i></button>
+        </div>
+      `;
+      byId("friendList").appendChild(div);
+    }
+
+    function loadFriendAssets(){
+      loadChatUsers();
+      loadIncomingRequests();
+      loadFriendList();
+    }
+
+    /* ========= LEADERBOARD ========= */
+    async function loadLeaderboard(){
+      const q = query(collection(db, "users"), orderBy("points","desc"), limit(20));
+      const snap = await getDocs(q);
+      byId("leaderRows").innerHTML = "";
+      let rank = 1;
+      snap.forEach(doc=>{
+        const data = doc.data();
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="py-2 px-2">${rank++}</td>
+          <td class="py-2 px-2"><img class="w-8 h-8 rounded object-cover inline mr-2" src="${data.avatar||'https://i.pravatar.cc/80?img=10'}"></td>
+          <td class="py-2 px-2">${data.nickname}</td>
+          <td class="py-2 px-2">${data.points||0}</td>
+          <td class="py-2 px-2">${data.rank||1}</td>
         `;
-        card.querySelectorAll('[data-view-profile]').forEach(el=>{
-          el.addEventListener('click', ()=> openProfileModal(u.uid));
-        });
-        card.querySelector(`[data-add="${u.uid}"]`).addEventListener("click",()=> sendFriendRequest(u.uid));
-        box.appendChild(card);
+        byId("leaderRows").appendChild(tr);
       });
-    }
-
-    async function loadFriendAssets(){
-      // incoming requests
-      const qIn = query(collection(db,"friendRequests"), where("to","==",me.uid), orderBy("createdAt","desc"), limit(20));
-      onSnapshot(qIn, (snap)=>{
-        const box = byId("incomingRequests");
-        box.innerHTML="";
-        snap.forEach(d=>{
-          const r = d.data();
-          const row = document.createElement("div");
-          row.className="glass rounded p-3 flex items-center justify-between";
-          row.innerHTML=`
-            <div class="flex items-center gap-3">
-              <img class="w-10 h-10 rounded object-cover" src="${r.fromAvatar || 'https://i.pravatar.cc/80?u='+r.from}">
-              <div>
-                <div class="font-semibold">${r.fromNick || shortId(r.from)}</div>
-                <div class="text-xs text-white/50">${tsToText(r.createdAt)}</div>
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <button class="px-3 py-1.5 rounded bg-[var(--mh-ok)]/20 hover:bg-[var(--mh-ok)]/30" data-accept="${d.id}">Accept</button>
-              <button class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20" data-decline="${d.id}">Decline</button>
-            </div>
-          `;
-          row.querySelector(`[data-accept="${d.id}"]`).addEventListener("click",()=> acceptFriend(d.id,r));
-          row.querySelector(`[data-decline="${d.id}"]`).addEventListener("click",()=> deleteDoc(doc(db,"friendRequests",d.id)));
-          box.appendChild(row);
-        });
-      });
-
-      // friends list (and chat list)
-      const qFr = query(collection(db,"friends"), where("uids","array-contains", me.uid));
-      onSnapshot(qFr, (snap)=>{
-        const box = byId("friendList");
-        const chatBox = byId("chatUsers");
-        box.innerHTML=""; chatBox.innerHTML="";
-        snap.forEach(d=>{
-          const fr = d.data();
-          const peerUid = fr.uids.find(u=>u!==me.uid);
-          getDoc(doc(db,"users",peerUid)).then(su=>{
-            const u = su.data()||{uid:peerUid, gamer:"Player", avatar:null};
-            // card
-            const c = document.createElement("div");
-            c.className="glass rounded-lg p-3 flex items-center justify-between";
-            c.innerHTML=`
-              <div class="flex items-center gap-3 cursor-pointer" data-view-profile="${u.uid}">
-                <img class="w-10 h-10 rounded object-cover" src="${u.avatar || 'https://i.pravatar.cc/80?u='+u.uid}">
-                <div>
-                  <div class="font-semibold">${u.gamer||u.nickname||'Player'}</div>
-                  <div class="text-xs text-white/50">${shortId(u.uid)}</div>
-                </div>
-              </div>
-              <div class="flex items-center gap-2">
-                <button class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20" data-pm="${u.uid}">Message</button>
-                <button class="px-3 py-1.5 rounded bg-red-500/20 hover:bg-red-500/30" data-unf="${u.uid}">Unfriend</button>
-              </div>
-            `;
-            c.querySelector(`[data-pm="${u.uid}"]`).addEventListener("click", ()=>{
-              sectionTo("chat"); openChatWith(u);
-            });
-            c.querySelector(`[data-unf="${u.uid}"]`).addEventListener("click", ()=> unfriend(u.uid));
-            c.querySelector(`[data-view-profile="${u.uid}"]`).addEventListener('click', ()=> openProfileModal(u.uid));
-            box.appendChild(c);
-
-            // chat list item
-            const li = document.createElement("div");
-            li.className="glass rounded-lg p-3 flex items-center justify-between";
-            li.innerHTML=`
-              <div class="flex items-center gap-3">
-                <img class="w-9 h-9 rounded object-cover" src="${u.avatar || 'https://i.pravatar.cc/80?u='+u.uid}">
-                <div>
-                  <div class="font-semibold text-sm">${u.gamer||u.nickname||'Player'}</div>
-                  <div class="text-[11px] text-white/50">Tap to chat</div>
-                </div>
-              </div>
-              <button class="px-2 py-1 rounded bg-white/10 hover:bg-white/20" data-pm="${u.uid}"><i class="fa-regular fa-comment"></i></button>
-            `;
-            li.querySelector(`[data-pm="${u.uid}"]`).addEventListener("click", ()=> openChatWith(u));
-            chatBox.appendChild(li);
-          });
-        });
-      });
-    }
-
-    async function sendFriendRequest(toUid){
-      if(toUid===me.uid) return;
-      const toDoc = (await getDoc(doc(db,"users",toUid))).data();
-      await addDoc(collection(db,"friendRequests"),{
-        from: me.uid, to:toUid, fromNick: meDoc.gamer || meDoc.nickname, fromAvatar: meDoc.avatar || null,
-        createdAt: nowTs()
-      });
-      await addDoc(collection(db,"users",toUid,"notifications"),{
-        type:"friend-request", fromUid: me.uid, fromNick: meDoc.gamer || meDoc.nickname, createdAt: nowTs(), seen:false
-      });
-      alert("Request sent.");
-    }
-
-    async function acceptFriend(reqId, req){
-      const pair = [req.from, req.to].sort();
-      await setDoc(doc(db,"friends", pair.join("_")), { uids: pair, since: nowTs() });
-      await deleteDoc(doc(db,"friendRequests", reqId));
-      await addDoc(collection(db,"users",req.from,"notifications"),{
-        type:"friend-accept", fromUid: me.uid, fromNick: meDoc.gamer || meDoc.nickname, createdAt: nowTs(), seen:false
-      });
-    }
-
-    async function unfriend(peerUid){
-      const pair = [me.uid, peerUid].sort().join("_");
-      await deleteDoc(doc(db,"friends",pair));
-    }
-
-    /* ========= PRIVATE CHAT ========= */
-    function convoIdFor(a,b){ return [a,b].sort().join("_"); }
-
-    function openChatWith(u){
-      chatPeer = u;
-      byId("chatPeerNick").textContent = u.gamer || u.nickname || "Player";
-      byId("chatPeerAvatar").src = u.avatar || "https://i.pravatar.cc/80?u="+u.uid;
-      byId("chatPeerStatus").textContent = "Online";
-
-      if(chatUnsub) chatUnsub();
-      const cid = convoIdFor(me.uid, u.uid);
-      const qMsgs = query(collection(db,"chats",cid,"messages"), orderBy("createdAt","asc"), limit(300));
-      chatUnsub = onSnapshot(qMsgs, (snap)=>{
-        const box = byId("chatStream"); box.innerHTML="";
-        let lastSeenByPeer = null;
-        snap.forEach(d=>{
-          const m = d.data();
-          const mine = m.from===me.uid;
-          const row = document.createElement("div");
-          row.className = `max-w-[78%] ${mine?'ml-auto':''}`;
-          row.innerHTML = `
-            <div class="${mine?'bg-[var(--mh-primary)]':'bg-white/10'} rounded-lg px-3 py-2">
-              <div class="text-sm break-words">${md(m.text||'')}</div>
-              <div class="text-[10px] text-white/70 mt-1">${tsToText(m.createdAt)}${mine && m.seen?' · seen':''}</div>
-            </div>
-          `;
-          box.appendChild(row);
-          if(!mine) lastSeenByPeer = d.id;
-        });
-        box.scrollTop = box.scrollHeight;
-        // mark all peer messages seen
-        if(chatPeer){
-          markSeen(cid);
-        }
-      });
-    }
-
-    async function markSeen(cid){
-      const msgs = await getDocs(query(collection(db,"chats",cid,"messages"), where("to","==",me.uid)));
-      const batch = msgs.docs;
-      for(const d of batch){
-        await updateDoc(doc(db,"chats",cid,"messages",d.id), { seen:true });
-      }
-    }
-
-    byId("btnSendChat").addEventListener("click", sendChat);
-    byId("chatInput").addEventListener("keydown", (e)=>{ if(e.key==="Enter") sendChat(); });
-    async function sendChat(){
-      const ip = byId("chatInput"); const text = ip.value.trim();
-      if(!text || !chatPeer) return;
-      const cid = convoIdFor(me.uid, chatPeer.uid);
-      await setDoc(doc(db,"chats",cid), { uids: [me.uid, chatPeer.uid], updatedAt: nowTs() }, { merge:true });
-      await addDoc(collection(db,"chats",cid,"messages"),{
-        from: me.uid, to: chatPeer.uid, text, createdAt: nowTs(), seen:false
-      });
-      await addDoc(collection(db,"users",chatPeer.uid,"notifications"),{
-        type:"dm", fromUid: me.uid, fromNick: meDoc.gamer || meDoc.nickname, text, createdAt: nowTs(), seen:false
-      });
-      ip.value="";
     }
 
     /* ========= NOTIFICATIONS ========= */
     function startNotifications(){
       if(notifUnsub) notifUnsub();
-      const qN = query(collection(db,"users",me.uid,"notifications"), orderBy("createdAt","desc"), limit(50));
-      notifUnsub = onSnapshot(qN, (snap)=>{
-        const list = byId("notifList"); list.innerHTML="";
-        let unseen = 0;
-        snap.forEach(d=>{
-          const n = d.data(); if(!n.seen) unseen++;
-          const row = document.createElement("div");
-          row.className = "glass rounded p-3 flex items-start gap-3";
-          row.innerHTML = `
-            <div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center">
-              <i class="fa-solid ${
-                n.type==='like'?'fa-thumbs-up':
-                n.type==='comment'?'fa-comment':
-                n.type==='dm'?'fa-message':
-                n.type==='friend-accept'?'fa-user-check':
-                'fa-user-plus'
-              }"></i>
-            </div>
-            <div class="flex-1">
-              <div class="text-sm">
-                <span class="font-semibold">${n.fromNick || 'Someone'}</span>
-                ${
-                  n.type==='like'?'liked your post':
-                  n.type==='comment'?'commented on your post':
-                  n.type==='dm'?'messaged you':
-                  n.type==='friend-accept'?'accepted your request':
-                  'sent a friend request'
-                }
-              </div>
-              ${n.text? `<div class="text-sm text-white/80 mt-1 ellipsis-2">${n.text}</div>`:''}
-              <div class="text-[11px] text-white/50 mt-1">${tsToText(n.createdAt)}</div>
-            </div>
-            <button class="px-2 py-1 text-xs rounded bg-white/10 hover:bg-white/20" data-seen="${d.id}">Mark seen</button>
-          `;
-          row.querySelector(`[data-seen="${d.id}"]`).addEventListener("click", ()=> updateDoc(doc(db,"users",me.uid,"notifications",d.id), { seen:true }));
-          list.appendChild(row);
-        });
-        byId("notifDot").classList.toggle("hidden", unseen===0);
+      const q = query(collection(db, "notifications"), where("uid", "==", me.uid), orderBy("ts","desc"), limit(20));
+      notifUnsub = onSnapshot(q, snap=>{
+        byId("notifList").innerHTML = "";
+        if(snap.empty){
+          byId("notifList").innerHTML = `<div class="text-center text-white/50 py-4">No notifications yet.</div>`;
+          return;
+        }
+        snap.forEach(doc=> renderNotification(doc.id, doc.data()));
       });
     }
-    byId("btnOpenNotifications").addEventListener("click", ()=> sectionTo("notifications"));
 
-    /* ========= LEADERBOARD ========= */
-    function loadLeaderboard(){
-      const qL = query(collection(db,"users"), orderBy("points","desc"), limit(50));
-      onSnapshot(qL, (snap)=>{
-        const rows = byId("leaderRows"); rows.innerHTML="";
-        let i=0;
-        snap.forEach(d=>{
-          const u=d.data(); i++;
-          const tr=document.createElement("tr");
-          tr.innerHTML = `
-            <td class="py-2 px-2">${i}</td>
-            <td class="py-2 px-2"><div class="flex items-center gap-2"><img class="w-7 h-7 rounded object-cover" src="${u.avatar || 'https://i.pravatar.cc/80?u='+u.uid}"><span class="text-sm">${shortId(u.uid)}</span></div></td>
-            <td class="py-2 px-2">${u.gamer||u.nickname||'Player'}</td>
-            <td class="py-2 px-2">${u.points||0}</td>
-            <td class="py-2 px-2">Lv ${rankFromPoints(u.points||0)}</td>
-          `;
-          rows.appendChild(tr);
-        });
-      });
+    function renderNotification(id, data){
+      const div = document.createElement("div");
+      div.className = "p-3 glass rounded-lg";
+      div.innerHTML = `
+        <div class="flex items-start gap-3">
+          <i class="fa-solid fa-bell text-[var(--mh-accent)] mt-1"></i>
+          <div class="flex-1">
+            <div>${md(data.text)}</div>
+            <div class="text-xs text-white/50 mt-1">${tsToText(data.ts)}</div>
+          </div>
+          ${data.link ? `<a href="${data.link}" class="text-[var(--mh-primary)] hover:underline">View</a>` : ''}
+        </div>
+      `;
+      byId("notifList").appendChild(div);
     }
 
     /* ========= PROFILE ========= */
-    byId("btnSaveProfile").addEventListener("click", saveProfile);
-    async function saveProfile(){
-      const nickname = byId("setNick").value.trim() || meDoc.nickname || "Player";
-      const gamer    = byId("setGamer").value.trim() || nickname;
-      const status   = byId("setStatus").value;
-      const bio      = byId("setBio").value.trim();
-      const sex = byId("setSex").value;
-      const dob = byId("setDOB").value || "";
-      const lang = byId("setLang").value.trim();
-      const country = byId("setCountry").value.trim();
-      const games = (byId("setGames").value||"").split(",").map(s=>s.trim()).filter(Boolean).slice(0,20);
-      const privDOB = byId("privDOB").checked;
-      const privEmail = byId("privEmail").checked;
-
-      let avatarData = meDoc.avatar || null;
-      const file = byId("setAvatar").files?.[0];
-      if(file){ avatarData = await fileToBase64(file, 420, .8); }
-
-      await updateDoc(doc(db,"users", me.uid), {
-        nickname, gamer, status, bio, avatar: avatarData,
-        sex, dob, lang, country, games,
-        priv:{ dob:privDOB, email:privEmail },
-        updatedAt: nowTs()
-      });
-      meDoc = (await getDoc(doc(db,"users",me.uid))).data();
-      ["navAvatar","sideAvatar","cpAvatar"].forEach(id=> byId(id).src = meDoc.avatar || "https://i.pravatar.cc/80?img=14");
-      ["navNick","sideNick"].forEach(id=> byId(id).textContent = meDoc.gamer || meDoc.nickname);
-      byId("profileSaved").classList.remove("hidden"); await sleep(1200); byId("profileSaved").classList.add("hidden");
+    function hydrateProfile(){
+      byId("setNick").value = meDoc.nickname || "";
+      byId("setGamer").value = meDoc.gamer || "";
+      byId("setSex").value = meDoc.sex || "";
+      byId("setDOB").value = meDoc.dob || "";
+      byId("setLang").value = meDoc.lang || "";
+      byId("setCountry").value = meDoc.country || "";
+      byId("setGames").value = meDoc.games || "";
+      byId("setStatus").value = meDoc.status || "online";
+      byId("setBio").value = meDoc.bio || "";
+      byId("privDOB").checked = !!meDoc.privDOB;
+      byId("privEmail").checked = !!meDoc.privEmail;
     }
+
+    byId("btnSaveProfile").addEventListener("click", async ()=>{
+      const data = {
+        nickname: byId("setNick").value.trim(),
+        gamer: byId("setGamer").value.trim(),
+        sex: byId("setSex").value,
+        dob: byId("setDOB").value,
+        lang: byId("setLang").value.trim(),
+        country: byId("setCountry").value.trim(),
+        games: byId("setGames").value.trim(),
+        status: byId("setStatus").value,
+        bio: byId("setBio").value.trim(),
+        privDOB: byId("privDOB").checked,
+        privEmail: byId("privEmail").checked,
+        lastSeen: nowTs()
+      };
+      if(byId("setAvatar").files[0]){
+        data.avatar = await fileToBase64(byId("setAvatar").files[0]);
+      }
+      await updateDoc(doc(db, "users", me.uid), data);
+      meDoc = {...meDoc, ...data};
+      hydrateHeader();
+      byId("profileSaved").classList.remove("hidden");
+      setTimeout(()=> byId("profileSaved").classList.add("hidden"), 3000);
+    });
 
     /* ========= ADMIN ========= */
     byId("btnAdminDeletePost").addEventListener("click", async ()=>{
-      if(me.uid!==ADMIN_UID){ alert("Not admin."); return; }
-      const postId = byId("adminDeletePostId").value.trim();
-      if(!postId) return;
-      await deleteDoc(doc(db,"posts",postId));
-      alert("Deleted.");
+      const id = byId("adminDeletePostId").value.trim();
+      if(!id || !confirm("Delete post "+id+"?")) return;
+      if(me.uid !== ADMIN_UID){ alert("Not admin."); return; }
+      await deleteDoc(doc(db, "posts", id));
+      byId("adminDeletePostId").value = "";
     });
 
     byId("btnBanUser").addEventListener("click", async ()=>{
-      if(me.uid!==ADMIN_UID){ alert("Not admin."); return; }
-      const uid = prompt("Enter user UID to toggle ban:");
-      if(!uid) return;
-      const uref = doc(db,"users",uid);
-      const snap = await getDoc(uref);
-      if(!snap.exists()) return alert("User not found.");
-      const cur = snap.data().banned ? false : true;
-      await updateDoc(uref, { banned: cur });
-      alert(cur? "User banned" : "Ban removed");
+      const uid = prompt("Enter UID to (soft) ban:");
+      if(!uid || me.uid !== ADMIN_UID){ alert("Not admin."); return; }
+      const ref = doc(db, "users", uid);
+      const snap = await getDoc(ref);
+      if(!snap.exists()){ alert("User not found."); return; }
+      const data = snap.data();
+      const banned = data.banned || false;
+      await updateDoc(ref, { banned: !banned });
+      alert("User "+(banned?"unbanned":"banned"));
     });
 
-    /* ========= SEARCH ========= */
-    byId("searchBox").addEventListener("input", (e)=> {
-      const q = e.target.value.toLowerCase();
-      // simple client filter for visible posts (title/text)
-      $$("#feedList .glass").forEach(card=>{
-        const txt = card.innerText.toLowerCase();
-        card.style.display = txt.includes(q) ? "" : "none";
-      });
-    });
+    /* ========= VIEW PROFILE ========= */
+    window.viewProfile = async (uid)=>{
+      const ref = doc(db, "users", uid);
+      const snap = await getDoc(ref);
+      if(!snap.exists()) return;
+      const data = snap.data();
+      byId("pmAvatar").src = data.avatar||'https://i.pravatar.cc/80?img=11';
+      byId("pmName").textContent = data.nickname;
+      byId("pmUid").textContent = "UID: "+shortId(uid);
+      byId("pmBio").textContent = data.bio || "(No bio)";
+      let publicInfo = "";
+      if(data.gamer) publicInfo += `Display: ${data.gamer}\n`;
+      if(data.lang) publicInfo += `Language: ${data.lang}\n`;
+      if(data.country) publicInfo += `Country: ${data.country}\n`;
+      if(data.games) publicInfo += `Games: ${data.games}\n`;
+      publicInfo += `Points: ${data.points||0} · Rank: ${data.rank||1}`;
+      byId("pmPublic").textContent = publicInfo;
+      byId("profileModal").classList.remove("hidden");
+    };
 
-    /* ========= VIEW PROFILE MODAL ========= */
-    async function openProfileModal(uid){
-      const s = await getDoc(doc(db,"users",uid));
-      if(!s.exists()) return;
-      const u = s.data();
-      byId('pmAvatar').src = u.avatar || 'https://i.pravatar.cc/128?u='+uid;
-      byId('pmName').textContent = u.gamer || u.nickname || 'Player';
-      byId('pmUid').textContent = shortId(uid);
-      const chips = byId('pmChips'); chips.innerHTML="";
-      const addChip = (t)=>{ const c=document.createElement('span'); c.className='chip'; c.textContent=t; chips.appendChild(c); };
-      addChip('Lv '+rankFromPoints(u.points||0));
-      if(u.lang) addChip(u.lang);
-      if(u.country) addChip(u.country);
-      if(Array.isArray(u.games)) u.games.slice(0,5).forEach(g=> addChip(g));
-      byId('pmBio').innerHTML = md(u.bio||'—');
-      const pub = [];
-      if(u.sex) pub.push(`<div><b>Sex:</b> ${u.sex}</div>`);
-      if(!u?.priv?.dob && u.dob) pub.push(`<div><b>DOB:</b> ${u.dob}</div>`);
-      if(u.lang) pub.push(`<div><b>Language:</b> ${u.lang}</div>`);
-      if(u.country) pub.push(`<div><b>Country:</b> ${u.country}</div>`);
-      if(u.games?.length) pub.push(`<div><b>Games:</b> ${u.games.join(", ")}</div>`);
-      byId('pmPublic').innerHTML = pub.join("") || "—";
-      byId('pmAdd').onclick = ()=> sendFriendRequest(uid);
-      byId('pmMsg').onclick = async ()=>{
-        const peer = (await getDoc(doc(db,"users",uid))).data();
-        openChatWith({uid, ...peer});
-        sectionTo('chat');
-        byId('profileModal').classList.add('hidden');
-      };
-      byId('profileModal').classList.remove('hidden');
-      byId('pmClose').onclick = ()=> byId('profileModal').classList.add('hidden');
-      byId('profileModal').onclick = (e)=>{ if(e.target.id==='profileModal') byId('profileModal').classList.add('hidden'); }
-    }
+    byId("pmClose").addEventListener("click", ()=> byId("profileModal").classList.add("hidden"));
 
-    /* ========= Accessibility: close sidebar with ESC ========= */
-    document.addEventListener('keydown', (e)=>{
-      if(e.key==='Escape'){
-        const sb = document.getElementById('sidebar');
-        if(!sb.classList.contains('-translate-x-full')){
-          document.getElementById('overlay').classList.add('hidden');
-          sb.classList.add('-translate-x-full');
-        }
-        // close modals
-        byId('profileModal').classList.add('hidden');
-        byId('imgLight').classList.add('hidden');
-        document.body.classList.remove('modal-open');
-      }
-    });
-
+    /* ========= INIT ========= */
+    // When profile section is opened, hydrate the form
+    byId("section-profile").addEventListener("click", hydrateProfile);
   </script>
-
-  <!-- ===== Non-module helpers ===== -->
-  <script>
-    // no-op placeholder if older browser needs small helpers; we already included everything in module above
-  </script>
-
-  <!--
-  ========================= FIRESTORE SECURITY RULES (COPY INTO CONSOLE) =========================
-
-
-  rules_version = '2';
-  service cloud.firestore {
-    match /databases/{database}/documents {
-
-      function isSignedIn() { return request.auth != null; }
-      function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
-      function isAdmin() { return isSignedIn() && request.auth.uid == '7aTPZ6wEIpQaPjlXWDrz5Ajc4By1'; }
-
-      // Users
-      match /users/{uid} {
-        allow read: if isSignedIn();
-        allow create: if isOwner(uid);
-        allow update: if isOwner(uid) || isAdmin();
-      }
-
-      // Posts
-      match /posts/{postId} {
-        allow read: if true;
-        allow create: if isSignedIn();
-        allow update, delete: if resource.data.uid == request.auth.uid || isAdmin();
-      }
-      // Post subcollections
-      match /posts/{postId}/comments/{commentId} {
-        allow read: if true;
-        allow create: if isSignedIn();
-        allow update, delete: if request.auth.uid == resource.data.uid || isAdmin();
-      }
-      match /posts/{postId}/likes/{uid} {
-        allow read: if true;
-        allow create, delete: if isSignedIn() && request.auth.uid == uid;
-      }
-
-      // Friends + Requests
-      match /friends/{pairId} {
-        allow read, create, delete: if isSignedIn();
-      }
-      match /friendRequests/{reqId} {
-        allow read, create: if isSignedIn();
-        allow delete: if isSignedIn();
-      }
-
-      // Chats
-      match /chats/{cid} {
-        allow read, write: if isSignedIn();
-      }
-      match /chats/{cid}/messages/{mid} {
-        allow read, write: if isSignedIn();
-      }
-
-      // Notifications (per user)
-      match /users/{uid}/notifications/{nid} {
-        allow read, create: if isSignedIn() && (isOwner(uid) || isAdmin());
-        allow update: if isOwner(uid) || isAdmin();
-        allow delete: if isOwner(uid) || isAdmin();
-      }
-
-      // Saved / Pinned
-      match /users/{uid}/{any=**} {
-        allow read, write: if isOwner(uid) || isAdmin();
-      }
-
-      // Reports & Shares (open write, public read)
-      match /reports/{rid} {
-        allow read: if isSignedIn();
-        allow create: if isSignedIn();
-      }
-      match /shares/{sid} {
-        allow read: if true;
-        allow create: if isSignedIn();
-      }
-    }
-  }
-  ================================================================================================
-  NOTE:
-  • Replace YOUR_ADMIN_UID_HERE in the rules to match the constant in your HTML file.
-  • This setup stays inside free plan usage if your traffic is modest. Avoid huge base64 images (> 700KB).
-  • No Cloud Functions / No Storage used.
-  -->
-
 </body>
-</html>
+  </html>

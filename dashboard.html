@@ -1,1077 +1,1099 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mod Hive - Live Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <style>
-        :root {
-            --primary: #6c5ce7;
-            --primary-dark: #5649c0;
-            --accent: #00cec9;
-            --danger: #fd79a8;
-            --dark: #0e1217;
-            --darker: #0b0f13;
-            --panel: #151b22;
-            --muted: #93a1b1;
-        }
-        
-        body {
-            background: var(--dark);
-            color: #e8eef6;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        
-        .nav-active {
-            background: rgba(255, 255, 255, 0.08);
-        }
-        
-        .btn {
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 70vw;
-            }
-            
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0 !important;
-                width: 100%;
-                padding: 1rem;
-            }
-            
-            .search-box {
-                display: none;
-            }
-        }
-        
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--darker);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 3px;
-        }
-        
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.3s ease forwards;
-        }
-        
-        /* Loading animation */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .loading {
-            animation: spin 1s linear infinite;
-        }
-        
-        /* Notification badge */
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--danger);
-            color: white;
-            font-size: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mod Hive — Dashboard</title>
 
-        /* Image preview */
-        .image-preview {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 8px;
-            margin-top: 10px;
-            display: none;
-        }
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        /* Emoji picker */
-        .emoji-picker {
-            display: none;
-            position: absolute;
-            bottom: 50px;
-            right: 10px;
-            background: var(--panel);
-            border-radius: 8px;
-            padding: 10px;
-            width: 250px;
-            z-index: 100;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 5px;
-        }
-        
-        .emoji-picker.show {
-            display: grid;
-        }
-        
-        .emoji {
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 5px;
-            text-align: center;
-            border-radius: 4px;
-        }
-        
-        .emoji:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-        /* Reaction buttons */
-        .reaction-btn {
-            position: relative;
-        }
-        
-        .reaction-options {
-            display: none;
-            position: absolute;
-            bottom: 30px;
-            left: 0;
-            background: var(--panel);
-            border-radius: 20px;
-            padding: 5px;
-            z-index: 10;
-        }
-        
-        .reaction-btn:hover .reaction-options {
-            display: flex;
-        }
-        
-        /* Online status indicator */
-        .online-status {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--accent);
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            border: 2px solid var(--dark);
-        }
-        
-        /* Chat interface */
-        .chat-container {
-            height: 400px;
-            overflow-y: auto;
-        }
-        
-        .message {
-            max-width: 70%;
-            padding: 8px 12px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-        }
-        
-        .message.sent {
-            background: var(--primary);
-            margin-left: auto;
-            border-bottom-right-radius: 4px;
-        }
-        
-        .message.received {
-            background: var(--panel);
-            margin-right: auto;
-            border-bottom-left-radius: 4px;
-        }
-    </style>
+  <style>
+    :root{
+      --mh-primary:#6c5ce7; --mh-primary-2:#5649c0;
+      --mh-accent:#00cec9;  --mh-pink:#fd79a8;
+      --mh-dark:#0e1217;    --mh-darker:#0b0f13; --mh-panel:#151b22;
+      --mh-muted:#93a1b1;   --mh-soft:#222a35;   --mh-ok:#10b981; --mh-warn:#f59e0b; --mh-danger:#ef4444;
+    }
+    html,body{background:var(--mh-dark); color:#e8eef6;}
+    .glass{background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); backdrop-filter: blur(6px); border:1px solid rgba(255,255,255,.04)}
+    .btn{transition: transform .12s ease, box-shadow .12s ease}
+    .btn:active{transform: scale(.98)}
+    .nav-active{background: rgba(255,255,255,.06)}
+    .fade-in{animation:fade .22s ease both}
+    @keyframes fade{from{opacity:0; transform: translateY(6px)} to{opacity:1; transform:none}}
+    .ellipsis-2{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+    .scroll-y{scrollbar-width:thin}
+    .reaction-btn{min-width:3rem}
+    .chip{background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.03); padding:.15rem .5rem; border-radius:.5rem; font-size:.75rem}
+    .hidden-xs{display:none}
+    @media (min-width:640px){ .hidden-xs{display:inline-block} }
+    .touch-target{min-height:44px; min-width:44px}
+    /* small modal sizing */
+    .modal-max-w{max-width:90%; width:720px}
+  </style>
 </head>
-<body class="min-h-screen flex">
-    <!-- Loading screen -->
-    <div id="loading" class="fixed inset-0 flex items-center justify-center bg-[var(--dark)] z-50">
-        <div class="text-center">
-            <div class="inline-block h-12 w-12 rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] loading text-[var(--accent)]"></div>
-            <p class="mt-4 text-[var(--muted)]">Loading Mod Hive...</p>
-        </div>
+<body class="h-full">
+
+  <!-- Image viewer modal -->
+  <div id="imgModal" class="fixed inset-0 hidden items-center justify-center bg-black/60 z-50 p-4">
+    <div class="modal-max-w relative">
+      <button id="imgModalClose" class="absolute -top-10 right-0 text-white p-2"><i class="fa-solid fa-xmark fa-lg"></i></button>
+      <img id="imgModalImg" class="w-full h-auto rounded-lg shadow-lg" src="" alt="full">
     </div>
+  </div>
 
-    <!-- App Container -->
-    <div id="app-container" class="min-h-screen w-full hidden">
-        <!-- Sidebar Toggle for Mobile -->
-        <div id="sidebar-toggle-mobile" class="fixed top-4 left-4 z-30 bg-[var(--primary)] p-2 rounded-lg md:hidden">
-            <i class="fas fa-bars text-white"></i>
+  <!-- Public profile modal -->
+  <div id="profileModal" class="fixed inset-0 hidden items-center justify-center bg-black/50 z-40 p-4">
+    <div class="glass rounded-xl p-4 w-full max-w-2xl relative">
+      <button id="profileModalClose" class="absolute right-3 top-3 text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      <div class="flex gap-4">
+        <img id="pmAvatar" class="w-20 h-20 rounded object-cover" src="">
+        <div class="flex-1">
+          <div class="flex items-center gap-2">
+            <h2 id="pmNickname" class="text-xl font-semibold"></h2>
+            <span id="pmAdminBadge" class="hidden text-xs bg-yellow-600 text-white px-2 py-0.5 rounded">🛡 Admin</span>
+          </div>
+          <div id="pmGamer" class="text-white/70 mt-1"></div>
+          <div id="pmUid" class="text-xs text-white/50 mt-1"></div>
         </div>
-
-        <!-- Sidebar -->
-        <div id="sidebar" class="glass h-screen w-64 fixed left-0 top-0 p-4 transition-all duration-300 z-20">
-            <div class="flex items-center justify-between mb-8">
-                <h1 class="text-xl font-bold flex items-center">
-                    <i class="fas fa-hive mr-2 text-[var(--accent)]"></i>
-                    <span class="text-white">Mod Hive</span>
-                </h1>
-                <button id="sidebar-toggle" class="text-[var(--muted)]">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-            </div>
-            
-            <nav class="space-y-2">
-                <a href="#" class="nav-link flex items-center p-3 rounded-lg nav-active" data-section="home">
-                    <i class="fas fa-home mr-3"></i>
-                    <span class="nav-text">Home</span>
-                </a>
-                <a href="#" class="nav-link flex items-center p-3 rounded-lg" data-section="discover">
-                    <i class="fas fa-compass mr-3"></i>
-                    <span class="nav-text">Discover</span>
-                </a>
-                <a href="#" class="nav-link flex items-center p-3 rounded-lg" data-section="friends">
-                    <i class="fas fa-users mr-3"></i>
-                    <span class="nav-text">Friends</span>
-                    <span class="ml-auto bg-[var(--danger)] text-xs rounded-full px-2 py-1 friend-request-count">0</span>
-                </a>
-                <a href="#" class="nav-link flex items-center p-3 rounded-lg" data-section="chat">
-                    <i class="fas fa-comment mr-3"></i>
-                    <span class="nav-text">Messages</span>
-                    <span class="ml-auto bg-[var(--accent)] text-xs rounded-full px-2 py-1">5</span>
-                </a>
-                <a href="#" class="nav-link flex items-center p-3 rounded-lg" data-section="notifications">
-                    <i class="fas fa-bell mr-3"></i>
-                    <span class="nav-text">Notifications</span>
-                </a>
-                <a href="#" class="nav-link flex items-center p-3 rounded-lg" data-section="profile">
-                    <i class="fas fa-cog mr-3"></i>
-                    <span class="nav-text">Profile</span>
-                </a>
-                <a href="ModHive.html" class="nav-link flex items-center p-3 rounded-lg">
-                    <i class="fas fa-rotate-left mr-3"></i>
-                    <span class="nav-text">Back to Main</span>
-                </a>
-                <a href="#" id="logout-btn" class="nav-link flex items-center p-3 rounded-lg text-[var(--danger)]">
-                    <i class="fas fa-sign-out-alt mr-3"></i>
-                    <span class="nav-text">Logout</span>
-                </a>
-            </nav>
-            
-            <div class="mt-8 glass rounded-xl p-4">
-                <div class="flex items-center">
-                    <div class="relative">
-                        <div class="w-12 h-12 rounded-full bg-[var(--primary)] flex items-center justify-center text-white font-bold" id="sidebar-avatar">
-                            U
-                        </div>
-                        <div class="online-status"></div>
-                    </div>
-                    <div class="ml-3">
-                        <div class="font-semibold" id="sidebar-username">User</div>
-                        <div class="text-xs text-[var(--muted)]">Level <span id="sidebar-level">1</span> • <span id="sidebar-points">0</span> pts</div>
-                    </div>
-                </div>
-                <div class="mt-4 flex space-x-2">
-                    <div class="flex-1 bg-[var(--primary)] rounded-lg text-center py-2 text-sm">
-                        <div class="font-bold friend-count">0</div>
-                        <div class="text-xs">Friends</div>
-                    </div>
-                    <div class="flex-1 bg-[var(--primary)] rounded-lg text-center py-2 text-sm">
-                        <div class="font-bold">0</div>
-                        <div class="text-xs">Posts</div>
-                    </div>
-                </div>
-            </div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-3 mt-4">
+        <div class="glass p-3 rounded">
+          <h4 class="font-semibold mb-2">About</h4>
+          <div id="pmBio" class="text-sm"></div>
         </div>
-
-        <!-- Main Content -->
-        <div class="main-content flex-1 ml-64 p-6 transition-all duration-300">
-            <!-- Top Bar -->
-            <div class="glass rounded-xl p-4 mb-6 flex items-center justify-between">
-                <div class="search-box flex items-center bg-[var(--darker)] rounded-lg px-3 py-2 flex-1 max-w-md">
-                    <i class="fas fa-search text-[var(--muted)] mr-2"></i>
-                    <input type="text" id="global-search" placeholder="Search posts, friends, or topics..." class="bg-transparent outline-none w-full">
-                </div>
-                
-                <div class="flex items-center space-x-4">
-                    <button class="relative p-2 rounded-lg hover:bg-[var(--darker)]">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </button>
-                    <button class="relative p-2 rounded-lg hover:bg-[var(--darker)]">
-                        <i class="fas fa-envelope"></i>
-                        <span class="notification-badge">5</span>
-                    </button>
-                    <div class="flex items-center">
-                        <div class="relative">
-                            <div class="w-10 h-10 rounded-full bg-[var(--primary)] flex items-center justify-center text-white font-bold mr-2" id="topbar-avatar">
-                                U
-                            </div>
-                            <div class="online-status"></div>
-                        </div>
-                        <div class="profile-details">
-                            <div class="font-semibold text-sm" id="topbar-username">User</div>
-                            <div class="text-xs text-[var(--muted)]">Online</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Content Sections -->
-            <div id="content-sections">
-                <!-- Home Section -->
-                <div id="home-section" class="content-section">
-                    <!-- Create Post -->
-                    <div class="glass rounded-xl p-4 mb-6">
-                        <div class="flex items-center mb-4">
-                            <div class="w-10 h-10 rounded-full bg-[var(--primary)] flex items-center justify-center text-white font-bold mr-3" id="post-user-avatar">
-                                U
-                            </div>
-                            <input type="text" placeholder="What's on your mind?" class="bg-[var(--darker)] rounded-full px-4 py-2 flex-1 outline-none" id="post-content">
-                        </div>
-                        <div class="flex justify-between border-t border-[var(--darker)] pt-3">
-                            <label class="flex items-center text-[var(--muted)] hover:text-white cursor-pointer">
-                                <i class="fas fa-image mr-2"></i> Photo
-                                <input type="file" id="post-image" accept="image/*" class="hidden">
-                            </label>
-                            <button class="flex items-center text-[var(--muted)] hover:text-white">
-                                <i class="fas fa-video mr-2"></i> Video
-                            </button>
-                            <button class="flex items-center text-[var(--muted)] hover:text-white">
-                                <i class="fas fa-map-marker-alt mr-2"></i> Location
-                            </button>
-                            <button class="bg-[var(--primary)] text-white px-4 py-1 rounded-lg btn" id="create-post">
-                                Post
-                            </button>
-                        </div>
-                        <img id="image-preview" class="image-preview" src="" alt="Preview">
-                    </div>
-
-                    <!-- Feed -->
-                    <div class="glass rounded-xl p-4">
-                        <h2 class="text-lg font-semibold mb-4">Recent Posts</h2>
-                        <div id="posts-container">
-                            <div class="text-center py-8 text-[var(--muted)]">
-                                <i class="fas fa-feather-alt text-4xl mb-3"></i>
-                                <p>No posts yet. Be the first to share something!</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Friends Section -->
-                <div id="friends-section" class="content-section hidden">
-                    <div class="glass rounded-xl p-4">
-                        <h2 class="text-lg font-semibold mb-4">Friends</h2>
-                        
-                        <!-- Friend Requests -->
-                        <div class="mb-6">
-                            <h3 class="font-semibold mb-3 flex items-center justify-between">
-                                <span>Friend Requests</span>
-                                <span class="text-xs text-[var(--muted)] friend-request-count">0 requests</span>
-                            </h3>
-                            <div id="friend-requests-container" class="space-y-3">
-                                <div class="text-center py-4 text-[var(--muted)]">
-                                    <i class="fas fa-user-friends text-2xl mb-2"></i>
-                                    <p>No friend requests yet</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Friend List -->
-                        <div class="mb-6">
-                            <h3 class="font-semibold mb-3 flex items-center justify-between">
-                                <span>Your Friends</span>
-                                <span class="text-xs text-[var(--muted)] friend-count">0 friends</span>
-                            </h3>
-                            <div id="friends-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div class="text-center py-8 text-[var(--muted)] col-span-2">
-                                    <i class="fas fa-users text-2xl mb-2"></i>
-                                    <p>You haven't added any friends yet</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Friend Suggestions -->
-                        <div>
-                            <h3 class="font-semibold mb-3">People You May Know</h3>
-                            <div id="friend-suggestions-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div class="text-center py-8 text-[var(--muted)] col-span-2">
-                                    <i class="fas fa-user-plus text-2xl mb-2"></i>
-                                    <p>No suggestions available</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chat Section -->
-                <div id="chat-section" class="content-section hidden">
-                    <div class="glass rounded-xl p-4">
-                        <h2 class="text-lg font-semibold mb-4">Messages</h2>
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <!-- Friends List -->
-                            <div class="bg-[var(--darker)] rounded-xl p-4">
-                                <h3 class="font-semibold mb-3">Friends</h3>
-                                <div class="mb-3">
-                                    <input type="text" placeholder="Search friends..." class="bg-[var(--panel)] rounded-lg px-3 py-2 outline-none w-full">
-                                </div>
-                                <div id="chat-friends-list" class="space-y-2 max-h-96 overflow-y-auto">
-                                    <!-- Friends list for chat will be loaded here -->
-                                </div>
-                            </div>
-                            
-                            <!-- Chat Area -->
-                            <div class="lg:col-span-2 bg-[var(--darker)] rounded-xl p-4 flex flex-col">
-                                <div id="chat-header" class="font-semibold mb-3 p-2 border-b border-[var(--panel)]">
-                                    Select a friend to chat with
-                                </div>
-                                <div id="chat-messages" class="chat-container mb-3 space-y-3 p-2">
-                                    <!-- Messages will be loaded here -->
-                                </div>
-                                <div class="flex mt-3">
-                                    <div class="relative flex-1">
-                                        <input type="text" id="chat-input" placeholder="Type a message..." class="bg-[var(--panel)] rounded-l-lg px-4 py-2 outline-none w-full" disabled>
-                                        <button class="absolute right-2 top-2 text-[var(--muted)] hover:text-white emoji-trigger">
-                                            <i class="fas fa-smile"></i>
-                                        </button>
-                                        <div class="emoji-picker">
-                                            <span class="emoji">😀</span>
-                                            <span class="emoji">😃</span>
-                                            <span class="emoji">😄</span>
-                                            <span class="emoji">😁</span>
-                                            <span class="emoji">😆</span>
-                                            <span class="emoji">😅</span>
-                                            <span class="emoji">😂</span>
-                                            <span class="emoji">🤣</span>
-                                            <span class="emoji">😊</span>
-                                            <span class="emoji">😇</span>
-                                            <span class="emoji">🙂</span>
-                                            <span class="emoji">🙃</span>
-                                            <span class="emoji">😉</span>
-                                            <span class="emoji">😌</span>
-                                            <span class="emoji">😍</span>
-                                            <span class="emoji">🥰</span>
-                                            <span class="emoji">😘</span>
-                                            <span class="emoji">😗</span>
-                                            <span class="emoji">😙</span>
-                                            <span class="emoji">😚</span>
-                                            <span class="emoji">😋</span>
-                                            <span class="emoji">😛</span>
-                                            <span class="emoji">😝</span>
-                                            <span class="emoji">😜</span>
-                                            <span class="emoji">🤪</span>
-                                            <span class="emoji">🤨</span>
-                                            <span class="emoji">🧐</span>
-                                            <span class="emoji">🤓</span>
-                                            <span class="emoji">😎</span>
-                                            <span class="emoji">🤩</span>
-                                            <span class="emoji">🥳</span>
-                                        </div>
-                                    </div>
-                                    <button id="send-message" class="bg-[var(--primary)] text-white px-4 py-2 rounded-r-lg" disabled>
-                                        <i class="fas fa-paper-plane"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Notifications Section -->
-                <div id="notifications-section" class="content-section hidden">
-                    <div class="glass rounded-xl p-4">
-                        <h2 class="text-lg font-semibold mb-4">Notifications</h2>
-                        <div id="notifications-container" class="space-y-3">
-                            <div class="text-center py-8 text-[var(--muted)]">
-                                <i class="fas fa-bell-slash text-2xl mb-2"></i>
-                                <p>No notifications yet</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Profile Section -->
-                <div id="profile-section" class="content-section hidden">
-                    <div class="glass rounded-xl p-4">
-                        <h2 class="text-lg font-semibold mb-4">Profile Settings</h2>
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <!-- Profile Form -->
-                            <div class="lg:col-span-2 bg-[var(--darker)] rounded-xl p-4">
-                                <div id="profile-form">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                        <div>
-                                            <label class="block text-sm mb-1 text-[var(--muted)]">Username</label>
-                                            <input type="text" id="profile-username" class="bg-[var(--panel)] rounded-lg px-4 py-2 outline-none w-full" value="User">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm mb-1 text-[var(--muted)]">Avatar Initials</label>
-                                            <input type="text" id="profile-avatar" class="bg-[var(--panel)] rounded-lg px-4 py-2 outline-none w-full" value="U" maxlength="2">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-4">
-                                        <label class="block text-sm mb-1 text-[var(--muted)]">Bio</label>
-                                        <textarea id="profile-bio" class="bg-[var(--panel)] rounded-lg px-4 py-2 outline-none w-full" rows="3" placeholder="Tell us about yourself"></textarea>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                        <div>
-                                            <label class="block text-sm mb-1 text-[var(--muted)]">Level</label>
-                                            <input type="number" id="profile-level" class="bg-[var(--panel)] rounded-lg px-4 py-2 outline-none w-full" value="1" min="1">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm mb-1 text-[var(--muted)]">Points</label>
-                                            <input type="number" id="profile-points" class="bg-[var(--panel)] rounded-lg px-4 py-2 outline-none w-full" value="0" min="0">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-4">
-                                        <label class="block text-sm mb-1 text-[var(--muted)]">Favorite Games</label>
-                                        <input type="text" id="profile-games" class="bg-[var(--panel)] rounded-lg px-4 py-2 outline-none w-full" placeholder="e.g. Call of Duty, Fortnite">
-                                    </div>
-                                    
-                                    <button id="save-profile" class="bg-[var(--primary)] text-white px-4 py-2 rounded-lg btn w-full">
-                                        Save Profile
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Profile Preview -->
-                            <div class="bg-[var(--darker)] rounded-xl p-4">
-                                <h3 class="font-semibold mb-3">Profile Preview</h3>
-                                <div class="flex items-center mb-4">
-                                    <div class="w-16 h-16 rounded-full bg-[var(--primary)] flex items-center justify-center text-white font-bold text-xl" id="profile-preview-avatar">
-                                        U
-                                    </div>
-                                    <div class="ml-4">
-                                        <div class="font-semibold text-lg" id="profile-preview-username">User</div>
-                                        <div class="text-sm text-[var(--muted)]">Level <span id="profile-preview-level">1</span> • <span id="profile-preview-points">0</span> pts</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="mb-4">
-                                    <div class="text-sm text-[var(--muted)] mb-1">Bio</div>
-                                    <div id="profile-preview-bio" class="text-sm">No bio yet</div>
-                                </div>
-                                
-                                <div>
-                                    <div class="text-sm text-[var(--muted)] mb-1">Favorite Games</div>
-                                    <div id="profile-preview-games" class="text-sm">Not specified</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="glass p-3 rounded">
+          <h4 class="font-semibold mb-2">Details</h4>
+          <div id="pmDetails" class="text-sm"></div>
         </div>
+      </div>
+      <div class="mt-3 flex gap-2">
+        <button id="pmAddFriend" class="px-3 py-2 rounded bg-white/10 hover:bg-white/20"><i class="fa-solid fa-user-plus mr-2"></i>Add Friend</button>
+        <button id="pmMessage" class="px-3 py-2 rounded bg-white/10 hover:bg-white/20"><i class="fa-regular fa-comment mr-2"></i>Message</button>
+        <button id="pmReport" class="px-3 py-2 rounded bg-red-500/20 hover:bg-red-600/30 text-red-200"><i class="fa-solid fa-flag mr-2"></i>Report</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Firebase configuration -->
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAgx0jy6we6cvnIgKbS1fBoeRfSD2MDszo",
-            authDomain: "mod-hive.firebaseapp.com",
-            projectId: "mod-hive",
-            storageBucket: "mod-hive.firebasestorage.app",
-            messagingSenderId: "982583858832",
-            appId: "1:982583858832:web:44d5e4e2edd77fac06ea15",
-            measurementId: "G-PK2DRED7FB"
+  <!-- Auth gate -->
+  <div id="gate" class="fixed inset-0 flex items-center justify-center z-50">
+    <div class="glass p-6 rounded-xl w-[92%] max-w-md text-center">
+      <h1 class="text-2xl font-semibold mb-2">Mod Hive</h1>
+      <p class="text-sm text-[var(--mh-muted)]">Checking session…</p>
+    </div>
+  </div>
+
+  <!-- App -->
+  <div id="app" class="min-h-screen hidden">
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-[var(--mh-darker)]/90 backdrop-blur border-b border-white/5">
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <button id="openSidebarBtn" class="md:hidden p-2 rounded hover:bg-white/10 touch-target"><i class="fa-solid fa-bars"></i></button>
+          <div class="flex items-center gap-3">
+            <span class="inline-flex items-center justify-center w-8 h-8 rounded bg-[var(--mh-primary)] text-white font-bold">MH</span>
+            <h1 class="text-lg font-semibold tracking-wide">Mod Hive</h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="hidden md:flex items-center bg-[var(--mh-panel)] rounded px-3 py-1">
+            <i class="fa-solid fa-magnifying-glass text-white/50 mr-2"></i>
+            <input id="searchBox" placeholder="Search posts, users…" class="bg-transparent outline-none text-sm placeholder-white/40 w-64" />
+          </div>
+
+          <button id="btnNotifications" class="relative p-2 rounded hover:bg-white/10 touch-target">
+            <i class="fa-regular fa-bell"></i>
+            <span id="notifDot" class="hidden absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[var(--mh-pink)]"></span>
+          </button>
+
+          <div class="relative">
+            <button id="profileToggle" class="flex items-center gap-2 hover:bg-white/10 px-2 py-1 rounded">
+              <img id="navAvatar" class="w-8 h-8 rounded object-cover" src="https://i.pravatar.cc/80?img=3" alt="avatar">
+              <div class="hidden sm:block text-left">
+                <div id="navNick" class="text-sm font-medium">Player</div>
+                <div class="text-[11px] text-white/50">Lv <span id="navRank">1</span> · <span id="navPoints">0</span> pts</div>
+              </div>
+              <i class="fa-solid fa-chevron-down text-xs ml-1"></i>
+            </button>
+
+            <div id="profileMenu" class="hidden absolute right-0 mt-2 w-56 glass rounded-lg p-2">
+              <button data-section="profile" class="w-full text-left px-3 py-2 rounded hover:bg-white/10">Profile / Settings</button>
+              <button data-section="notifications" class="w-full text-left px-3 py-2 rounded hover:bg-white/10">Notifications</button>
+              <button id="btnLogout" class="w-full text-left px-3 py-2 rounded hover:bg-white/10 text-red-400">Log out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Layout -->
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-5 grid grid-cols-12 gap-6">
+      <!-- Sidebar -->
+      <aside id="sidebar" class="fixed md:static inset-y-0 left-0 w-[86%] max-w-xs md:max-w-none md:w-auto md:col-span-3 bg-[var(--mh-darker)] md:bg-transparent -translate-x-full md:translate-x-0 transition-transform z-40">
+        <div class="md:sticky md:top-20 p-4 md:p-0 h-full overflow-y-auto">
+          <nav class="space-y-2">
+            <button data-section="feed" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg glass nav-active"><i class="fa-solid fa-house"></i><span>Feed</span></button>
+            <button data-section="chat" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg glass"><i class="fa-solid fa-message"></i><span>Chat</span></button>
+            <button data-section="friends" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg glass"><i class="fa-solid fa-user-group"></i><span>Friends</span></button>
+            <button data-section="leaderboard" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg glass"><i class="fa-solid fa-trophy"></i><span>Leaderboard</span></button>
+            <button data-section="notifications" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg glass"><i class="fa-solid fa-bell"></i><span>Notifications</span></button>
+            <button data-section="profile" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-lg glass"><i class="fa-solid fa-id-card"></i><span>Profile</span></button>
+            <a href="main.html" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg glass hover:bg-white/10"><i class="fa-solid fa-rotate-left"></i><span>Back to Main</span></a>
+          </nav>
+
+          <div class="mt-6 glass rounded-xl p-4">
+            <div class="flex items-center gap-3">
+              <div class="relative">
+                <img id="sideAvatar" class="w-12 h-12 rounded object-cover" src="https://i.pravatar.cc/80?img=4" />
+                <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-[var(--mh-ok)] rounded-full border-2 border-[var(--mh-darker)]"></span>
+              </div>
+              <div>
+                <div id="sideNick" class="font-semibold">Player</div>
+                <div class="text-xs text-white/50">Points: <span id="sidePoints">0</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Mobile overlay -->
+      <div id="overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
+
+      <!-- Main -->
+      <main class="col-span-12 md:col-span-9 space-y-6">
+        <!-- FEED -->
+        <section id="section-feed" class="space-y-5 fade-in">
+          <div class="glass rounded-xl p-3 sm:p-4">
+            <div class="flex items-start gap-3">
+              <img id="cpAvatar" class="w-10 h-10 rounded object-cover" src="https://i.pravatar.cc/80?img=5" />
+              <div class="flex-1">
+                <textarea id="postText" class="w-full bg-[var(--mh-panel)] rounded-lg p-3 outline-none text-sm" rows="2" placeholder="Share your gaming moment…"></textarea>
+                <div class="mt-3 flex flex-wrap items-center gap-2">
+                  <label class="cursor-pointer px-3 py-1.5 rounded bg-white/5 hover:bg-white/10">
+                    <i class="fa-regular fa-image mr-2"></i> Image
+                    <input id="postImage" type="file" accept="image/*" class="hidden">
+                  </label>
+                  <div class="flex items-center gap-2 bg-[var(--mh-panel)] rounded px-3 py-1.5 flex-1 min-w-[220px] max-w-[420px]">
+                    <i class="fa-solid fa-link text-white/60"></i>
+                    <input id="postLink" placeholder="Link (optional)" class="bg-transparent outline-none text-sm w-full"/>
+                  </div>
+                  <button id="btnPost" class="ml-auto btn px-4 py-2 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)]">Post</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="feedList" class="space-y-4"></div>
+          <button id="btnMore" class="hidden mx-auto block px-4 py-2 glass rounded hover:bg-white/10">Load more</button>
+        </section>
+
+        <!-- CHAT -->
+        <section id="section-chat" class="hidden space-y-4 fade-in">
+          <div class="grid md:grid-cols-12 gap-4">
+            <div class="md:col-span-4 glass rounded-xl p-3 sm:p-4">
+              <div class="flex items-center gap-2 mb-3">
+                <i class="fa-solid fa-message"></i><h3 class="font-semibold">Private Chats</h3>
+              </div>
+              <input id="chatSearch" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none mb-3 text-sm" placeholder="Search friend…"/>
+              <div id="chatUsers" class="space-y-2 max-h-[60vh] overflow-y-auto scroll-y"></div>
+            </div>
+
+            <div class="md:col-span-8 glass rounded-xl p-3 sm:p-4 flex flex-col h-[70vh]">
+              <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                <div class="flex items-center gap-3">
+                  <img id="chatPeerAvatar" class="w-10 h-10 rounded object-cover" src="https://i.pravatar.cc/80?img=6">
+                  <div>
+                    <div id="chatPeerNick" class="font-semibold">Select a friend</div>
+                    <div id="chatPeerStatus" class="text-xs text-white/50">—</div>
+                  </div>
+                </div>
+                <div class="text-white/50 text-sm">Encrypted 1-on-1</div>
+              </div>
+
+              <div id="chatStream" class="flex-1 my-3 overflow-y-auto scroll-y space-y-3"></div>
+
+              <div class="mt-2 flex items-center gap-2">
+                <input id="chatInput" class="flex-1 bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Type a message… (Enter to send)">
+                <button id="btnSendChat" class="btn px-3 py-2 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)]"><i class="fa-solid fa-paper-plane"></i></button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FRIENDS -->
+        <section id="section-friends" class="hidden space-y-4 fade-in">
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="glass rounded-xl p-3 sm:p-4">
+              <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-user-plus"></i><h3 class="font-semibold">Friend Suggestions</h3></div>
+              <div id="friendSuggestions" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+              <div id="friendSuggestionsEmpty" class="hidden text-sm text-white/60">No suggestions yet.</div>
+            </div>
+
+            <div class="glass rounded-xl p-3 sm:p-4">
+              <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-inbox"></i><h3 class="font-semibold">Requests</h3></div>
+              <div id="incomingRequests" class="space-y-2"></div>
+              <div id="incomingEmpty" class="text-sm text-white/60">No incoming requests.</div>
+            </div>
+          </div>
+
+          <div class="glass rounded-xl p-3 sm:p-4">
+            <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-user-group"></i><h3 class="font-semibold">Your Friends</h3></div>
+            <div id="friendList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+            <div id="friendEmpty" class="text-sm text-white/60">You don’t have any friends yet.</div>
+          </div>
+        </section>
+
+        <!-- LEADERBOARD -->
+        <section id="section-leaderboard" class="hidden space-y-4 fade-in">
+          <div class="glass rounded-xl p-3 sm:p-4">
+            <div class="flex items-center gap-2 mb-4"><i class="fa-solid fa-trophy text-yellow-400"></i><h3 class="font-semibold">Top Players</h3></div>
+            <div class="overflow-auto">
+              <table class="min-w-full text-sm">
+                <thead class="text-white/60">
+                  <tr><th class="text-left py-2 px-2">#</th><th class="text-left py-2 px-2">Player</th><th class="text-left py-2 px-2">Nickname</th><th class="text-left py-2 px-2">Points</th><th class="text-left py-2 px-2">Rank</th></tr>
+                </thead>
+                <tbody id="leaderRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- NOTIFICATIONS -->
+        <section id="section-notifications" class="hidden space-y-4 fade-in">
+          <div class="glass rounded-xl p-3 sm:p-4">
+            <div class="flex items-center gap-2 mb-3"><i class="fa-solid fa-bell"></i><h3 class="font-semibold">Notifications</h3></div>
+            <div id="notifList" class="space-y-2"></div>
+            <div id="notifEmpty" class="text-sm text-white/60">You’re all caught up.</div>
+          </div>
+        </section>
+
+        <!-- PROFILE -->
+        <section id="section-profile" class="hidden space-y-4 fade-in">
+          <!-- View -->
+          <div id="profileView" class="glass rounded-xl p-3 sm:p-4 hidden">
+            <div class="flex items-start gap-4">
+              <img id="pvAvatar" class="w-20 h-20 rounded object-cover" src="">
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <h3 id="pvNickname" class="text-xl font-semibold"></h3>
+                  <span id="pvAdminBadge" class="hidden text-xs bg-yellow-600 text-white px-2 py-0.5 rounded">🛡 Admin</span>
+                </div>
+                <div id="pvGamer" class="text-white/70 mt-1"></div>
+                <div id="pvPoints" class="text-xs text-white/50 mt-1"></div>
+              </div>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-3 mt-4">
+              <div class="glass p-3 rounded">
+                <h4 class="font-semibold mb-2">About</h4>
+                <div id="pvBio" class="text-sm"></div>
+              </div>
+              <div class="glass p-3 rounded">
+                <h4 class="font-semibold mb-2">Details</h4>
+                <div id="pvDetails" class="text-sm"></div>
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <button id="btnEditProfile" class="btn px-4 py-2 rounded bg-white/10 hover:bg-white/20">Edit Profile</button>
+            </div>
+          </div>
+
+          <!-- Edit -->
+          <div id="profileEdit" class="glass rounded-xl p-3 sm:p-4">
+            <div class="flex items-center gap-2 mb-4"><i class="fa-solid fa-id-card"></i><h3 class="font-semibold">Profile & Account</h3></div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm text-white/70">Gamer Nickname</label>
+                <input id="setNick" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Your nickname">
+              </div>
+              <div>
+                <label class="text-sm text-white/70">Gamer Name</label>
+                <input id="setGamerName" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="@tag or in-game name">
+              </div>
+              <div>
+                <label class="text-sm text-white/70">Status</label>
+                <select id="setStatus" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none">
+                  <option value="online">Online</option>
+                  <option value="ingame">In-game</option>
+                  <option value="offline">Offline</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-sm text-white/70">Avatar (base64 — free)</label>
+                <input id="setAvatar" type="file" accept="image/*" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none">
+                <p class="text-xs text-white/50 mt-1">No paid Storage: we save a compressed base64 avatar in Firestore.</p>
+              </div>
+              <div class="sm:col-span-2">
+                <label class="text-sm text-white/70">Bio</label>
+                <textarea id="setBio" rows="3" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Tell others about your gaming…"></textarea>
+              </div>
+              <div>
+                <label class="text-sm text-white/70">Sex</label>
+                <select id="setSex" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none">
+                  <option value="">Prefer not to say</option>
+                  <option value="female">Female</option>
+                  <option value="male">Male</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-sm text-white/70">DOB</label>
+                <input id="setDob" type="date" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none">
+              </div>
+              <div>
+                <label class="text-sm text-white/70">Language</label>
+                <input id="setLang" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="e.g., English">
+              </div>
+              <div>
+                <label class="text-sm text-white/70">Country</label>
+                <input id="setCountry" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="e.g., Nigeria">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="text-sm text-white/70">Games you play (comma separated)</label>
+                <input id="setGames" class="w-full bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Fortnite, FIFA 24, CoD…">
+              </div>
+            </div>
+
+            <div class="mt-4 flex items-center gap-2">
+              <button id="btnSaveProfile" class="btn px-4 py-2 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)]">Save</button>
+              <span id="profileSaved" class="hidden text-[var(--mh-ok)] text-sm">Saved ✓</span>
+            </div>
+
+            <div id="adminTools" class="mt-4 hidden">
+              <div class="text-sm text-white/60 mb-2">Admin tools (visible only to admin)</div>
+              <div class="grid sm:grid-cols-2 gap-2">
+                <input id="adminDeletePostId" class="bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Post ID to delete">
+                <button id="btnAdminDeletePost" class="btn px-4 py-2 rounded bg-[var(--mh-danger)] hover:bg-red-600">Delete Post</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Firebase SDK modules -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import {
+      getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, serverTimestamp,
+      onSnapshot, query, where, orderBy, limit, getDocs, deleteDoc, increment, runTransaction
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    // ======= CONFIG - replace with your real config =========
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT",
+      appId: "YOUR_APP_ID"
+    };
+    const ADMIN_UID = "YOUR_ADMIN_UID"; // put your UID here
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // ======= State =======
+    let me = null, meDoc = null;
+    let feedUnsub = null, notifUnsub = null, chatUnsub = null;
+    const userCache = {}; // uid -> doc
+    let friendsMap = new Map();
+    let pendingTo = new Set();
+    let pendingFrom = new Set();
+    const REACTIONS = ["like","love","wow","laugh","angry"];
+
+    // small helpers
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+    const byId = id => document.getElementById(id);
+    const sleep = ms => new Promise(r=>setTimeout(r,ms));
+    const nowTs = () => serverTimestamp();
+    function shortId(id){ return id?.slice(0,6) + "…"; }
+    function tsToText(ts){ try{ const d = ts?.toDate ? ts.toDate() : new Date(ts); return d.toLocaleString(); } catch { return "just now"; } }
+    function rankFromPoints(p=0){ if(p>2000) return 10; if(p>1000) return 9; if(p>600) return 8; if(p>400) return 7; if(p>250) return 6; if(p>150) return 5; if(p>90) return 4; if(p>50) return 3; if(p>20) return 2; return 1; }
+
+    // Ensure user doc exists
+    async function ensureUserDoc(user){
+      const ref = doc(db,"users", user.uid);
+      const snap = await getDoc(ref);
+      if(!snap.exists()){
+        await setDoc(ref, {
+          uid: user.uid, email: user.email||null,
+          nickname: user.displayName || ("Player_"+user.uid.slice(0,4)),
+          gamerName: "", avatar: user.photoURL || null, bio: "", status: "online",
+          sex:"", dob:"", language:"", country:"", games:[], points:0,
+          createdAt: nowTs(), updatedAt: nowTs(), profileCompleted:false
+        }, { merge:true });
+      }
+      const data = (await getDoc(ref)).data();
+      userCache[user.uid] = data;
+      return data;
+    }
+
+    // Render helpers
+    function getDisplayName(uid, fallback){
+      const u = userCache[uid];
+      return u ? (u.nickname || fallback || shortId(uid)) : (fallback || shortId(uid));
+    }
+    function getAvatar(uid, fallback){
+      const u = userCache[uid];
+      return u ? (u.avatar || fallback) : fallback;
+    }
+
+    // Auth gate
+    onAuthStateChanged(auth, async (user)=>{
+      if(!user){ location.href = "auth.html"; return; }
+      me = user;
+      meDoc = await ensureUserDoc(user);
+
+      // hydrate ui
+      byId("navAvatar").src = meDoc.avatar || "https://i.pravatar.cc/80?img=7";
+      byId("cpAvatar").src  = meDoc.avatar || "https://i.pravatar.cc/80?img=8";
+      byId("sideAvatar").src= meDoc.avatar || "https://i.pravatar.cc/80?img=9";
+      byId("navNick").innerHTML = meDoc.nickname || "Player";
+      byId("sideNick").textContent = meDoc.nickname || "Player";
+      byId("navPoints").textContent = meDoc.points || 0;
+      byId("navRank").textContent = rankFromPoints(meDoc.points||0);
+
+      // admin tools visibility
+      byId("adminTools").classList.toggle("hidden", me.uid !== ADMIN_UID);
+
+      // start listeners
+      startFeed();
+      startNotifications();
+      initFriendsAndChat();
+      loadLeaderboard();
+      refreshProfileViewMode();
+
+      byId("gate").classList.add("hidden");
+      byId("app").classList.remove("hidden");
+    });
+
+    byId("btnLogout").addEventListener("click", ()=> signOut(auth));
+
+    // Sidebar toggles
+    byId("openSidebarBtn").addEventListener("click", ()=>{
+      byId("sidebar").classList.toggle("-translate-x-full");
+      byId("overlay").classList.toggle("hidden");
+    });
+    byId("overlay").addEventListener("click", ()=> {
+      byId("sidebar").classList.add("-translate-x-full");
+      byId("overlay").classList.add("hidden");
+    });
+
+    // Nav links
+    $$("#sidebar .nav-link").forEach(b => b.addEventListener("click", ()=> sectionTo(b.dataset.section)));
+
+    function sectionTo(name){
+      const all = ["feed","chat","friends","leaderboard","notifications","profile"];
+      all.forEach(s => byId(`section-${s}`).classList.toggle("hidden", s!==name));
+      $$("#sidebar .nav-link").forEach(b=>b.classList.toggle("nav-active", b.dataset.section===name));
+      byId('sidebar').classList.add('-translate-x-full'); byId('overlay').classList.add('hidden');
+      if(name === "profile") preloadProfileInputs();
+    }
+
+    // profile dropdown
+    byId("profileToggle").addEventListener("click", (e)=> { e.stopPropagation(); byId("profileMenu").classList.toggle("hidden"); });
+    document.addEventListener("click", ()=> byId("profileMenu").classList.add("hidden"));
+
+    // ===== POSTS =====
+    const feedList = byId("feedList");
+    const postImage = byId("postImage");
+    const postText = byId("postText");
+    const postLink = byId("postLink");
+    let pendingImgBase64 = null;
+
+    postImage.addEventListener("change", async (e)=>{
+      const f = e.target.files?.[0];
+      if(!f){ pendingImgBase64 = null; return; }
+      pendingImgBase64 = await fileToBase64(f, 1000, 0.82);
+    });
+
+    byId("btnPost").addEventListener("click", async ()=>{
+      const text = postText.value.trim(), link = postLink.value.trim() || null;
+      if(!text && !pendingImgBase64 && !link){ alert("Write something, add image or link."); return; }
+      const docRef = await addDoc(collection(db,"posts"), {
+        uid: me.uid,
+        nickname: meDoc.nickname || "Player",
+        avatar: meDoc.avatar || null,
+        text, link, image: pendingImgBase64 || null,
+        createdAt: nowTs(),
+        likes: 0, comments: 0, shares: 0,
+        reactionCounts: { like:0, love:0, wow:0, laugh:0, angry:0 }
+      });
+      await updateDoc(doc(db,"users",me.uid), { points: increment(5), updatedAt: nowTs() });
+      postText.value = ""; postLink.value = ""; postImage.value = ""; pendingImgBase64 = null;
+    });
+
+    // image compression
+    function fileToBase64(file, maxW=960, quality=0.82){
+      return new Promise((resolve,reject)=>{
+        const r = new FileReader();
+        r.onload = e=>{
+          const img = new Image();
+          img.onload = ()=>{
+            const scale = Math.min(1, maxW / img.width);
+            const w = Math.round(img.width * scale);
+            const h = Math.round(img.height * scale);
+            const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0,w,h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
         };
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+    }
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+    function openImg(src){ byId("imgModalImg").src = src; byId("imgModal").classList.remove("hidden"); byId("imgModal").classList.add("flex"); }
+    byId("imgModalClose").addEventListener("click", ()=> { byId("imgModal").classList.add("hidden"); byId("imgModal").classList.remove("flex"); byId("imgModalImg").src = ""; });
+    byId("imgModal").addEventListener("click", (e)=>{ if(e.target.id==="imgModal") byId("imgModalClose").click(); });
 
-        // Authentication state observer
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                // User is signed in
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('app-container').classList.remove('hidden');
-                
-                // Load user data
-                loadUserData(user);
-                initializeApp();
-            } else {
-                // User is signed out, redirect to auth.html
-                window.location.href = "auth.html";
-            }
-        });
-
-        // Logout functionality
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            auth.signOut().then(() => {
-                // Sign-out successful, redirect handled by auth state observer
-            }).catch((error) => {
-                console.error('Logout error:', error);
-            });
-        });
-
-        // Sidebar toggle functionality
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.querySelector('.main-content');
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const sidebarToggleMobile = document.getElementById('sidebar-toggle-mobile');
-        
-        // Check localStorage for sidebar state
-        const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-        
-        if (sidebarCollapsed) {
-            sidebar.classList.add('collapsed');
-            mainContent.classList.add('collapsed');
-            sidebarToggle.innerHTML = '<i class="fas fa-chevron-right"></i>';
-        }
-        
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-            mainContent.classList.toggle('collapsed');
-            
-            // Update icon
-            if (sidebar.classList.contains('collapsed')) {
-                sidebarToggle.innerHTML = '<i class="fas fa-chevron-right"></i>';
-                localStorage.setItem('sidebarCollapsed', 'true');
-            } else {
-                sidebarToggle.innerHTML = '<i class="fas fa-chevron-left"></i>';
-                localStorage.setItem('sidebarCollapsed', 'false');
-            }
-        });
-        
-        sidebarToggleMobile.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-        });
-
-        // Navigation
-        const navLinks = document.querySelectorAll('.nav-link');
-        const contentSections = document.querySelectorAll('.content-section');
-        
-        navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Don't process navigation for external links
-                if (this.getAttribute('href') && this.getAttribute('href') !== '#') {
-                    return;
-                }
-                
-                const section = this.getAttribute('data-section');
-                
-                // Update active nav link
-                navLinks.forEach(nav => nav.classList.remove('nav-active'));
-                this.classList.add('nav-active');
-                
-                // Show the corresponding section
-                contentSections.forEach(s => s.classList.add('hidden'));
-                if (section) {
-                    document.getElementById(`${section}-section`).classList.remove('hidden');
-                }
-                
-                // Close sidebar on mobile after selection
-                if (window.innerWidth < 768) {
-                    sidebar.classList.remove('open');
-                }
-            });
-        });
-
-        // Profile functionality
-        document.getElementById('save-profile').addEventListener('click', saveProfile);
-        
-        function saveProfile() {
-            const profileData = {
-                username: document.getElementById('profile-username').value,
-                avatar: document.getElementById('profile-avatar').value,
-                bio: document.getElementById('profile-bio').value,
-                level: parseInt(document.getElementById('profile-level').value),
-                points: parseInt(document.getElementById('profile-points').value),
-                games: document.getElementById('profile-games').value,
-                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            // Update preview
-            updateProfilePreview(profileData);
-            
-            // Update sidebar and topbar
-            document.getElementById('sidebar-username').textContent = profileData.username;
-            document.getElementById('sidebar-avatar').textContent = profileData.avatar;
-            document.getElementById('sidebar-level').textContent = profileData.level;
-            document.getElementById('sidebar-points').textContent = profileData.points;
-            
-            document.getElementById('topbar-username').textContent = profileData.username;
-            document.getElementById('topbar-avatar').textContent = profileData.avatar;
-            
-            document.getElementById('post-user-avatar').textContent = profileData.avatar;
-            
-            // Save to Firestore
-            const user = auth.currentUser;
-            if (user) {
-                db.collection('users').doc(user.uid).set(profileData, { merge: true })
-                    .then(() => {
-                        console.log('Profile updated successfully');
-                    })
-                    .catch((error) => {
-                        console.error('Error updating profile:', error);
-                    });
-            }
-            
-            // Show success message
-            alert('Profile saved successfully!');
-        }
-        
-        function updateProfilePreview(profileData) {
-            document.getElementById('profile-preview-username').textContent = profileData.username;
-            document.getElementById('profile-preview-avatar').textContent = profileData.avatar;
-            document.getElementById('profile-preview-level').textContent = profileData.level;
-            document.getElementById('profile-preview-points').textContent = profileData.points;
-            document.getElementById('profile-preview-bio').textContent = profileData.bio || 'No bio yet';
-            document.getElementById('profile-preview-games').textContent = profileData.games || 'Not specified';
-        }
-
-        // Load user data from Firestore
-        function loadUserData(user) {
-            db.collection('users').doc(user.uid).get()
-                .then((doc) => {
-                    if (doc.exists) {
-                        const userData = doc.data();
-                        
-                        // Update form fields
-                        document.getElementById('profile-username').value = userData.username || 'User';
-                        document.getElementById('profile-avatar').value = userData.avatar || 'U';
-                        document.getElementById('profile-bio').value = userData.bio || '';
-                        document.getElementById('profile-level').value = userData.level || 1;
-                        document.getElementById('profile-points').value = userData.points || 0;
-                        document.getElementById('profile-games').value = userData.games || '';
-                        
-                        // Update UI
-                        updateProfilePreview(userData);
-                        
-                        document.getElementById('sidebar-username').textContent = userData.username || 'User';
-                        document.getElementById('sidebar-avatar').textContent = userData.avatar || 'U';
-                        document.getElementById('sidebar-level').textContent = userData.level || 1;
-                        document.getElementById('sidebar-points').textContent = userData.points || 0;
-                        
-                        document.getElementById('topbar-username').textContent = userData.username || 'User';
-                        document.getElementById('topbar-avatar').textContent = userData.avatar || 'U';
-                        
-                        document.getElementById('post-user-avatar').textContent = userData.avatar || 'U';
-                    } else {
-                        // Create a new user document if it doesn't exist
-                        const defaultUserData = {
-                            username: user.displayName || 'User',
-                            avatar: user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U',
-                            bio: '',
-                            level: 1,
-                            points: 0,
-                            games: '',
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-                        };
-                        
-                        db.collection('users').doc(user.uid).set(defaultUserData)
-                            .then(() => {
-                                console.log('New user document created');
-                                loadUserData(user); // Reload data
-                            })
-                            .catch((error) => {
-                                console.error('Error creating user document:', error);
-                            });
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error getting user document:', error);
-                });
-        }
-
-        // Image preview functionality
-        document.getElementById('post-image').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('image-preview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Post creation
-        document.getElementById('create-post').addEventListener('click', createPost);
-        
-        function createPost() {
-            const content = document.getElementById('post-content').value.trim();
-            const imageFile = document.getElementById('post-image').files[0];
-            
-            if (!content && !imageFile) {
-                alert('Please enter some content or select an image for your post');
-                return;
-            }
-            
-            const user = auth.currentUser;
-            if (!user) return;
-            
-            // If there's an image, convert it to Base64
-            if (imageFile) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const postData = {
-                        uid: user.uid,
-                        content: content,
-                        image: e.target.result, // Base64 encoded image
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        likes: 0,
-                        comments: 0,
-                        shares: 0
-                    };
-                    
-                    addPostToFirestore(postData);
-                };
-                reader.readAsDataURL(imageFile);
-            } else {
-                const postData = {
-                    uid: user.uid,
-                    content: content,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    likes: 0,
-                    comments: 0,
-                    shares: 0
-                };
-                
-                addPostToFirestore(postData);
-            }
-        }
-        
-        function addPostToFirestore(postData) {
-            db.collection('posts').add(postData)
-                .then((docRef) => {
-                    console.log('Post created with ID: ', docRef.id);
-                    document.getElementById('post-content').value = '';
-                    document.getElementById('post-image').value = '';
-                    document.getElementById('image-preview').style.display = 'none';
-                    
-                    // Add to recent posts
-                    addPostToFeed({
-                        id: docRef.id,
-                        ...postData,
-                        username: document.getElementById('profile-username').value,
-                        avatar: document.getElementById('profile-avatar').value
-                    });
-                })
-                .catch((error) => {
-                    console.error('Error adding post: ', error);
-                    alert('Error creating post. Please try again.');
-                });
-        }
-        
-        function addPostToFeed(post) {
-            const postsContainer = document.getElementById('posts-container');
-            
-            // Remove empty state if it exists
-            if (postsContainer.querySelector('.text-center')) {
-                postsContainer.innerHTML = '';
-            }
-            
-            const postEl = document.createElement('div');
-            postEl.className = 'mb-6 pb-6 border-b border-[var(--darker)] fade-in';
-            postEl.innerHTML = `
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-full bg-[var(--accent)] flex items-center justify-center text-white font-bold mr-3">
-                            ${post.avatar}
-                        </div>
-                        <div>
-                            <div class="font-semibold">${post.username}</div>
-                            <div class="text-xs text-[var(--muted)]">Just now</div>
-                        </div>
-                    </div>
-                    <button class="text-[var(--muted)] hover:text-white">
-                        <i class="fas fa-ellipsis-h"></i>
-                    </button>
+    // render post ensuring display name & avatar come from users collection (userCache)
+    function renderPost(id, p){
+      const wrap = document.createElement("div");
+      wrap.className = "glass rounded-xl p-3 sm:p-4 fade-in";
+      const nickname = getDisplayName(p.uid, p.nickname || shortId(p.uid));
+      const avatar = getAvatar(p.uid, p.avatar || "https://i.pravatar.cc/80?img=10");
+      const chips = REACTIONS.map(rx => {
+        const n = p.reactionCounts?.[rx]||0;
+        if(n<=0) return '';
+        const label = rx==="laugh"?"😂":rx==="love"?"❤️":rx==="wow"?"😮":rx==="angry"?"😡":"👍";
+        return `<span class="chip">${label} ${n}</span>`;
+      }).filter(Boolean).join(' ');
+      wrap.innerHTML = `
+        <div class="flex items-start gap-3">
+          <img class="w-10 h-10 sm:w-12 sm:h-12 rounded object-cover" src="${avatar}">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="font-semibold text-sm sm:text-base">${nickname} ${p.uid===ADMIN_UID ? '<span class="ml-1 text-[10px] bg-yellow-600 text-white px-1 rounded">🛡 Admin</span>':''} <span class="text-white/40 text-[11px] ml-1">(${shortId(p.uid)})</span></div>
+                <div class="text-xs text-white/50">${tsToText(p.createdAt)}</div>
+              </div>
+              <div class="relative">
+                <button class="px-2 py-1 rounded hover:bg-white/10" data-more="${id}"><i class="fa-solid fa-ellipsis"></i></button>
+                <div class="hidden absolute right-0 mt-2 w-44 glass rounded p-1 z-10" id="menu-${id}">
+                  <button class="w-full text-left px-3 py-2 rounded hover:bg-white/10" data-view-profile="${p.uid}"><i class="fa-regular fa-id-card mr-2"></i>View profile</button>
+                  <button class="w-full text-left px-3 py-2 rounded hover:bg-white/10" data-add-friend="${p.uid}"><i class="fa-solid fa-user-plus mr-2"></i>Add user</button>
+                  <button class="w-full text-left px-3 py-2 rounded hover:bg-white/10" data-copy-link="${id}"><i class="fa-solid fa-link mr-2"></i>Copy link</button>
+                  <button class="w-full text-left px-3 py-2 rounded hover:bg-white/10" data-report="${id}"><i class="fa-solid fa-flag mr-2"></i>Report</button>
+                  ${ (p.uid===me.uid || me.uid===ADMIN_UID) ? `<button class="w-full text-left px-3 py-2 rounded hover:bg-white/10 text-red-400" data-delete="${id}"><i class="fa-solid fa-trash mr-2"></i>Delete</button>` : '' }
                 </div>
-                
-                ${post.content ? `<p class="mb-4">${post.content}</p>` : ''}
-                
-                ${post.image ? `
-                <div class="mb-4 rounded-lg overflow-hidden">
-                    <img src="${post.image}" alt="Post image" class="w-full h-auto max-h-96 object-cover">
-                </div>
-                ` : ''}
-                
-                <div class="flex justify-between text-[var(--muted)] text-sm mb-3">
-                    <div>
-                        <span class="mr-3"><i class="fas fa-heart mr-1"></i> 0</span>
-                        <span><i class="fas fa-comment mr-1"></i> 0</span>
-                    </div>
-                    <div>0 shares</div>
-                </div>
-                
-                <div class="flex justify-between border-t border-b border-[var(--darker)] py-2">
-                    <div class="reaction-btn relative">
-                        <button class="flex items-center text-[var(--muted)] hover:text-white">
-                            <i class="fas fa-heart mr-2"></i> Like
-                        </button>
-                        <div class="reaction-options">
-                            <span class="emoji" data-reaction="❤️">❤️</span>
-                            <span class="emoji" data-reaction="😂">😂</span>
-                            <span class="emoji" data-reaction="😮">😮</span>
-                            <span class="emoji" data-reaction="😢">😢</span>
-                            <span class="emoji" data-reaction="😡">😡</span>
-                        </div>
-                    </div>
-                    <button class="flex items-center text-[var(--muted)] hover:text-white">
-                        <i class="fas fa-comment mr-2"></i> Comment
-                    </button>
-                    <button class="flex items-center text-[var(--muted)] hover:text-white">
-                        <i class="fas fa-share mr-2"></i> Share
-                    </button>
-                </div>
-            `;
-            
-            postsContainer.prepend(postEl);
-            
-            // Add event listeners for reactions
-            const reactionOptions = postEl.querySelectorAll('.emoji');
-            reactionOptions.forEach(emoji => {
-                emoji.addEventListener('click', function() {
-                    const reaction = this.getAttribute('data-reaction');
-                    addReaction(post.id, reaction);
-                });
-            });
-        }
+              </div>
+            </div>
+            ${p.text ? `<p class="mt-2 text-sm sm:text-base">${p.text}</p>` : ``}
+            ${p.link ? `<a class="block mt-2 text-[var(--mh-accent)] underline break-words" target="_blank" href="${p.link}">${p.link}</a>` : ``}
+            ${p.image ? `<img class="mt-3 rounded-lg max-h-[420px] object-cover w-full cursor-zoom-in" data-open-img="${id}" src="${p.image}">` : ``}
+            <div class="flex flex-wrap items-center gap-2 mt-3 text-white/80 text-[13px]">
+              ${chips || '<span class="text-white/40 text-xs">No reactions yet</span>'}
+              <span class="ml-auto"><span id="cmts-${id}">${p.comments||0}</span> comments</span>
+            </div>
 
-        // Load posts from Firestore
-        function loadPosts() {
-            db.collection('posts').orderBy('createdAt', 'desc').limit(10).get()
-                .then((querySnapshot) => {
-                    const postsContainer = document.getElementById('posts-container');
-                    
-                    if (querySnapshot.empty) {
-                        postsContainer.innerHTML = `
-                            <div class="text-center py-8 text-[var(--muted)]">
-                                <i class="fas fa-feather-alt text-4xl mb-3"></i>
-                                <p>No posts yet. Be the first to share something!</p>
-                            </div>
-                        `;
-                        return;
-                    }
-                    
-                    postsContainer.innerHTML = '';
-                    
-                    querySnapshot.forEach((doc) => {
-                        const post = { id: doc.id, ...doc.data() };
-                        
-                        // Get user data for this post
-                        db.collection('users').doc(post.uid).get()
-                            .then((userDoc) => {
-                                if (userDoc.exists) {
-                                    const userData = userDoc.data();
-                                    addPostToFeed({
-                                        ...post,
-                                        username: userData.username,
-                                        avatar: userData.avatar
-                                    });
-                                }
-                            })
-                            .catch((error) => {
-                                console.error('Error getting user data:', error);
-                            });
-                    });
-                })
-                .catch((error) => {
-                    console.error('Error getting posts:', error);
-                });
-        }
+            <div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
+              ${REACTIONS.map(rx => {
+                const icon = rx==="laugh"?"😂":rx==="love"?"❤️":rx==="wow"?"😮":rx==="angry"?"😡":"👍";
+                return `<button class="reaction-btn px-3 py-2 rounded hover:bg-white/10" data-react="${id}:${rx}">${icon} <span class="hidden-xs capitalize ml-2">${rx}</span></button>`;
+              }).join('')}
+            </div>
 
-        // Add reaction to post
-        function addReaction(postId, reaction) {
-            const user = auth.currentUser;
-            if (!user) return;
-            
-            // In a real app, you would add this to a subcollection
-            console.log(`User ${user.uid} reacted with ${reaction} to post ${postId}`);
-            alert(`You reacted with ${reaction}`);
-        }
+            <div id="cbox-${id}" class="mt-3">
+              <div id="cList-${id}" class="space-y-2"></div>
+              <div class="flex items-center gap-2 mt-2">
+                <input id="cInput-${id}" class="flex-1 bg-[var(--mh-panel)] rounded px-3 py-2 outline-none" placeholder="Write a comment">
+                <button class="px-3 py-2 rounded bg-[var(--mh-primary)] hover:bg-[var(--mh-primary-2)]" data-cmt="${id}">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
 
-        // Initialize the app
-        function initializeApp() {
-            // Load posts
-            loadPosts();
-            
-            // Set up real-time listener for new posts
-            db.collection('posts').orderBy('createdAt', 'desc').limit(10)
-                .onSnapshot((querySnapshot) => {
-                    // This will be called whenever there are new posts
-                    loadPosts();
-                });
-                
-            // Set up real-time search
-            const searchInput = document.getElementById('global-search');
-            let searchTimeout;
-            
-            searchInput.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    const searchTerm = this.value.trim();
-                    if (searchTerm) {
-                        performSearch(searchTerm);
-                    }
-                }, 500);
-            });
-        }
+      // attach image open
+      const imgEl = wrap.querySelector(`[data-open-img="${id}"]`);
+      if(imgEl) imgEl.addEventListener("click", ()=> openImg(imgEl.src));
 
-        // Perform search
-        function performSearch(searchTerm) {
-            console.log(`Searching for: ${searchTerm}`);
-            // In a real app, you would query Firestore for matching posts or users
-            // For now, we'll just filter the current posts
-            const posts = document.querySelectorAll('#posts-container > div');
-            posts.forEach(post => {
-                const postText = post.textContent.toLowerCase();
-                if (postText.includes(searchTerm.toLowerCase())) {
-                    post.style.display = 'block';
-                } else {
-                    post.style.display = 'none';
-                }
-            });
-        }
+      // menu toggle
+      const moreBtn = wrap.querySelector(`[data-more="${id}"]`);
+      const menuEl = wrap.querySelector(`#menu-${id}`);
+      moreBtn.addEventListener("click", (e)=> { e.stopPropagation(); menuEl.classList.toggle("hidden"); });
+      document.addEventListener("click", (e)=> { if(!menuEl.contains(e.target) && e.target !== moreBtn) menuEl.classList.add("hidden"); });
 
-        // Wait for auth state to be determined before initializing
-        const authCheckInterval = setInterval(() => {
-            if (auth.currentUser) {
-                clearInterval(authCheckInterval);
-                initializeApp();
-            }
-        }, 100);
-    </script>
+      // menu actions
+      wrap.querySelector(`[data-view-profile="${p.uid}"]`).addEventListener("click", ()=> openPublicProfile(p.uid));
+      wrap.querySelector(`[data-add-friend="${p.uid}"]`)?.addEventListener("click", ()=> sendFriendRequest(p.uid));
+      wrap.querySelector(`[data-copy-link="${id}"]`).addEventListener("click", ()=> { navigator.clipboard.writeText(location.href + "#post-" + id); alert("Link copied"); });
+      wrap.querySelector(`[data-report="${id}"]`).addEventListener("click", async ()=> { await addDoc(collection(db,"reports"), { postId:id, from:me.uid, createdAt: nowTs() }); alert("Reported."); });
+      if(wrap.querySelector(`[data-delete="${id}"]`)) wrap.querySelector(`[data-delete="${id}"]`).addEventListener("click", async ()=> { if(confirm("Delete this post?")) await deleteDoc(doc(db,"posts",id)); });
+
+      // reaction handlers
+      REACTIONS.forEach(rx => {
+        const btn = wrap.querySelector(`[data-react="${id}:${rx}"]`);
+        btn.addEventListener("click", ()=> toggleReaction(id, p.uid, rx));
+      });
+
+      // comment handlers
+      wrap.querySelector(`[data-cmt="${id}"]`).addEventListener("click", ()=>{
+        const ip = byId(`cInput-${id}`); const txt = ip.value.trim(); if(!txt) return; addComment(id, txt, p.uid); ip.value="";
+      });
+
+      // live comments
+      const q = query(collection(db,"posts",id,"comments"), orderBy("createdAt","asc"), limit(200));
+      onSnapshot(q, snap => {
+        const list = byId(`cList-${id}`); list.innerHTML = "";
+        snap.forEach(d => {
+          const c = d.data();
+          const li = document.createElement("div");
+          li.className = "flex items-start gap-2";
+          li.innerHTML = `
+            <img class="w-8 h-8 rounded object-cover" src="${getAvatar(c.uid, c.avatar || 'https://i.pravatar.cc/80?img=11')}">
+            <div class="flex-1 bg-white/5 rounded px-3 py-2">
+              <div class="text-sm"><span class="font-semibold">${getDisplayName(c.uid, c.nickname||'Player')}${c.uid===ADMIN_UID? ' <span class="text-[10px] bg-yellow-600 text-white px-1 rounded">🛡 Admin</span>':''}</span> <span class="text-xs text-white/40 ml-2">${tsToText(c.createdAt)}</span></div>
+              <div class="text-sm">${c.text}</div>
+            </div>
+          `;
+          list.appendChild(li);
+        });
+        byId(`cmts-${id}`).textContent = snap.size.toString();
+      });
+
+      return wrap;
+    }
+
+    // add comment
+    async function addComment(postId, text, ownerUid){
+      await addDoc(collection(db,"posts",postId,"comments"), {
+        uid: me.uid, nickname: meDoc.nickname, avatar: meDoc.avatar || null,
+        text, createdAt: nowTs()
+      });
+      await updateDoc(doc(db,"posts",postId), { comments: increment(1) });
+      await updateDoc(doc(db,"users",me.uid), { points: increment(1) });
+      if(ownerUid !== me.uid){
+        await addDoc(collection(db,"users",ownerUid,"notifications"), {
+          type:"comment", fromUid: me.uid, fromNick: meDoc.nickname, postId, text, createdAt: nowTs(), seen:false
+        });
+      }
+    }
+
+    // robust reaction toggle using per-user reaction doc + transaction (fix admin freeze)
+    async function toggleReaction(postId, ownerUid, type){
+      const postRef = doc(db,"posts",postId);
+      const rxRef = doc(db,"posts",postId,"reactions", me.uid);
+
+      await runTransaction(db, async (tx) => {
+        const rxSnap = await tx.get(rxRef);
+        const postSnap = await tx.get(postRef);
+        if(!postSnap.exists()) return;
+
+        const counts = { like:0, love:0, wow:0, laugh:0, angry:0, ...(postSnap.data().reactionCounts||{}) };
+        const prev = rxSnap.exists() ? rxSnap.data().type : null;
+
+        if(prev === type){
+          // remove
+          counts[type] = Math.max(0, (counts[type]||0) - 1);
+          tx.delete(rxRef);
+          // sync legacy likes
+          if(type === "like"){
+            tx.update(postRef, { reactionCounts: counts, likes: Math.max(0, (postSnap.data().likes||0) - 1) });
+          } else {
+            tx.update(postRef, { reactionCounts: counts });
+          }
+        } else {
+          if(prev){ counts[prev] = Math.max(0, (counts[prev]||0) - 1); }
+          counts[type] = (counts[type]||0) + 1;
+          tx.set(rxRef, { type, uid: me.uid, createdAt: nowTs() });
+          let likeValue = postSnap.data().likes||0;
+          if(prev === "like") likeValue = Math.max(0, likeValue - 1);
+          if(type === "like") likeValue = likeValue + 1;
+          tx.update(postRef, { reactionCounts: counts, likes: likeValue });
+        }
+      });
+
+      // notify owner when adding or changing (not when removing)
+      await addDoc(collection(db,"users", ownerUid, "notifications"), {
+        type: "reaction", fromUid: me.uid, fromNick: meDoc.nickname, postId, reaction: type, createdAt: nowTs(), seen:false
+      }).catch(()=>{});
+    }
+
+    // start feed (subscribe)
+    function startFeed(){
+      if(feedUnsub) feedUnsub();
+      const qFeed = query(collection(db,"posts"), orderBy("createdAt","desc"), limit(50));
+      feedUnsub = onSnapshot(qFeed, snap => {
+        feedList.innerHTML = "";
+        snap.forEach(d => {
+          const p = d.data();
+          userCache[p.uid] = userCache[p.uid] || { nickname: p.nickname, avatar: p.avatar };
+          const el = renderPost(d.id, p);
+          el.id = "post-" + d.id;
+          feedList.appendChild(el);
+        });
+      });
+    }
+
+    // ===== FRIENDS + CHAT =====
+    async function initFriendsAndChat(){
+      // incoming requests
+      const qIn = query(collection(db,"friendRequests"), where("to","==", me.uid), orderBy("createdAt","desc"), limit(50));
+      onSnapshot(qIn, snap => {
+        pendingFrom = new Set();
+        const box = byId("incomingRequests"); box.innerHTML = "";
+        if(snap.empty){ byId("incomingEmpty").classList.remove("hidden"); } else { byId("incomingEmpty").classList.add("hidden"); }
+        snap.forEach(d => {
+          const r = d.data(); pendingFrom.add(r.from);
+          const el = document.createElement("div");
+          el.className = "glass rounded p-3 flex items-center justify-between";
+          el.innerHTML = `
+            <div class="flex items-center gap-3">
+              <img class="w-10 h-10 rounded object-cover" src="${r.fromAvatar || 'https://i.pravatar.cc/80?u='+r.from}">
+              <div>
+                <div class="font-semibold">${r.fromNick || shortId(r.from)} ${r.from===ADMIN_UID?'<span class="text-[10px] bg-yellow-600 text-white px-1 rounded">🛡 Admin</span>':''}</div>
+                <div class="text-xs text-white/50">${tsToText(r.createdAt)}</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="px-3 py-1.5 rounded bg-[var(--mh-ok)]/20 hover:bg-[var(--mh-ok)]/30" data-accept="${d.id}">Accept</button>
+              <button class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20" data-decline="${d.id}">Decline</button>
+            </div>
+          `;
+          el.querySelector(`[data-accept="${d.id}"]`).addEventListener("click", ()=> acceptFriend(d.id, r));
+          el.querySelector(`[data-decline="${d.id}"]`).addEventListener("click", ()=> deleteDoc(doc(db,"friendRequests", d.id)));
+          box.appendChild(el);
+        });
+      });
+
+      // friends list (documents with uids array)
+      const qFr = query(collection(db,"friends"), where("uids","array-contains", me.uid));
+      onSnapshot(qFr, async snap => {
+        friendsMap = new Map();
+        const list = byId("friendList"); list.innerHTML = "";
+        const chatBox = byId("chatUsers"); chatBox.innerHTML = "";
+        if(snap.empty) { byId("friendEmpty").classList.remove("hidden"); } else { byId("friendEmpty").classList.add("hidden"); }
+        for(const d of snap.docs){
+          const fr = d.data(); const peerUid = fr.uids.find(u => u !== me.uid);
+          friendsMap.set(peerUid, true);
+          const su = await getDoc(doc(db,"users",peerUid)); const u = su.exists() ? su.data() : { uid: peerUid, nickname: shortId(peerUid), avatar: null };
+          userCache[peerUid] = u;
+
+          const card = document.createElement("div");
+          card.className = "glass rounded-lg p-3 flex items-center justify-between";
+          card.innerHTML = `
+            <div class="flex items-center gap-3 min-w-0">
+              <img class="w-10 h-10 rounded object-cover" src="${u.avatar || 'https://i.pravatar.cc/80?u='+u.uid}">
+              <div class="min-w-0">
+                <div class="font-semibold truncate">${u.nickname || shortId(u.uid)} ${u.uid===ADMIN_UID?'<span class="text-[10px] bg-yellow-600 text-white px-1 rounded">🛡</span>':''}</div>
+                <div class="text-xs text-white/50 truncate">${shortId(u.uid)}</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20" data-pm="${u.uid}">Message</button>
+              <button class="px-3 py-1.5 rounded bg-red-500/20 hover:bg-red-500/30" data-unf="${u.uid}">Unfriend</button>
+            </div>
+          `;
+          card.querySelector(`[data-pm="${u.uid}"]`).addEventListener("click", ()=> { sectionTo("chat"); openChatWith(u); });
+          card.querySelector(`[data-unf="${u.uid}"]`).addEventListener("click", ()=> unfriend(u.uid));
+          list.appendChild(card);
+
+          const li = document.createElement("div");
+          li.className = "glass rounded-lg p-3 flex items-center justify-between";
+          li.innerHTML = `
+            <div class="flex items-center gap-3">
+              <img class="w-9 h-9 rounded object-cover" src="${u.avatar || 'https://i.pravatar.cc/80?u='+u.uid}">
+              <div>
+                <div class="font-semibold text-sm">${u.nickname||shortId(u.uid)} ${u.uid===ADMIN_UID?'<span class="text-[10px] bg-yellow-600 text-white px-1 rounded">🛡</span>':''}</div>
+                <div class="text-[11px] text-white/50">Tap to chat</div>
+              </div>
+            </div>
+            <button class="px-2 py-1 rounded bg-white/10" data-pm="${u.uid}"><i class="fa-regular fa-comment"></i></button>
+          `;
+          li.querySelector(`[data-pm="${u.uid}"]`).addEventListener("click", ()=> openChatWith(u));
+          chatBox.appendChild(li);
+        }
+        await loadSuggestions(); // refresh suggestions
+      });
+    }
+
+    // suggestions
+    async function loadSuggestions(){
+      const s = await getDocs(query(collection(db,"users"), orderBy("createdAt","desc"), limit(30)));
+      const box = byId("friendSuggestions"); box.innerHTML = "";
+      let count = 0;
+      // outgoing pending
+      const out = await getDocs(query(collection(db,"friendRequests"), where("from","==", me.uid), limit(50)));
+      pendingTo = new Set(out.docs.map(d=>d.data().to));
+
+      s.forEach(d => {
+        const u = d.data(); if(!u || u.uid === me.uid) return;
+        if(friendsMap.has(u.uid)) return;
+        if(pendingTo.has(u.uid)) return;
+        if(pendingFrom.has(u.uid)) return;
+
+        const card = document.createElement("div");
+        card.className = "glass rounded-lg p-3";
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <img class="w-10 h-10 rounded object-cover" src="${u.avatar || 'https://i.pravatar.cc/80?u='+u.uid}">
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold truncate">${u.nickname||shortId(u.uid)} ${u.uid===ADMIN_UID?'<span class="text-[10px] bg-yellow-600 text-white px-1 rounded">🛡</span>':''}</div>
+              <div class="text-xs text-white/50 truncate">${u.gamerName || shortId(u.uid)}</div>
+            </div>
+            <button class="px-3 py-1.5 rounded bg-white/10 hover:bg-white/20" data-add="${u.uid}">Add</button>
+          </div>
+        `;
+        card.querySelector(`[data-add="${u.uid}"]`).addEventListener("click", ()=> sendFriendRequest(u.uid));
+        box.appendChild(card);
+        count++;
+      });
+      byId("friendSuggestionsEmpty").classList.toggle("hidden", count>0);
+    }
+
+    // send friend request (doc id is deterministic to avoid duplicates)
+    async function sendFriendRequest(toUid){
+      if(toUid === me.uid) { alert("That's you."); return; }
+      if(friendsMap.has(toUid)) { alert("Already friends."); return; }
+      const id = `${me.uid}_${toUid}`;
+      await setDoc(doc(db,"friendRequests", id), { from: me.uid, to: toUid, fromNick: meDoc.nickname, fromAvatar: meDoc.avatar || null, createdAt: nowTs() });
+      await addDoc(collection(db,"users",toUid,"notifications"), { type:"friend-request", fromUid: me.uid, fromNick: meDoc.nickname, createdAt: nowTs(), seen:false });
+      alert("Friend request sent.");
+      await loadSuggestions();
+    }
+
+    async function acceptFriend(reqId, req){
+      const pair = [req.from, req.to].sort();
+      await setDoc(doc(db,"friends", pair.join("_")), { uids: pair, since: nowTs() });
+      await deleteDoc(doc(db,"friendRequests", reqId));
+    }
+
+    async function unfriend(peerUid){
+      const pair = [me.uid, peerUid].sort().join("_");
+      await deleteDoc(doc(db,"friends", pair));
+      alert("Unfriended.");
+    }
+
+    // ===== PRIVATE CHAT =====
+    function convoIdFor(a,b) { return [a,b].sort().join("_"); }
+
+    async function openChatWith(u){
+      chatPeer = u;
+      byId("chatPeerNick").innerHTML = `${u.nickname || shortId(u.uid)} ${u.uid===ADMIN_UID?'<span class="text-[10px] bg-yellow-600 text-white px-1 rounded">🛡 Admin</span>':''}`;
+      byId("chatPeerAvatar").src = u.avatar || "https://i.pravatar.cc/80?u="+u.uid;
+      byId("chatPeerStatus").textContent = "Online";
+
+      if(chatUnsub) chatUnsub();
+      const cid = convoIdFor(me.uid, u.uid);
+      const qMsgs = query(collection(db,"chats",cid,"messages"), orderBy("createdAt","asc"), limit(500));
+      chatUnsub = onSnapshot(qMsgs, snap => {
+        const box = byId("chatStream"); box.innerHTML = "";
+        snap.forEach(d => {
+          const m = d.data();
+          const mine = m.from === me.uid;
+          const row = document.createElement("div");
+          row.className = `max-w-[85%] ${mine ? 'ml-auto' : ''}`;
+          row.innerHTML = `
+            <div class="${mine ? 'bg-[var(--mh-primary)]' : 'bg-white/10'} rounded-lg px-3 py-2">
+              <div class="text-sm break-words">${m.text || ''}</div>
+              <div class="text-[10px] text-white/70 mt-1">${tsToText(m.createdAt)}</div>
+            </div>
+          `;
+          box.appendChild(row);
+        });
+        box.scrollTop = box.scrollHeight;
+      });
+
+      sectionTo("chat");
+    }
+
+    byId("btnSendChat").addEventListener("click", sendChat);
+    byId("chatInput").addEventListener("keydown", (e) => { if(e.key === "Enter") sendChat(); });
+
+    async function sendChat(){
+      const ip = byId("chatInput"); const text = ip.value.trim();
+      if(!text || !chatPeer) return;
+      const cid = convoIdFor(me.uid, chatPeer.uid);
+      await setDoc(doc(db,"chats",cid), { uids: [me.uid, chatPeer.uid], updatedAt: nowTs() }, { merge: true });
+      await addDoc(collection(db,"chats",cid,"messages"), { from: me.uid, to: chatPeer.uid, text, createdAt: nowTs() });
+      await addDoc(collection(db,"users", chatPeer.uid, "notifications"), { type:"dm", fromUid: me.uid, fromNick: meDoc.nickname, text, createdAt: nowTs(), seen:false });
+      ip.value = "";
+    }
+
+    // ===== NOTIFICATIONS =====
+    function startNotifications(){
+      if(notifUnsub) notifUnsub();
+      const qN = query(collection(db,"users", me.uid, "notifications"), orderBy("createdAt","desc"), limit(50));
+      notifUnsub = onSnapshot(qN, snap => {
+        const list = byId("notifList"); list.innerHTML = "";
+        let unseen = 0;
+        if(snap.empty){ byId("notifEmpty").classList.remove("hidden"); } else { byId("notifEmpty").classList.add("hidden"); }
+        snap.forEach(d => {
+          const n = d.data(); if(!n.seen) unseen++;
+          const row = document.createElement("div");
+          row.className = "glass rounded p-3 flex items-start gap-3";
+          row.innerHTML = `
+            <div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center">
+              <i class="fa-solid ${
+                n.type==='reaction' ? 'fa-face-smile' :
+                n.type==='comment' ? 'fa-comment' :
+                n.type==='dm' ? 'fa-message' : 'fa-user-plus'
+              }"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-sm"><span class="font-semibold">${n.fromNick || 'Someone'}</span> ${
+                n.type==='reaction' ? 'reacted to your post' :
+                n.type==='comment' ? 'commented on your post' :
+                n.type==='dm' ? 'messaged you' : 'sent a friend request'
+              }</div>
+              ${n.text ? `<div class="text-sm text-white/80 mt-1 ellipsis-2">${n.text}</div>` : ''}
+              <div class="text-[11px] text-white/50 mt-1">${tsToText(n.createdAt)}</div>
+            </div>
+            <button class="px-2 py-1 text-xs rounded bg-white/10" data-seen="${d.id}">Mark seen</button>
+          `;
+          row.querySelector(`[data-seen="${d.id}"]`).addEventListener("click", ()=> updateDoc(doc(db,"users",me.uid,"notifications",d.id), { seen: true }));
+          list.appendChild(row);
+        });
+        byId("notifDot").classList.toggle("hidden", unseen === 0);
+      });
+    }
+    byId("btnNotifications").addEventListener("click", ()=> sectionTo("notifications"));
+
+    // ===== LEADERBOARD =====
+    function loadLeaderboard(){
+      const q = query(collection(db,"users"), orderBy("points","desc"), limit(50));
+      onSnapshot(q, snap => {
+        const rows = byId("leaderRows"); rows.innerHTML = "";
+        let i = 0;
+        snap.forEach(d => {
+          const u = d.data(); i++;
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="py-2 px-2">${i}</td>
+            <td class="py-2 px-2"><div class="flex items-center gap-2"><img class="w-7 h-7 rounded object-cover" src="${u.avatar || 'https://i.pravatar.cc/80?u='+u.uid}"><span class="text-sm">${shortId(u.uid)}</span></div></td>
+            <td class="py-2 px-2">${u.nickname||'Player'} ${u.uid===ADMIN_UID?'<span class="text-[10px] bg-yellow-600 text-white px-1 rounded">🛡</span>':''}</td>
+            <td class="py-2 px-2">${u.points||0}</td>
+            <td class="py-2 px-2">Lv ${rankFromPoints(u.points||0)}</td>
+          `;
+          rows.appendChild(tr);
+        });
+      });
+    }
+
+    // ===== PROFILE save/view mode =====
+    byId("btnSaveProfile").addEventListener("click", saveProfile);
+    byId("btnEditProfile").addEventListener("click", ()=> { byId("profileEdit").classList.remove("hidden"); byId("profileView").classList.add("hidden"); });
+
+    async function saveProfile(){
+      const nickname = byId("setNick").value.trim() || meDoc.nickname || "Player";
+      const gamerName = byId("setGamerName").value.trim();
+      const status = byId("setStatus").value;
+      const bio = byId("setBio").value.trim();
+      const sex = byId("setSex").value;
+      const dob = byId("setDob").value || "";
+      const lang = byId("setLang").value.trim();
+      const country = byId("setCountry").value.trim();
+      const games = (byId("setGames").value || "").split(",").map(s=>s.trim()).filter(Boolean);
+
+      let avatarData = meDoc.avatar || null;
+      const file = byId("setAvatar").files?.[0];
+      if(file) avatarData = await fileToBase64(file, 420, .8);
+
+      await setDoc(doc(db,"users",me.uid), {
+        nickname, gamerName, status, bio, avatar: avatarData,
+        sex, dob, language: lang, country, games,
+        updatedAt: nowTs(), profileCompleted: true
+      }, { merge: true });
+
+      meDoc = (await getDoc(doc(db,"users",me.uid))).data();
+      userCache[me.uid] = meDoc;
+
+      ["navAvatar","sideAvatar","cpAvatar","pvAvatar"].forEach(id => { const el = byId(id); if(el) el.src = meDoc.avatar || "https://i.pravatar.cc/80?img=14"; });
+      ["navNick","sideNick"].forEach(id => { const el = byId(id); if(el) id==="navNick" ? (el.innerHTML = meDoc.nickname) : (el.textContent = meDoc.nickname) });
+
+      byId("profileSaved").classList.remove("hidden");
+      await sleep(900);
+      byId("profileSaved").classList.add("hidden");
+      refreshProfileViewMode(true);
+    }
+
+    function refreshProfileViewMode(forceShowView=false){
+      if(meDoc?.profileCompleted || forceShowView){
+        byId("pvAvatar").src = meDoc.avatar || "https://i.pravatar.cc/80?img=14";
+        byId("pvNickname").textContent = meDoc.nickname || "Player";
+        byId("pvAdminBadge").classList.toggle("hidden", me.uid !== ADMIN_UID);
+        byId("pvGamer").textContent = meDoc.gamerName ? `@${meDoc.gamerName}` : "";
+        byId("pvPoints").textContent = `Level ${rankFromPoints(meDoc.points||0)} · ${meDoc.points||0} pts`;
+        byId("pvBio").textContent = meDoc.bio || "—";
+        const d = [];
+        if(meDoc.sex) d.push(`Sex: ${meDoc.sex}`);
+        if(meDoc.dob) d.push(`DOB: ${meDoc.dob}`);
+        if(meDoc.language) d.push(`Language: ${meDoc.language}`);
+        if(meDoc.country) d.push(`Country: ${meDoc.country}`);
+        if(meDoc.games?.length) d.push(`Games: ${meDoc.games.join(", ")}`);
+        byId("pvDetails").innerHTML = d.length ? d.map(x=>`<div>${x}</div>`).join("") : "<div>—</div>";
+        byId("profileEdit").classList.add("hidden");
+        byId("profileView").classList.remove("hidden");
+      } else {
+        byId("profileView").classList.add("hidden");
+        byId("profileEdit").classList.remove("hidden");
+      }
+    }
+
+    async function preloadProfileInputs(){
+      await sleep(200);
+      byId("setNick").value = meDoc?.nickname || "";
+      byId("setGamerName").value = meDoc?.gamerName || "";
+      byId("setBio").value = meDoc?.bio || "";
+      byId("setStatus").value = meDoc?.status || "online";
+      byId("setSex").value = meDoc?.sex || "";
+      byId("setDob").value = meDoc?.dob || "";
+      byId("setLang").value = meDoc?.language || "";
+      byId("setCountry").value = meDoc?.country || "";
+      byId("setGames").value = (meDoc?.games||[]).join(", ");
+    }
+
+    // ===== Public profile modal =====
+    async function openPublicProfile(uid){
+      const snap = await getDoc(doc(db,"users",uid));
+      const u = snap.exists() ? snap.data() : { uid, nickname: shortId(uid), avatar: null };
+      byId("pmAvatar").src = u.avatar || "https://i.pravatar.cc/80?u=" + uid;
+      byId("pmNickname").textContent = u.nickname || shortId(uid);
+      byId("pmAdminBadge").classList.toggle("hidden", uid !== ADMIN_UID);
+      byId("pmGamer").textContent = u.gamerName ? `@${u.gamerName}` : "";
+      byId("pmUid").textContent = `UID: ${uid}`;
+      byId("pmBio").textContent = u.bio || "—";
+      const details = [];
+      if(u.language) details.push(`Language: ${u.language}`);
+      if(u.country) details.push(`Country: ${u.country}`);
+      if(u.games?.length) details.push(`Games: ${u.games.join(", ")}`);
+      byId("pmDetails").innerHTML = details.length ? details.map(x=>`<div>${x}</div>`).join("") : "<div>—</div>";
+      const addBtn = byId("pmAddFriend");
+      addBtn.disabled = friendsMap.has(uid) || uid === me.uid;
+      addBtn.textContent = friendsMap.has(uid) ? "Already friends" : "Add Friend";
+      addBtn.onclick = ()=> sendFriendRequest(uid);
+      byId("pmMessage").onclick = ()=> { openChatWith(u); byId("profileModalClose").click(); };
+      byId("pmReport").onclick = async ()=> { await addDoc(collection(db,"reports"), { userId: uid, from: me.uid, createdAt: nowTs() }); alert("Reported."); };
+
+      byId("profileModal").classList.remove("hidden"); byId("profileModal").classList.add("flex");
+    }
+    byId("profileModalClose").addEventListener("click", ()=> { byId("profileModal").classList.add("hidden"); byId("profileModal").classList.remove("flex"); });
+    byId("profileModal").addEventListener("click", (e)=> { if(e.target.id === "profileModal") byId("profileModalClose").click(); });
+
+    // Small UX keyboard shortcuts
+    document.addEventListener("keydown", (e)=> {
+      if(e.key === "Escape"){
+        if(!byId("imgModal").classList.contains("hidden")) byId("imgModalClose").click();
+        if(!byId("profileModal").classList.contains("hidden")) byId("profileModalClose").click();
+        const sb = byId("sidebar");
+        if(!sb.classList.contains("-translate-x-full")) { sb.classList.add("-translate-x-full"); byId("overlay").classList.add("hidden"); }
+      }
+    });
+
+    // End of module
+  </script>
 </body>
 </html>

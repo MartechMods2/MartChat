@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mod Hive - Dashboard</title>
+    <title>Mod Hive - Live Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase App (the core Firebase SDK) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <!-- Firebase Auth -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <!-- Firebase Firestore -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
@@ -30,7 +28,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
         }
         
         .glass {
@@ -63,20 +60,13 @@
                 transform: translateX(0);
             }
             
-            .nav-text {
-                display: block !important;
-            }
-            
             .main-content {
                 margin-left: 0 !important;
                 width: 100%;
+                padding: 1rem;
             }
             
             .search-box {
-                display: none;
-            }
-            
-            .profile-details {
                 display: none;
             }
         }
@@ -130,6 +120,103 @@
             align-items: center;
             justify-content: center;
         }
+
+        /* Image preview */
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Emoji picker */
+        .emoji-picker {
+            display: none;
+            position: absolute;
+            bottom: 50px;
+            right: 10px;
+            background: var(--panel);
+            border-radius: 8px;
+            padding: 10px;
+            width: 250px;
+            z-index: 100;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+        }
+        
+        .emoji-picker.show {
+            display: grid;
+        }
+        
+        .emoji {
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            text-align: center;
+            border-radius: 4px;
+        }
+        
+        .emoji:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Reaction buttons */
+        .reaction-btn {
+            position: relative;
+        }
+        
+        .reaction-options {
+            display: none;
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            background: var(--panel);
+            border-radius: 20px;
+            padding: 5px;
+            z-index: 10;
+        }
+        
+        .reaction-btn:hover .reaction-options {
+            display: flex;
+        }
+        
+        /* Online status indicator */
+        .online-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            border: 2px solid var(--dark);
+        }
+        
+        /* Chat interface */
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .message.sent {
+            background: var(--primary);
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.received {
+            background: var(--panel);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
     </style>
 </head>
 <body class="min-h-screen flex">
@@ -141,7 +228,7 @@
         </div>
     </div>
 
-    <!-- App Container (initially hidden) -->
+    <!-- App Container -->
     <div id="app-container" class="min-h-screen w-full hidden">
         <!-- Sidebar Toggle for Mobile -->
         <div id="sidebar-toggle-mobile" class="fixed top-4 left-4 z-30 bg-[var(--primary)] p-2 rounded-lg md:hidden">
@@ -199,8 +286,11 @@
             
             <div class="mt-8 glass rounded-xl p-4">
                 <div class="flex items-center">
-                    <div class="w-12 h-12 rounded-full bg-[var(--primary)] flex items-center justify-center text-white font-bold" id="sidebar-avatar">
-                        U
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-full bg-[var(--primary)] flex items-center justify-center text-white font-bold" id="sidebar-avatar">
+                            U
+                        </div>
+                        <div class="online-status"></div>
                     </div>
                     <div class="ml-3">
                         <div class="font-semibold" id="sidebar-username">User</div>
@@ -226,7 +316,7 @@
             <div class="glass rounded-xl p-4 mb-6 flex items-center justify-between">
                 <div class="search-box flex items-center bg-[var(--darker)] rounded-lg px-3 py-2 flex-1 max-w-md">
                     <i class="fas fa-search text-[var(--muted)] mr-2"></i>
-                    <input type="text" placeholder="Search posts, friends, or topics..." class="bg-transparent outline-none w-full">
+                    <input type="text" id="global-search" placeholder="Search posts, friends, or topics..." class="bg-transparent outline-none w-full">
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -239,8 +329,11 @@
                         <span class="notification-badge">5</span>
                     </button>
                     <div class="flex items-center">
-                        <div class="w-10 h-10 rounded-full bg-[var(--primary)] flex items-center justify-center text-white font-bold mr-2" id="topbar-avatar">
-                            U
+                        <div class="relative">
+                            <div class="w-10 h-10 rounded-full bg-[var(--primary)] flex items-center justify-center text-white font-bold mr-2" id="topbar-avatar">
+                                U
+                            </div>
+                            <div class="online-status"></div>
                         </div>
                         <div class="profile-details">
                             <div class="font-semibold text-sm" id="topbar-username">User</div>
@@ -263,9 +356,10 @@
                             <input type="text" placeholder="What's on your mind?" class="bg-[var(--darker)] rounded-full px-4 py-2 flex-1 outline-none" id="post-content">
                         </div>
                         <div class="flex justify-between border-t border-[var(--darker)] pt-3">
-                            <button class="flex items-center text-[var(--muted)] hover:text-white">
+                            <label class="flex items-center text-[var(--muted)] hover:text-white cursor-pointer">
                                 <i class="fas fa-image mr-2"></i> Photo
-                            </button>
+                                <input type="file" id="post-image" accept="image/*" class="hidden">
+                            </label>
                             <button class="flex items-center text-[var(--muted)] hover:text-white">
                                 <i class="fas fa-video mr-2"></i> Video
                             </button>
@@ -276,6 +370,7 @@
                                 Post
                             </button>
                         </div>
+                        <img id="image-preview" class="image-preview" src="" alt="Preview">
                     </div>
 
                     <!-- Feed -->
@@ -331,6 +426,93 @@
                                     <i class="fas fa-user-plus text-2xl mb-2"></i>
                                     <p>No suggestions available</p>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Section -->
+                <div id="chat-section" class="content-section hidden">
+                    <div class="glass rounded-xl p-4">
+                        <h2 class="text-lg font-semibold mb-4">Messages</h2>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Friends List -->
+                            <div class="bg-[var(--darker)] rounded-xl p-4">
+                                <h3 class="font-semibold mb-3">Friends</h3>
+                                <div class="mb-3">
+                                    <input type="text" placeholder="Search friends..." class="bg-[var(--panel)] rounded-lg px-3 py-2 outline-none w-full">
+                                </div>
+                                <div id="chat-friends-list" class="space-y-2 max-h-96 overflow-y-auto">
+                                    <!-- Friends list for chat will be loaded here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Chat Area -->
+                            <div class="lg:col-span-2 bg-[var(--darker)] rounded-xl p-4 flex flex-col">
+                                <div id="chat-header" class="font-semibold mb-3 p-2 border-b border-[var(--panel)]">
+                                    Select a friend to chat with
+                                </div>
+                                <div id="chat-messages" class="chat-container mb-3 space-y-3 p-2">
+                                    <!-- Messages will be loaded here -->
+                                </div>
+                                <div class="flex mt-3">
+                                    <div class="relative flex-1">
+                                        <input type="text" id="chat-input" placeholder="Type a message..." class="bg-[var(--panel)] rounded-l-lg px-4 py-2 outline-none w-full" disabled>
+                                        <button class="absolute right-2 top-2 text-[var(--muted)] hover:text-white emoji-trigger">
+                                            <i class="fas fa-smile"></i>
+                                        </button>
+                                        <div class="emoji-picker">
+                                            <span class="emoji">😀</span>
+                                            <span class="emoji">😃</span>
+                                            <span class="emoji">😄</span>
+                                            <span class="emoji">😁</span>
+                                            <span class="emoji">😆</span>
+                                            <span class="emoji">😅</span>
+                                            <span class="emoji">😂</span>
+                                            <span class="emoji">🤣</span>
+                                            <span class="emoji">😊</span>
+                                            <span class="emoji">😇</span>
+                                            <span class="emoji">🙂</span>
+                                            <span class="emoji">🙃</span>
+                                            <span class="emoji">😉</span>
+                                            <span class="emoji">😌</span>
+                                            <span class="emoji">😍</span>
+                                            <span class="emoji">🥰</span>
+                                            <span class="emoji">😘</span>
+                                            <span class="emoji">😗</span>
+                                            <span class="emoji">😙</span>
+                                            <span class="emoji">😚</span>
+                                            <span class="emoji">😋</span>
+                                            <span class="emoji">😛</span>
+                                            <span class="emoji">😝</span>
+                                            <span class="emoji">😜</span>
+                                            <span class="emoji">🤪</span>
+                                            <span class="emoji">🤨</span>
+                                            <span class="emoji">🧐</span>
+                                            <span class="emoji">🤓</span>
+                                            <span class="emoji">😎</span>
+                                            <span class="emoji">🤩</span>
+                                            <span class="emoji">🥳</span>
+                                        </div>
+                                    </div>
+                                    <button id="send-message" class="bg-[var(--primary)] text-white px-4 py-2 rounded-r-lg" disabled>
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications Section -->
+                <div id="notifications-section" class="content-section hidden">
+                    <div class="glass rounded-xl p-4">
+                        <h2 class="text-lg font-semibold mb-4">Notifications</h2>
+                        <div id="notifications-container" class="space-y-3">
+                            <div class="text-center py-8 text-[var(--muted)]">
+                                <i class="fas fa-bell-slash text-2xl mb-2"></i>
+                                <p>No notifications yet</p>
                             </div>
                         </div>
                     </div>
@@ -413,6 +595,7 @@
         </div>
     </div>
 
+    <!-- Firebase configuration -->
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -439,6 +622,7 @@
                 
                 // Load user data
                 loadUserData(user);
+                initializeApp();
             } else {
                 // User is signed out, redirect to auth.html
                 window.location.href = "auth.html";
@@ -529,7 +713,8 @@
                 bio: document.getElementById('profile-bio').value,
                 level: parseInt(document.getElementById('profile-level').value),
                 points: parseInt(document.getElementById('profile-points').value),
-                games: document.getElementById('profile-games').value
+                games: document.getElementById('profile-games').value,
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
             };
             
             // Update preview
@@ -546,7 +731,7 @@
             
             document.getElementById('post-user-avatar').textContent = profileData.avatar;
             
-            // Save to Firestore (in a real app)
+            // Save to Firestore
             const user = auth.currentUser;
             if (user) {
                 db.collection('users').doc(user.uid).set(profileData, { merge: true })
@@ -607,7 +792,8 @@
                             level: 1,
                             points: 0,
                             games: '',
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                         };
                         
                         db.collection('users').doc(user.uid).set(defaultUserData)
@@ -625,33 +811,73 @@
                 });
         }
 
+        // Image preview functionality
+        document.getElementById('post-image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('image-preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
         // Post creation
         document.getElementById('create-post').addEventListener('click', createPost);
         
         function createPost() {
             const content = document.getElementById('post-content').value.trim();
+            const imageFile = document.getElementById('post-image').files[0];
             
-            if (!content) {
-                alert('Please enter some content for your post');
+            if (!content && !imageFile) {
+                alert('Please enter some content or select an image for your post');
                 return;
             }
             
             const user = auth.currentUser;
             if (!user) return;
             
-            const postData = {
-                uid: user.uid,
-                content: content,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                likes: 0,
-                comments: 0
-            };
-            
-            // Add post to Firestore
+            // If there's an image, convert it to Base64
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const postData = {
+                        uid: user.uid,
+                        content: content,
+                        image: e.target.result, // Base64 encoded image
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        likes: 0,
+                        comments: 0,
+                        shares: 0
+                    };
+                    
+                    addPostToFirestore(postData);
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                const postData = {
+                    uid: user.uid,
+                    content: content,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    likes: 0,
+                    comments: 0,
+                    shares: 0
+                };
+                
+                addPostToFirestore(postData);
+            }
+        }
+        
+        function addPostToFirestore(postData) {
             db.collection('posts').add(postData)
                 .then((docRef) => {
                     console.log('Post created with ID: ', docRef.id);
                     document.getElementById('post-content').value = '';
+                    document.getElementById('post-image').value = '';
+                    document.getElementById('image-preview').style.display = 'none';
                     
                     // Add to recent posts
                     addPostToFeed({
@@ -693,7 +919,13 @@
                     </button>
                 </div>
                 
-                <p class="mb-4">${post.content}</p>
+                ${post.content ? `<p class="mb-4">${post.content}</p>` : ''}
+                
+                ${post.image ? `
+                <div class="mb-4 rounded-lg overflow-hidden">
+                    <img src="${post.image}" alt="Post image" class="w-full h-auto max-h-96 object-cover">
+                </div>
+                ` : ''}
                 
                 <div class="flex justify-between text-[var(--muted)] text-sm mb-3">
                     <div>
@@ -704,19 +936,37 @@
                 </div>
                 
                 <div class="flex justify-between border-t border-b border-[var(--darker)] py-2">
-                    <button class="flex items-center text-[var(--muted)] hover:text-white reaction-btn">
-                        <i class="fas fa-heart mr-2"></i> Like
-                    </button>
-                    <button class="flex items-center text-[var(--muted)] hover:text-white reaction-btn">
+                    <div class="reaction-btn relative">
+                        <button class="flex items-center text-[var(--muted)] hover:text-white">
+                            <i class="fas fa-heart mr-2"></i> Like
+                        </button>
+                        <div class="reaction-options">
+                            <span class="emoji" data-reaction="❤️">❤️</span>
+                            <span class="emoji" data-reaction="😂">😂</span>
+                            <span class="emoji" data-reaction="😮">😮</span>
+                            <span class="emoji" data-reaction="😢">😢</span>
+                            <span class="emoji" data-reaction="😡">😡</span>
+                        </div>
+                    </div>
+                    <button class="flex items-center text-[var(--muted)] hover:text-white">
                         <i class="fas fa-comment mr-2"></i> Comment
                     </button>
-                    <button class="flex items-center text-[var(--muted)] hover:text-white reaction-btn">
+                    <button class="flex items-center text-[var(--muted)] hover:text-white">
                         <i class="fas fa-share mr-2"></i> Share
                     </button>
                 </div>
             `;
             
             postsContainer.prepend(postEl);
+            
+            // Add event listeners for reactions
+            const reactionOptions = postEl.querySelectorAll('.emoji');
+            reactionOptions.forEach(emoji => {
+                emoji.addEventListener('click', function() {
+                    const reaction = this.getAttribute('data-reaction');
+                    addReaction(post.id, reaction);
+                });
+            });
         }
 
         // Load posts from Firestore
@@ -762,6 +1012,16 @@
                 });
         }
 
+        // Add reaction to post
+        function addReaction(postId, reaction) {
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            // In a real app, you would add this to a subcollection
+            console.log(`User ${user.uid} reacted with ${reaction} to post ${postId}`);
+            alert(`You reacted with ${reaction}`);
+        }
+
         // Initialize the app
         function initializeApp() {
             // Load posts
@@ -773,6 +1033,36 @@
                     // This will be called whenever there are new posts
                     loadPosts();
                 });
+                
+            // Set up real-time search
+            const searchInput = document.getElementById('global-search');
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const searchTerm = this.value.trim();
+                    if (searchTerm) {
+                        performSearch(searchTerm);
+                    }
+                }, 500);
+            });
+        }
+
+        // Perform search
+        function performSearch(searchTerm) {
+            console.log(`Searching for: ${searchTerm}`);
+            // In a real app, you would query Firestore for matching posts or users
+            // For now, we'll just filter the current posts
+            const posts = document.querySelectorAll('#posts-container > div');
+            posts.forEach(post => {
+                const postText = post.textContent.toLowerCase();
+                if (postText.includes(searchTerm.toLowerCase())) {
+                    post.style.display = 'block';
+                } else {
+                    post.style.display = 'none';
+                }
+            });
         }
 
         // Wait for auth state to be determined before initializing

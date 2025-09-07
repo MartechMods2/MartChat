@@ -40,6 +40,9 @@
     .app-wrap{min-height:100vh; display:flex; flex-direction:column;}
     /* skeleton loader */
     .skeleton{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.04), rgba(255,255,255,0.02)); border-radius:6px; height:12px}
+    /* small responsive fixes */
+    .hidden-md { display: none; }
+    @media(min-width:768px) { .hidden-md { display: block; } }
   </style>
 </head>
 <body class="antialiased">
@@ -89,7 +92,7 @@
         <div class="flex items-center gap-3">
           <div class="hidden md:flex items-center bg-[var(--mh-panel)] rounded px-2 py-1">
             <i class="fa fa-search text-white/50 mr-2"></i>
-            <input id="searchBox" placeholder="Search..." class="bg-transparent outline-none text-sm text-white/75 w-64"/>
+            <input id="searchBox" placeholder="Search posts, users…" class="bg-transparent outline-none text-sm text-white/75 w-64"/>
           </div>
           <button id="notifBtn" class="p-2 rounded bg-white/5 relative btn"><i class="fa-regular fa-bell"></i><span id="notifDot" class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[var(--mh-accent)] hidden"></span></button>
           <div class="relative">
@@ -303,7 +306,8 @@
     getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, serverTimestamp,
     onSnapshot, query, where, orderBy, limit, getDocs, deleteDoc, runTransaction
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+ // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAgx0jy6we6cvnIgKbS1fBoeRfSD2MDszo",
   authDomain: "mod-hive.firebaseapp.com",
@@ -328,7 +332,7 @@ const firebaseConfig = {
   let chatUnsub = null;
   let currentChatCid = null;
   let pendingImgBase64 = null;
-  let authChecked = false;
+  let authResolved = false;
 
   // DOM helpers
   const $ = s => document.querySelector(s);
@@ -393,14 +397,42 @@ const firebaseConfig = {
 
   // AUTH GATE
   onAuthStateChanged(auth, async (user)=>{
-    // prevent redirect loops
-    if(authChecked && !user){ location.href = 'auth.html'; return; }
-    authChecked = true;
-    if(!user){ location.href = 'auth.html'; return; }
-    me = user;
-    await ensureUserDoc(user);
-    await hydrateUI();
+    // avoid redirect loop: only redirect user->auth if not already on auth page
+    try {
+      if(!user){
+        authResolved = true;
+        const path = window.location.pathname.split("/").pop();
+        if(path !== "auth.html"){
+          // send to auth page
+          location.href = "auth.html";
+        } else {
+          // we are already on auth page — allow
+          return;
+        }
+        return;
+      }
+      // user logged in
+      me = user;
+      await ensureUserDoc(user);
+      await hydrateUI();
+      authResolved = true;
+    } catch(err){
+      console.error('auth gate error', err);
+      authResolved = true;
+      byId('gate').style.display = 'none';
+      byId('root').classList.remove('hidden');
+      toast('Auth error, try reloading','error');
+    }
   });
+
+  // If auth check doesn't resolve in 8s, unstick UI but don't redirect
+  setTimeout(()=> {
+    if(!authResolved){
+      // hide gate and let page load with fallback UI; user will be redirected by onAuthStateChanged later
+      try{ byId('gate').style.display = 'none'; byId('root').classList.remove('hidden'); }catch{}
+      toast('Auth check taking long — if you are not logged in you will be sent to login','error');
+    }
+  }, 8000);
 
   async function ensureUserDoc(user){
     const ref = doc(db,'users',user.uid);
@@ -411,7 +443,7 @@ const firebaseConfig = {
         uid: user.uid,
         nickname: nick,
         gamerName: nick,
-        avatar: initialsAvatar(nick),
+        avatar: user.photoURL || initialsAvatar(nick),
         bio: '', sex:'', dob:'', language:'', country:'', games:'',
         points: 0, status:'online', createdAt: serverTimestamp(), updatedAt: serverTimestamp()
       });
@@ -431,8 +463,9 @@ const firebaseConfig = {
     byId('root').classList.remove('hidden');
 
     // set header/profile visuals
-    const fallback = initialsAvatar(meDoc.nickname || 'Player');
-    ['navAvatar','cpAvatar','sideAvatar','pvAvatar'].forEach(id => { const el = byId(id); if(el) el.src = meDoc.avatar || fallback; });
+    const fallback = meDoc.avatar || initialsAvatar(meDoc.nickname || 'Player');
+    const avatarIds = ['navAvatar','cpAvatar','sideAvatar','pvAvatar'];
+    avatarIds.forEach(id => { if(byId(id)) byId(id).src = fallback; });
     byId('navNick').textContent = meDoc.nickname || 'Player';
     byId('sideNick').textContent = meDoc.nickname || 'Player';
     byId('sidePoints').textContent = meDoc.points || 0;
@@ -455,14 +488,23 @@ const firebaseConfig = {
   }
 
   function rankFromPoints(p=0){
-    if(p>2000) return 10; if(p>1000) return 9; if(p>600) return 8; if(p>400) return 7;
-    if(p>250) return 6; if(p>150) return 5; if(p>90) return 4; if(p>50) return 3; if(p>20) return 2; return 1;
+    if(p>2000) return 10;
+    if(p>1000) return 9;
+    if(p>600) return 8;
+    if(p>400) return 7;
+    if(p>250) return 6;
+    if(p>150) return 5;
+    if(p>90) return 4;
+    if(p>50) return 3;
+    if(p>20) return 2;
+    return 1;
   }
 
   // UI event binding
   function bindUIEvents(){
     byId('burger').addEventListener('click', toggleSidebar);
-    $$('[data-section]').forEach(b => b.addEventListener('click', ()=> showSection(b.dataset.section)));
+    // nav buttons
+    $$('.navbtn').forEach(b => b.addEventListener('click', ()=> showSection(b.dataset.section)));
     $$('.tab').forEach(t=> t.addEventListener('click', ()=> { showSection(t.dataset.section); $$('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); }));
     byId('profileBtn').addEventListener('click', ()=> byId('profileMenu').classList.toggle('show'));
     document.addEventListener('click', (e)=>{ if(!byId('profileBtn').contains(e.target) && !byId('profileMenu').contains(e.target)) byId('profileMenu').classList.remove('show'); });
@@ -470,17 +512,19 @@ const firebaseConfig = {
 
     // header search debounce
     let debounce;
-    byId('searchBox')?.addEventListener('input', e=>{
+    const sbox = byId('searchBox');
+    if(sbox) sbox.addEventListener('input', e=>{
       clearTimeout(debounce);
-      debounce = setTimeout(()=> filterFeed(e.target.value.trim().toLowerCase()), 250);
+      debounce = setTimeout(()=> filterFeed(e.target.value.trim().toLowerCase()), 300);
     });
 
     // post image
-    byId('postImage')?.addEventListener('change', async (e)=>{
+    const postImgEl = byId('postImage');
+    if(postImgEl) postImgEl.addEventListener('change', async (e)=>{
       const f = e.target.files?.[0];
       if(!f) { pendingImgBase64 = null; return; }
       if(f.size > 5*1024*1024){ toast('Image too large (5MB max)','error'); e.target.value=''; pendingImgBase64=null; return; }
-      try{ pendingImgBase64 = await fileToBase64(f, 1200, .82); toast('Image ready'); } catch(e){ toast('Image processing failed','error'); pendingImgBase64=null; }
+      try{ pendingImgBase64 = await fileToBase64(f, 1200, .82); toast('Image attached'); } catch(e){ toast('Image processing failed','error'); pendingImgBase64=null; }
     });
 
     // create post
@@ -515,54 +559,47 @@ const firebaseConfig = {
       toast('Marked seen');
     });
 
-    // delegation: friend chat click (works for dynamically created items)
-    byId('friendList').addEventListener('click', (e)=>{
+    // delegation: friend chat click
+    const friendListEl = byId('friendList');
+    if(friendListEl) friendListEl.addEventListener('click', (e)=>{
       const btn = e.target.closest('[data-chat]');
       if(!btn) return;
       const uid = btn.dataset.chat;
       if(uid) openChatWithUid(uid);
     });
 
-    // chatUsers delegation as well
-    byId('chatUsers').addEventListener('click', (e)=>{
+    // chatUsers delegation
+    const chatUsersEl = byId('chatUsers');
+    if(chatUsersEl) chatUsersEl.addEventListener('click', (e)=>{
       const btn = e.target.closest('[data-open]');
       if(!btn) return;
       const uid = btn.dataset.open;
       if(uid) openChatWithUid(uid);
     });
 
-    // global click: post like/comment/menu delegation
+    // global delegation for posts
     document.addEventListener('click', (e)=>{
-      // like toggle
       const likeBtn = e.target.closest('[data-like]');
       if(likeBtn){ const postId = likeBtn.dataset.like; toggleLike(postId); return; }
-      // comment open
       const cbtn = e.target.closest('[data-cmt-toggle]');
       if(cbtn){ const id = cbtn.dataset.cmtToggle; toggleComments(id); return; }
-      // comment send
       const sendC = e.target.closest('[data-cmt-send]');
       if(sendC){ const id = sendC.dataset.cmtSend; sendComment(id); return; }
-      // post menu open
       const mbtn = e.target.closest('[data-more]');
       if(mbtn){ const id = mbtn.dataset.more; const menu = byId(`menu-${id}`); if(menu) menu.classList.toggle('show'); return; }
-      // menu actions (add, report, delete)
       const addBtn = e.target.closest('[data-add-user]'); if(addBtn){ sendFriendRequest(addBtn.dataset.addUser); return; }
       const reportBtn = e.target.closest('[data-report]'); if(reportBtn){ reportPost(reportBtn.dataset.report); return; }
       const delBtn = e.target.closest('[data-delete-post]'); if(delBtn){ deletePost(delBtn.dataset.deletePost); return; }
-      // image zoom
       const img = e.target.closest('.img-thumb'); if(img){ byId('imgLarge').src = img.src; byId('imgViewer').classList.remove('hidden'); return; }
     });
   }
 
   // section switching and cleanup
   function showSection(name){
-    // unsubscribe heavy listeners when switching
     if(name !== 'chat' && chatUnsub){ chatUnsub(); chatUnsub = null; currentChatCid = null; byId('chatStream').innerHTML = ''; }
-    if(name !== 'feed' && feedUnsub) { /* keep feed subscribed for now for live feed */ }
     ['feed','chat','friends','leaderboard','notifications','profile'].forEach(s=>{
       const el = byId(`section-${s}`); if(el) el.classList.toggle('hidden', s!==name);
     });
-    // update left nav active states
     $$('.navbtn').forEach(b=> b.classList.toggle('nav-active', b.dataset.section === name));
     $$('.tab').forEach(t=> t.classList.toggle('active', t.dataset.section === name));
     window.scrollTo({top:0, behavior:'smooth'});
@@ -575,10 +612,8 @@ const firebaseConfig = {
 
   /* ========== FEED ========== */
   async function startFeed(){
-    // skeleton
     byId('feedSkeleton').classList.remove('hidden');
-
-    const q = query(collection(db,'posts'), orderBy('createdAt','desc'), limit(20));
+    const q = query(collection(db,'posts'), orderBy('createdAt','desc'), limit(30));
     if(feedUnsub) feedUnsub();
     feedUnsub = onSnapshot(q, snap=>{
       byId('feedSkeleton').classList.add('hidden');
@@ -586,10 +621,9 @@ const firebaseConfig = {
       snap.forEach(d => list.appendChild(renderPost(d.id, d.data())));
     }, err => {
       console.error('feed error', err); toast('Failed to load feed','error');
+      byId('feedSkeleton').classList.add('hidden');
     });
   }
-
-  async function loadMoreFeed(){ /* placeholder for pagination */ }
 
   async function createPost(){
     const text = byId('postText').value.trim();
@@ -601,8 +635,8 @@ const firebaseConfig = {
         text: text || null, link: link || null, image: pendingImgBase64 || null,
         likes: 0, comments: 0, createdAt: serverTimestamp()
       });
-      // reward
-      await updateDoc(doc(db,'users',me.uid), { points: (meDoc.points||0) + 5 }).catch(()=>{});
+      // reward (best-effort)
+      try{ await updateDoc(doc(db,'users',me.uid), { points: (meDoc.points||0) + 5 }); }catch(e){}
       byId('postText').value=''; byId('postLink').value=''; byId('postImage').value=''; pendingImgBase64=null;
       toast('Posted', 'ok');
     }catch(e){ console.error(e); toast('Post failed','error'); }
@@ -650,8 +684,6 @@ const firebaseConfig = {
         </div>
       </div>
     `;
-
-    // Setup: hide menu by default; menu toggles handled by delegation in bindUI
     return el;
   }
 
@@ -663,7 +695,6 @@ const firebaseConfig = {
     const isHidden = box.classList.contains('comments-hidden');
     if(isHidden){
       box.classList.remove('comments-hidden');
-      // subscribe to comments
       const q = query(collection(db,'posts',postId,'comments'), orderBy('createdAt','asc'), limit(200));
       const unsubC = onSnapshot(q, snap=>{
         const list = byId(`cList-${postId}`); list.innerHTML = '';
@@ -688,7 +719,6 @@ const firebaseConfig = {
       uid: me.uid, nickname: meDoc.nickname, avatar: meDoc.avatar || initialsAvatar(meDoc.nickname), text, createdAt: serverTimestamp()
     });
     await updateDoc(doc(db,'posts',postId), { comments: (Number(byId(`cmts-${postId}`)?.textContent||0) + 1) }).catch(()=>{});
-    // notify owner if not self (async best-effort)
     input.value = '';
     toast('Comment sent','ok');
   }
@@ -701,26 +731,30 @@ const firebaseConfig = {
       await runTransaction(db, async (t)=>{
         const likeSnap = await t.get(likeRef);
         const postSnap = await t.get(postRef);
-        if(!postSnap.exists()) throw 'Post not found';
+        if(!postSnap.exists()) throw new Error('Post not found');
         const postData = postSnap.data();
+        const ownerUid = postData.uid;
         if(likeSnap.exists()){
           // unlike
           t.delete(likeRef);
           t.update(postRef, { likes: (postData.likes||1) - 1 });
-          // decrement owner point if not self
-          if(postData.uid && postData.uid !== me.uid) {
-            const ownerRef = doc(db,'users',postData.uid);
-            t.update(ownerRef, { points: (postData.ownerPointsBackup||0) - 1 }); // fallback backup; best-effort
+          if(ownerUid && ownerUid !== me.uid){
+            const ownerRef = doc(db,'users',ownerUid);
+            const ownerSnap = await t.get(ownerRef);
+            const curPts = ownerSnap.exists() ? (ownerSnap.data().points || 0) : 0;
+            t.update(ownerRef, { points: curPts - 1 });
           }
         } else {
           // like
           t.set(likeRef, { uid: me.uid, createdAt: serverTimestamp() });
           t.update(postRef, { likes: (postData.likes||0) + 1 });
-          if(postData.uid && postData.uid !== me.uid) {
-            const ownerRef = doc(db,'users',postData.uid);
-            t.update(ownerRef, { points: (postData.ownerPointsBackup||0) + 1 });
-            // also add notification (best-effort async after transaction)
-            addDoc(collection(db,'users',postData.uid,'notifications'), { type:'like', fromUid: me.uid, fromNick: meDoc.nickname, postId, createdAt: serverTimestamp(), seen:false }).catch(()=>{});
+          if(ownerUid && ownerUid !== me.uid){
+            const ownerRef = doc(db,'users',ownerUid);
+            const ownerSnap = await t.get(ownerRef);
+            const curPts = ownerSnap.exists() ? (ownerSnap.data().points || 0) : 0;
+            t.update(ownerRef, { points: curPts + 1 });
+            // notification best-effort (outside transaction)
+            addDoc(collection(db,'users',ownerUid,'notifications'), { type:'like', fromUid: me.uid, fromNick: meDoc.nickname, postId, createdAt: serverTimestamp(), seen:false }).catch(()=>{});
           }
         }
       });
@@ -735,7 +769,8 @@ const firebaseConfig = {
     toast('Reported', 'ok');
   }
   async function deletePost(postId){
-    if(!(me.uid === ADMIN_UID || (await getDoc(doc(db,'posts',postId))).data()?.uid === me.uid)) { toast('No permission','error'); return; }
+    const pDoc = await getDoc(doc(db,'posts',postId));
+    if(!(me.uid === ADMIN_UID || (pDoc.exists() && pDoc.data().uid === me.uid))){ toast('No permission','error'); return; }
     if(await confirmDialog('Delete post','Permanently delete?')){ await deleteDoc(doc(db,'posts',postId)); toast('Deleted','ok'); }
   }
 
@@ -755,7 +790,7 @@ const firebaseConfig = {
 
   async function sendFriendRequest(toUid){
     if(toUid === me.uid) return toast("Can't add yourself",'error');
-    // prevent duplicates
+    // prevent duplicates (client-side check)
     const q1 = query(collection(db,'friendRequests'), where('from','==',me.uid), where('to','==',toUid), limit(1));
     const q2 = query(collection(db,'friendRequests'), where('from','==',toUid), where('to','==',me.uid), limit(1));
     const r1 = await getDocs(q1), r2 = await getDocs(q2);
@@ -780,8 +815,8 @@ const firebaseConfig = {
         const row = document.createElement('div'); row.className='flex items-center justify-between gap-2 p-2 bg-white/3 rounded';
         row.innerHTML = `<div class="flex items-center gap-2"><img src="${r.fromAvatar||initialsAvatar(r.fromNick||'U')}" class="w-10 h-10 rounded"><div><div class="tiny font-semibold">${r.fromNick||shortId(r.from)}</div><div class="tiny muted">${tsToText(r.createdAt)}</div></div></div><div class="flex gap-2"><button class="px-2 py-1 bg-[var(--ok)]/20 rounded tiny" data-acc="${d.id}">Accept</button><button class="px-2 py-1 bg-white/5 rounded tiny" data-dec="${d.id}">Decline</button></div>`;
         container.appendChild(row);
-        row.querySelector(`[data-acc="${d.id}"]`).addEventListener('click', ()=> acceptFriend(d.id, r));
-        row.querySelector(`[data-dec="${d.id}"]`).addEventListener('click', ()=> deleteDoc(doc(db,'friendRequests',d.id)).then(()=>toast('Declined')));
+        row.querySelector(`[data-acc="${d.id}"]`).addEventListener("click", ()=> acceptFriend(d.id, r));
+        row.querySelector(`[data-dec="${d.id}"]`).addEventListener("click", ()=> deleteDoc(doc(db,'friendRequests',d.id)).then(()=>toast('Declined')));
       });
     });
 
@@ -798,8 +833,7 @@ const firebaseConfig = {
         const card = document.createElement('div'); card.className='flex items-center justify-between p-2 bg-white/3 rounded';
         card.innerHTML = `<div class="flex items-center gap-2"><img src="${u.avatar||initialsAvatar(u.nickname)}" class="w-10 h-10 rounded"><div><div class="tiny font-semibold">${u.nickname||'Player'}</div><div class="tiny muted">${shortId(u.uid)}</div></div></div><div class="flex gap-2"><button class="px-2 py-1 bg-white/5 rounded tiny" data-chat="${u.uid}">Msg</button><button class="px-2 py-1 bg-red-500/20 rounded tiny" data-unf="${u.uid}">Unfriend</button></div>`;
         list.appendChild(card);
-        // unfriend
-        card.querySelector(`[data-unf="${u.uid}"]`).addEventListener('click', async ()=> {
+        card.querySelector(`[data-unf="${u.uid}"]`).addEventListener("click", async ()=> {
           if(await confirmDialog('Unfriend','Remove friend?')){ await deleteDoc(doc(db,'friends',[me.uid,u.uid].sort().join('_'))); toast('Removed','ok'); }
         });
 
@@ -815,14 +849,13 @@ const firebaseConfig = {
   async function acceptFriend(reqId, req){
     const pair = [req.from, req.to].sort().join('_');
     await setDoc(doc(db,'friends',pair), { uids: [req.from, req.to], since: serverTimestamp() });
-    await deleteDoc(doc(db,'friendRequests', reqId));
+    await deleteDoc(doc(db,'friendRequests',reqId));
     toast('Friend added','ok');
   }
 
   /* ========= PRIVATE CHAT ========= */
   function convoIdFor(a,b){ return [a,b].sort().join('_'); }
   async function openChatWithUid(peerUid){
-    // fetch peer profile
     const snap = await getDoc(doc(db,'users',peerUid));
     const u = snap.exists() ? snap.data() : { uid: peerUid, nickname: shortId(peerUid), avatar: initialsAvatar('User') };
     byId('chatPeerNick').textContent = u.nickname || 'Player';
@@ -830,47 +863,26 @@ const firebaseConfig = {
     byId('chatPeerStatus').textContent = 'Online';
     showSection('chat');
 
-    // highlight friend items (visual)
     $$('#friendList [data-chat]').forEach(b=> b.classList.toggle('nav-active', b.dataset.chat === peerUid));
 
-    // unsubscribe old
     if(chatUnsub){ chatUnsub(); chatUnsub = null; currentChatCid = null; byId('chatStream').innerHTML = ''; }
 
     const cid = convoIdFor(me.uid, peerUid);
     currentChatCid = cid;
-    // ensure chat doc exists
     await setDoc(doc(db,'chats',cid), { members: [me.uid, peerUid], updatedAt: serverTimestamp() }, { merge: true });
-    // listen to messages append-only
     const q = query(collection(db,'chats',cid,'messages'), orderBy('createdAt','asc'), limit(500));
     chatUnsub = onSnapshot(q, snap=>{
       const box = byId('chatStream');
-      // use docChanges for append-only
-      if(snap.docChanges && snap.docChanges().length > 0){
-        snap.docChanges().forEach(change=>{
-          if(change.type === 'added'){
-            const m = change.doc.data();
-            const mine = m.from === me.uid;
-            const row = document.createElement('div'); row.className = `max-w-[75%] ${mine? 'ml-auto text-right':'mr-auto'}`;
-            row.innerHTML = `<div class="p-2 rounded ${mine? 'bg-[var(--mh-primary)] text-white':'bg-white/5'} tiny">${escapeHtml(m.text)}<div class="tiny muted mt-1">${tsToText(m.createdAt)}</div></div>`;
-            box.appendChild(row);
-          } else if(change.type === 'removed'){
-            // do nothing
-          } else if(change.type === 'modified'){
-            // optional update
-          }
-        });
-      } else {
-        // fallback: render all
-        box.innerHTML = '';
-        snap.forEach(d=> {
-          const m = d.data(); const mine = m.from === me.uid;
+      snap.docChanges().forEach(change=>{
+        if(change.type === 'added'){
+          const m = change.doc.data();
+          const mine = m.from === me.uid;
           const row = document.createElement('div'); row.className = `max-w-[75%] ${mine? 'ml-auto text-right':'mr-auto'}`;
           row.innerHTML = `<div class="p-2 rounded ${mine? 'bg-[var(--mh-primary)] text-white':'bg-white/5'} tiny">${escapeHtml(m.text)}<div class="tiny muted mt-1">${tsToText(m.createdAt)}</div></div>`;
           box.appendChild(row);
-        });
-      }
+        }
+      });
       box.scrollTop = box.scrollHeight;
-      // autofocus input
       byId('chatInput').focus();
     }, err=> console.error('chat error', err));
   }
@@ -910,7 +922,6 @@ const firebaseConfig = {
   }
 
   /* ========= PROFILE ========= */
-  byId('btnSaveProfile').addEventListener('click', saveProfile);
   async function saveProfile(){
     const nickname = byId('setNick').value.trim() || meDoc.nickname || 'Player';
     const gamerName = byId('setGamer').value.trim() || nickname;
@@ -928,11 +939,11 @@ const firebaseConfig = {
     }
     await updateDoc(doc(db,'users',me.uid), { nickname, gamerName, sex, dob, language, country, games, bio, avatar: avatarData, updatedAt: serverTimestamp() });
     meDoc = (await getDoc(doc(db,'users',me.uid))).data();
-    // update UI
     ['navAvatar','sideAvatar','cpAvatar','pvAvatar'].forEach(id => { if(byId(id)) byId(id).src = meDoc.avatar || initialsAvatar(meDoc.nickname); });
     byId('navNick').textContent = meDoc.nickname; byId('sideNick').textContent = meDoc.nickname;
     toast('Profile saved','ok'); byId('profileSaved').classList.remove('hidden'); setTimeout(()=> byId('profileSaved').classList.add('hidden'), 1200);
     byId('profileView').classList.remove('hidden'); byId('profileEdit').classList.add('hidden');
+    fillProfileView();
   }
 
   async function preloadProfileInputs(){
@@ -973,27 +984,19 @@ const firebaseConfig = {
 
   /* small helpers */
   function escapeHtml(s=''){ return String(s).replace(/[&<>"'`]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])); }
-  function rankFromPoints(p=0){ if(p>2000) return 10; if(p>1000) return 9; if(p>600) return 8; if(p>400) return 7; if(p>250) return 6; if(p>150) return 5; if(p>90) return 4; if(p>50) return 3; if(p>20) return 2; return 1; }
 
-  // filter feed (client-side simple)
+  // simple feed filter
   function filterFeed(q){
     const items = byId('feedList').children;
-    for(const card of items){
-      if(card.textContent.toLowerCase().includes(q)) card.style.display=''; else card.style.display='none';
-    }
+    for(const card of items) card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
   }
-
-  // small escape to avoid long strings from UID showing
-  function shortId(id=''){ return (id||'').slice(0,6) + '…'; }
-
 </script>
 
 <!-- small non-module helpers -->
 <script>
-  // close profile menu on outside click
   document.addEventListener('click', (e)=>{
-    const menu = document.getElementById('profileMenu'), btn = document.getElementById('profileBtn');
-    if(menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) menu.classList.remove('show');
+    const menuEls = document.querySelectorAll('.menu.show');
+    menuEls.forEach(m => { if(!m.contains(e.target) && !e.target.closest('[data-more]')) m.classList.remove('show'); });
   });
 </script>
 

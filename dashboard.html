@@ -96,18 +96,16 @@
 
 <body class="h-full antialiased">
 
-  <!-- SESSION GATE -->
-  <div id="gate" class="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(6,7,9,0.92)]">
-    <div class="glass p-6 rounded-lg w-[92%] max-w-sm text-center">
-      <div class="mx-auto mb-3" style="width:44px;height:44px;border-radius:999px;border:4px solid rgba(255,255,255,0.06);border-top-color:var(--mh-primary);animation:spin 1s linear infinite"></div>
-      <h2 class="text-lg font-semibold">Mod Hive</h2>
-      <p class="muted text-sm mt-2">Checking your session…</p>
-    </div>
+<!-- SESSION GATE -->
+<div id="gate" class="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(6,7,9,0.92)]">
+  <div class="glass p-6 rounded-lg w-[92%] max-w-sm text-center">
+    <!-- Spinner -->
+    <div class="mx-auto mb-3" style="width:44px;height:44px;border-radius:999px;border:4px solid rgba(255,255,255,0.06);border-top-color:var(--mh-primary);animation:spin 1s linear infinite"></div>
+    <h2 class="text-lg font-semibold">Mod Hive</h2>
+    <p class="muted text-sm mt-2">Checking your session…</p>
   </div>
-
-  <!-- IMAGE VIEWER -->
-  <div id="imgViewer"><button id="imgClose" class="absolute top-6 right-6 p-2 rounded bg-white/10 text-white"><i class="fa fa-times"></i></button><img id="imgLarge" src="" alt="Preview" /></div>
-
+</div>
+  
   <!-- Toast container -->
   <div id="toasts" class="fixed right-4 bottom-6 z-60 space-y-2"></div>
 

@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en" class="h-full">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mod Hive — Dashboard</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Mod Hive — ⭐ Dashboard</title>
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -11,52 +11,43 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
   <style>
-  /* ===============================
-     MOD HIVE - EXPANDED DASHBOARD CSS
-     Mobile-first, Gaming Inspired
-     =============================== */
-
+  /* ------- Theme + utility ------- */
   :root{
     --mh-primary:#6c5ce7; --mh-primary-2:#4834d4;
-    --mh-dark:#0e0f12; --mh-panel:#1a1c23; --mh-panel-2:#20232b;
-    --mh-text:#eaeaea; --mh-muted:#9ca3af; --mh-danger:#ef4444;
-    --mh-ok:#10b981; --mh-warn:#fbbf24; --mh-accent:#00cec9;
+    --mh-dark:#09090b; --mh-panel:#111216; --mh-panel-2:#16171b;
+    --mh-text:#e9eef8; --mh-muted:#9aa4b2; --mh-ok:#10b981; --mh-warn:#f59e0b; --mh-danger:#ef4444; --mh-accent:#00cec9;
   }
-  html,body{height:100%; margin:0; padding:0; font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial; background:var(--mh-dark); color:var(--mh-text); -webkit-font-smoothing:antialiased;}
+  html,body{height:100%; margin:0; font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial; background:var(--mh-dark); color:var(--mh-text); -webkit-font-smoothing:antialiased;}
   .glass{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); backdrop-filter: blur(6px); border-radius:12px;}
-  .btn{transition:transform .08s ease, box-shadow .08s ease;}
-  .btn:active{transform:scale(.985);}
   .muted{color:var(--mh-muted);}
-  .nav-active{background:var(--mh-primary); color:#fff;}
-  .hidden-mobile{display:none;}
-  @media(min-width:768px){ .hidden-desktop{display:none;} .hidden-mobile{display:block;} }
-  .img-thumb{width:100%; max-height:420px; object-fit:cover; border-radius:10px; cursor:zoom-in;}
-  .toast{position:fixed; right:1rem; bottom:5rem; z-index:8000; min-width:220px; padding:.6rem .9rem; border-radius:.5rem; background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.04)}
+  .btn{transition:transform .08s ease; cursor:pointer}
+  .btn:active{transform:scale(.98)}
+  .hidden-mobile{display:none}
+  @media(min-width:768px){ .hidden-desktop{display:none} .hidden-mobile{display:block} }
+  .img-thumb{width:100%; max-height:480px; object-fit:cover; border-radius:10px; cursor:zoom-in;}
+  .toast{position:fixed; right:1rem; bottom:4.5rem; z-index:9999; padding:.6rem .9rem; border-radius:.6rem; background:rgba(0,0,0,0.6); color:#fff;}
   .menu{position:absolute; right:8px; top:36px; min-width:160px; background:var(--mh-panel); border:1px solid rgba(255,255,255,0.04); border-radius:8px; padding:.25rem; display:none; z-index:9000;}
   .menu.show{display:block;}
   .comment-hidden{display:none;}
   .spinner{border:3px solid rgba(255,255,255,0.06); border-top-color:var(--mh-primary); border-radius:50%; width:22px; height:22px; animation:spin 1s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);} }
 
-  /* Sidebar */
-  #sidebar{background:var(--mh-panel); width:260px; transition:transform .28s ease; transform:translateX(-100%); position:fixed; top:0; bottom:0; left:0; z-index:60; padding:1rem;}
-  #sidebar.open{transform:translateX(0);}
-  #sidebar .nav-link{display:flex; gap:.8rem; align-items:center; padding:.6rem .8rem; border-radius:10px;}
-  #sidebar .nav-link:hover{background:rgba(255,255,255,.04);}
-  #sidebar .nav-link i{width:22px; text-align:center;}
-
-  /* Responsive layout containers */
-  .main-wrap{max-width:1100px; margin:0 auto; padding:1rem; display:grid; grid-template-columns: 1fr; gap:1rem;}
-  @media(min-width:1024px){ .main-wrap{grid-template-columns: 260px 1fr 300px;} }
-
-  /* Header */
-  header.appbar{position:sticky; top:0; z-index:50; backdrop-filter:blur(6px); background:rgba(10,12,15,0.8); border-bottom:1px solid rgba(255,255,255,0.04); padding:.6rem 1rem; display:flex; justify-content:space-between; align-items:center;}
+  /* Layout */
+  header.appbar{position:sticky; top:0; z-index:50; backdrop-filter:blur(6px); background:rgba(8,9,11,0.85); border-bottom:1px solid rgba(255,255,255,0.03); padding:.6rem 1rem; display:flex; justify-content:space-between; align-items:center;}
   .appbar .brand{display:flex; align-items:center; gap:.6rem;}
-  .appbar .brand .logo{width:38px; height:38px; display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--mh-primary); font-weight:700; color:#fff;}
+  .appbar .brand .logo{width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:10px; background:var(--mh-primary); font-weight:700; color:#fff;}
+  .main-wrap{max-width:1100px; margin:0 auto; padding:1rem; display:grid; grid-template-columns:1fr; gap:1rem;}
+  @media(min-width:1024px){ .main-wrap{grid-template-columns:260px 1fr 300px;} }
+
+  /* Sidebar */
+  #sidebar{background:var(--mh-panel); width:260px; padding:1rem; border-radius:12px;}
+  .nav-link{display:flex; gap:.8rem; align-items:center; padding:.6rem .8rem; border-radius:10px; color:var(--mh-text);}
+  .nav-link.active{background:linear-gradient(90deg,var(--mh-primary),var(--mh-primary-2)); color:white;}
+  .nav-link i{width:22px; text-align:center;}
 
   /* Feed & posts */
   .feed{display:flex; flex-direction:column; gap:1rem;}
-  .post-card{background:var(--mh-panel-2); border-radius:12px; padding:1rem; box-shadow:0 6px 20px rgba(0,0,0,0.35);}
+  .post-card{background:var(--mh-panel-2); border-radius:12px; padding:1rem; box-shadow:0 6px 20px rgba(0,0,0,0.3);}
   .post-top{display:flex; gap:0.8rem; align-items:flex-start;}
   .post-top img.avatar{width:48px; height:48px; border-radius:50%; object-fit:cover;}
   .post-body{margin-top:.6rem;}
@@ -68,7 +59,6 @@
   .comment-list{margin-top:.6rem; display:flex; flex-direction:column; gap:.5rem; max-height:280px; overflow:auto;}
   .comment-item{display:flex; gap:.6rem; align-items:flex-start;}
   .comment-item img{width:36px; height:36px; border-radius:50%;}
-  .comment-item .bubble{background:rgba(255,255,255,0.03); padding:.5rem .7rem; border-radius:10px; font-size:.9rem;}
 
   /* Chat */
   .chat-window{background:var(--mh-panel-2); border-radius:12px; display:flex; flex-direction:column; height:68vh; overflow:hidden;}
@@ -85,267 +75,276 @@
   .profile-grid{display:grid; gap:.6rem;}
   @media(min-width:768px){ .profile-grid{grid-template-columns:1fr 1fr;} }
 
-  /* Friends */
-  .friend-card{display:flex; align-items:center; gap:.6rem; background:rgba(255,255,255,0.03); padding:.6rem; border-radius:10px;}
-  .friend-card img{width:46px; height:46px; border-radius:50%; object-fit:cover;}
-
-  /* Right column widgets */
+  /* Small right widgets */
   .widget{background:var(--mh-panel-2); border-radius:12px; padding:.8rem; margin-bottom:1rem;}
   .small-list{display:flex; flex-direction:column; gap:.5rem; max-height:40vh; overflow:auto;}
 
-  /* Toast */
-  .toast{position:fixed; right:1rem; bottom:4.5rem; z-index:9999; padding:.6rem .9rem; border-radius:.6rem; background:rgba(0,0,0,0.55); border:1px solid rgba(255,255,255,0.04); color:#fff;}
-
-  /* Image viewer */
-  #imgViewer{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.85); z-index:10000; padding:1rem;}
+  /* img modal */
+  #imgViewer{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.85); z-index:10000; padding:1rem; display:none;}
   #imgViewer img{max-width:96vw; max-height:92vh; border-radius:10px;}
 
-  /* Buttons */
-  .btn-primary{background:var(--mh-primary); color:#fff; padding:.5rem .8rem; border-radius:8px;}
-  .btn-danger{background:var(--mh-danger); color:#fff; padding:.5rem .8rem; border-radius:8px;}
+  /* bottom tabs */
+  .bottom-tabs{position:fixed; bottom:0; left:0; right:0; display:flex; justify-content:space-around; background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4)); padding:.5rem 0; z-index:60;}
+  .tab{flex:1; text-align:center; color:var(--mh-text); padding:.6rem;}
+  .tab.active{color:var(--mh-primary);}
 
   /* small helpers */
   .muted-xs{font-size:.82rem; color:var(--mh-muted);}
-
-  /* Responsive tweaks */
-  @media(max-width:767px){
-    #sidebar{display:none;}
-    .main-wrap{padding-bottom:76px;}
-    .post-top img.avatar{width:40px;height:40px;}
-    .chat-window{height:56vh;}
-  }
-
+  .hidden-el{display:none !important;}
   </style>
 </head>
 
 <body class="h-full antialiased">
 
-  <!-- AUTH GATE (spinner while checking auth) -->
-  <div id="gate" class="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(5,6,8,0.9)]">
+  <!-- SESSION GATE -->
+  <div id="gate" class="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(6,7,9,0.92)]">
     <div class="glass p-6 rounded-lg w-[92%] max-w-sm text-center">
-      <div class="spinner mx-auto mb-3"></div>
+      <div class="mx-auto mb-3" style="width:44px;height:44px;border-radius:999px;border:4px solid rgba(255,255,255,0.06);border-top-color:var(--mh-primary);animation:spin 1s linear infinite"></div>
       <h2 class="text-lg font-semibold">Mod Hive</h2>
       <p class="muted text-sm mt-2">Checking your session…</p>
     </div>
   </div>
 
-  <!-- Image viewer (hidden) -->
-  <div id="imgViewer" class="hidden">
-    <button id="imgClose" class="absolute top-6 right-6 p-2 rounded bg-white/10 text-white"><i class="fa fa-times"></i></button>
-    <img id="imgLarge" src="" alt="Preview" />
-  </div>
+  <!-- IMAGE VIEWER -->
+  <div id="imgViewer"><button id="imgClose" class="absolute top-6 right-6 p-2 rounded bg-white/10 text-white"><i class="fa fa-times"></i></button><img id="imgLarge" src="" alt="Preview" /></div>
 
   <!-- Toast container -->
-  <div id="toasts" aria-live="polite" class="fixed z-50 right-4 bottom-6 space-y-2"></div>
+  <div id="toasts" class="fixed right-4 bottom-6 z-60 space-y-2"></div>
 
-  <!-- Sidebar -->
-  <aside id="sidebar" class="">
-    <div class="mb-4">
-      <div class="flex items-center gap-3 mb-3">
-        <div class="logo text-white font-bold p-2 rounded" style="background:var(--mh-primary); width:44px; height:44px; display:flex; align-items:center; justify-content:center;">MH</div>
+  <!-- APP -->
+  <div id="app" class="hidden">
+    <header class="appbar">
+      <div class="brand">
+        <div class="logo">MH</div>
         <div>
-          <div id="sideNick" class="font-semibold">Player</div>
-          <div class="muted text-xs">Points: <span id="sidePoints">0</span></div>
+          <div class="text-sm font-semibold" id="navTitle">Mod Hive</div>
+          <div class="muted-xs" id="navSub">Gaming social</div>
         </div>
       </div>
-      <nav class="space-y-2">
-        <button class="nav-link nav-active" data-section="feed"><i class="fa fa-house"></i> <span>Feed</span></button>
-        <button class="nav-link" data-section="chat"><i class="fa fa-message"></i> <span>Chat</span></button>
-        <button class="nav-link" data-section="friends"><i class="fa fa-user-group"></i> <span>Friends</span></button>
-        <button class="nav-link" data-section="leaderboard"><i class="fa fa-trophy"></i> <span>Leaderboard</span></button>
-        <button class="nav-link" data-section="notifications"><i class="fa fa-bell"></i> <span>Notifications</span></button>
-        <button class="nav-link" data-section="profile"><i class="fa fa-id-card"></i> <span>Profile</span></button>
-        <a href="main.html" class="nav-link"><i class="fa fa-rotate-left"></i> <span>Back to Main</span></a>
-      </nav>
-    </div>
-
-    <div id="friendSuggestionsCard" class="glass p-3">
-      <div class="flex items-center justify-between mb-2">
-        <div class="font-semibold">Suggestions</div>
-        <button id="refreshSuggestions" class="text-xs muted">Refresh</button>
+      <div class="flex items-center gap-3">
+        <div id="notifDot" class="hidden w-2.5 h-2.5 rounded-full bg-[var(--mh-primary)]"></div>
+        <div class="relative">
+          <button id="profileToggle" class="flex items-center gap-2 p-1 rounded hover:bg-white/5">
+            <img id="navAvatar" class="w-8 h-8 rounded object-cover" src="" alt="avatar" />
+            <div class="hidden sm:block text-left">
+              <div id="navNick" class="text-sm font-medium">Player</div>
+              <div class="text-[11px] muted-xs">Lv <span id="navRank">1</span> · <span id="navPoints">0</span> pts</div>
+            </div>
+            <i class="fa fa-chevron-down text-xs"></i>
+          </button>
+          <div id="profileMenu" class="menu hidden">
+            <button data-section="profile" class="w-full text-left px-3 py-2 rounded hover:bg-white/10">Profile</button>
+            <button data-section="notifications" class="w-full text-left px-3 py-2 rounded hover:bg-white/10">Notifications</button>
+            <button id="btnLogout" class="w-full text-left px-3 py-2 rounded hover:bg-white/10 text-red-400">Log out</button>
+          </div>
+        </div>
       </div>
-      <div id="friendSuggestions" class="grid grid-cols-3 gap-2"></div>
-    </div>
+    </header>
 
-    <div id="adminCard" class="glass p-3 mt-4 hidden">
-      <div class="font-semibold text-red-300">Admin Tools</div>
-      <input id="adminDeletePostId" placeholder="Post id to delete" class="mt-2 p-2 rounded bg-[transparent] w-full" />
-      <button id="btnAdminDeletePost" class="btn-danger mt-2 w-full">Delete Post</button>
-    </div>
-  </aside>
+    <div class="main-wrap">
+      <!-- LEFT SIDEBAR -->
+      <aside id="sidebar" class="glass p-4 hidden-desktop">
+        <div class="mb-4 flex items-center gap-3">
+          <div class="logo text-white" style="background:var(--mh-primary); width:44px; height:44px; display:flex; align-items:center; justify-content:center; border-radius:8px;">MH</div>
+          <div>
+            <div id="sideNick" class="font-semibold">Player</div>
+            <div class="muted-xs">Points: <span id="sidePoints">0</span></div>
+          </div>
+        </div>
 
-  <!-- App main -->
-  <div class="main-wrap" id="app" style="display:none;">
+        <nav class="space-y-2">
+          <button class="nav-link active" data-section="feed"><i class="fa fa-house"></i> Feed</button>
+          <button class="nav-link" data-section="chat"><i class="fa fa-message"></i> Chat</button>
+          <button class="nav-link" data-section="friends"><i class="fa fa-user-group"></i> Friends</button>
+          <button class="nav-link" data-section="leaderboard"><i class="fa fa-trophy"></i> Leaderboard</button>
+          <button class="nav-link" data-section="notifications"><i class="fa fa-bell"></i> Notifications</button>
+          <button class="nav-link" data-section="profile"><i class="fa fa-id-card"></i> Profile</button>
+          <a href="main.html" class="nav-link"><i class="fa fa-rotate-left"></i> Back to Main</a>
+        </nav>
 
-    <!-- Left column (on desktop) handled by CSS grid -->
-    <!-- Center column -->
-    <main class="col-span-1">
-      <!-- Create post -->
-      <section id="section-feed" class="feed">
-        <div class="post-card">
-          <div class="post-top">
-            <img id="cpAvatar" class="avatar" src="" alt="avatar" />
-            <div class="flex-1">
-              <textarea id="postText" rows="2" placeholder="Share your gaming moment…" class="w-full bg-[transparent] p-2 rounded resize-none outline-none"></textarea>
-              <div class="mt-3 flex gap-2 items-center">
-                <label class="px-3 py-1 rounded bg-white/5 cursor-pointer">
-                  <i class="fa-regular fa-image"></i> <input id="postImage" type="file" accept="image/*" class="hidden" />
-                </label>
-                <input id="postLink" placeholder="Optional link" class="bg-[transparent] p-2 rounded flex-1" />
-                <button id="btnPost" class="btn-primary">Post</button>
+        <div id="friendSuggestionsCard" class="glass p-3 mt-4">
+          <div class="flex items-center justify-between mb-2"><div class="font-semibold">Suggestions</div><button id="refreshSuggestions" class="text-xs muted">Refresh</button></div>
+          <div id="friendSuggestions" class="grid grid-cols-3 gap-2"></div>
+        </div>
+
+        <div id="adminCard" class="glass p-3 mt-4 hidden">
+          <div class="font-semibold text-red-300">Admin Tools</div>
+          <input id="adminDeletePostId" placeholder="Post id to delete" class="mt-2 p-2 rounded bg-[transparent] w-full" />
+          <button id="btnAdminDeletePost" class="btn btn-danger mt-2 w-full" style="background:var(--mh-danger); color:white; padding:.5rem;">Delete Post</button>
+        </div>
+      </aside>
+
+      <!-- CENTER (Feed / Chat / Friends / etc) -->
+      <main class="col-span-1">
+        <!-- FEED -->
+        <section id="section-feed" class="feed">
+          <!-- create post -->
+          <div class="post-card">
+            <div class="post-top">
+              <img id="cpAvatar" class="avatar" src="" alt="avatar" />
+              <div class="flex-1">
+                <textarea id="postText" rows="2" placeholder="Share your gaming moment…" class="w-full bg-[transparent] p-2 rounded resize-none outline-none"></textarea>
+                <div class="mt-3 flex gap-2 items-center">
+                  <label class="px-3 py-1 rounded bg-white/5 cursor-pointer">
+                    <i class="fa-regular fa-image"></i> <input id="postImage" type="file" accept="image/*" class="hidden" />
+                  </label>
+                  <input id="postLink" placeholder="Optional link" class="bg-[transparent] p-2 rounded flex-1" />
+                  <button id="btnPost" class="btn btn-primary" style="background:var(--mh-primary); color:white; padding:.5rem .8rem; border-radius:8px;">Post</button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div id="pinnedList"></div>
-        <div id="feedList"></div>
-      </section>
+          <div id="pinnedList"></div>
+          <div id="feedList"></div>
+        </section>
 
-      <!-- Chat -->
-      <section id="section-chat" class="hidden">
-        <div class="chat-window">
-          <div class="chat-header">
-            <div class="flex items-center gap-3">
-              <img id="chatPeerAvatar" class="w-10 h-10 rounded" src="" />
-              <div><div id="chatPeerNick" class="font-semibold">Select a friend</div><div id="chatPeerStatus" class="muted-xs">—</div></div>
+        <!-- CHAT -->
+        <section id="section-chat" class="hidden">
+          <div class="grid md:grid-cols-12 gap-4">
+            <div class="md:col-span-4 glass rounded-xl p-4">
+              <div class="flex items-center gap-2 mb-3"><i class="fa fa-message"></i><h3 class="font-semibold">Private Chats</h3></div>
+              <input id="chatSearch" class="w-full bg-[transparent] rounded px-3 py-2 outline-none mb-3" placeholder="Search user…" />
+              <div id="chatUsers" class="space-y-2 max-h-[60vh] overflow-y-auto"></div>
+            </div>
+
+            <div class="md:col-span-8 glass rounded-xl p-4 flex flex-col h-[70vh]">
+              <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                <div class="flex items-center gap-3">
+                  <img id="chatPeerAvatar" class="w-10 h-10 rounded object-cover" src="" />
+                  <div><div id="chatPeerNick" class="font-semibold">Select a friend</div><div id="chatPeerStatus" class="text-xs muted">—</div></div>
+                </div>
+                <div class="text-white/50 text-sm">Encrypted 1-on-1</div>
+              </div>
+
+              <div id="chatStream" class="flex-1 my-3 overflow-y-auto space-y-3"></div>
+
+              <div class="mt-2 flex items-center gap-2">
+                <input id="chatInput" class="flex-1 bg-[transparent] rounded px-3 py-2 outline-none" placeholder="Type a message… (Enter to send)" />
+                <button id="btnSendChat" class="btn" style="background:var(--mh-primary); color:white; padding:.5rem .8rem; border-radius:8px;"><i class="fa fa-paper-plane"></i></button>
+              </div>
             </div>
           </div>
-          <div class="chat-stream" id="chatStream"></div>
-          <div class="chat-input">
-            <input id="chatInput" placeholder="Type a message… (Enter to send)" />
-            <button id="btnSendChat" class="btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
+        </section>
+
+        <!-- FRIENDS -->
+        <section id="section-friends" class="hidden">
+          <div class="glass rounded-xl p-3 mb-3">
+            <div class="font-semibold">Incoming Friend Requests</div>
+            <div id="incomingRequests" class="mt-3 space-y-2"></div>
           </div>
-        </div>
 
-        <div class="mt-4">
-          <div class="glass p-3">
-            <div class="flex items-center justify-between mb-2"><div class="font-semibold">Private Chats</div></div>
-            <input id="chatSearch" placeholder="Find friend…" class="w-full p-2 rounded bg-[transparent]" />
-            <div id="chatUsers" class="mt-3 space-y-2"></div>
+          <div class="glass rounded-xl p-3">
+            <div class="font-semibold">Your Friends</div>
+            <div id="friendList" class="mt-3 grid sm:grid-cols-2 gap-3"></div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- Friends -->
-      <section id="section-friends" class="hidden">
-        <div class="glass p-3">
-          <div class="font-semibold">Incoming Friend Requests</div>
-          <div id="incomingRequests" class="mt-3 space-y-2"></div>
-        </div>
+        <!-- LEADERBOARD -->
+        <section id="section-leaderboard" class="hidden">
+          <div class="glass rounded-xl p-3">
+            <div class="font-semibold">Top Players</div>
+            <table class="w-full mt-2 text-sm">
+              <thead class="muted"><tr><th>#</th><th>Player</th><th>Points</th></tr></thead>
+              <tbody id="leaderRows"></tbody>
+            </table>
+          </div>
+        </section>
 
-        <div class="glass p-3 mt-3">
-          <div class="font-semibold">Your Friends</div>
-          <div id="friendList" class="mt-3 grid sm:grid-cols-2 gap-3"></div>
-        </div>
-      </section>
+        <!-- NOTIFICATIONS -->
+        <section id="section-notifications" class="hidden">
+          <div class="glass rounded-xl p-3">
+            <div class="flex items-center justify-between"><div class="font-semibold">Notifications</div><button id="btnClearSeen" class="text-xs muted">Mark all seen</button></div>
+            <div id="notifList" class="mt-3 space-y-2"></div>
+          </div>
+        </section>
 
-      <!-- Leaderboard -->
-      <section id="section-leaderboard" class="hidden">
-        <div class="glass p-3">
-          <div class="font-semibold">Top Players</div>
-          <table class="w-full mt-2 text-sm">
-            <thead class="muted"><tr><th>#</th><th>Player</th><th>Points</th></tr></thead>
-            <tbody id="leaderRows"></tbody>
-          </table>
-        </div>
-      </section>
+        <!-- PROFILE -->
+        <section id="section-profile" class="hidden">
+          <div class="profile-card">
+            <div class="flex gap-4 items-center">
+              <img id="pvAvatar" class="avatar-lg" src="" alt="avatar" />
+              <div>
+                <div id="pvNick" class="font-semibold">Player</div>
+                <div class="muted-xs">Lv <span id="pvRank">1</span> · <span id="pvPoints">0</span> pts</div>
+              </div>
+            </div>
 
-      <!-- Notifications -->
-      <section id="section-notifications" class="hidden">
-        <div class="glass p-3">
-          <div class="flex items-center justify-between"><div class="font-semibold">Notifications</div><button id="btnClearSeen" class="text-xs muted">Mark all seen</button></div>
-          <div id="notifList" class="mt-3 space-y-2"></div>
-        </div>
-      </section>
+            <div id="profileView" class="mt-3">
+              <div id="pvBio" class="muted-xs"></div>
+              <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 muted-xs">
+                <div>Gamer name: <span id="pvGamer"></span></div>
+                <div>Sex: <span id="pvSex"></span></div>
+                <div>DOB: <span id="pvDob"></span></div>
+                <div>Lang: <span id="pvLang"></span></div>
+                <div>Country: <span id="pvCountry"></span></div>
+                <div>Games: <span id="pvGames"></span></div>
+              </div>
+              <div class="mt-3"><button id="btnEditProfile" class="btn" style="background:var(--mh-primary); color:white; padding:.5rem .8rem; border-radius:8px;">Edit Profile</button></div>
+            </div>
 
-      <!-- Profile -->
-      <section id="section-profile" class="hidden">
-        <div class="profile-card">
-          <div class="flex gap-4 items-center">
-            <img id="pvAvatar" class="avatar-lg" src="" alt="avatar" />
-            <div>
-              <div id="pvNick" class="font-semibold">Player</div>
-              <div class="muted-xs">Lv <span id="pvRank">1</span> · <span id="pvPoints">0</span> pts</div>
+            <div id="profileEdit" class="mt-3 hidden">
+              <div class="profile-grid">
+                <input id="setNick" placeholder="Nickname" />
+                <input id="setGamer" placeholder="Gamer name" />
+                <select id="setSex"><option value="">Prefer not to say</option><option>Male</option><option>Female</option><option>Other</option></select>
+                <input id="setDob" type="date" />
+                <input id="setLang" placeholder="Language" />
+                <input id="setCountry" placeholder="Country" />
+                <input id="setGames" placeholder="Games (comma separated)" />
+                <input id="setAvatar" type="file" accept="image/*" />
+                <textarea id="setBio" rows="3" placeholder="Bio"></textarea>
+              </div>
+              <div class="mt-3 flex gap-2"><button id="btnSaveProfile" class="btn" style="background:var(--mh-primary); color:white; padding:.5rem .8rem; border-radius:8px;">Save</button><span id="profileSaved" class="hidden text-[var(--mh-ok)]">Saved ✓</span></div>
             </div>
           </div>
 
-          <div id="profileView" class="mt-3">
-            <div id="pvBio" class="muted-xs"></div>
-            <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 muted-xs">
-              <div>Gamer name: <span id="pvGamer"></span></div>
-              <div>Sex: <span id="pvSex"></span></div>
-              <div>DOB: <span id="pvDob"></span></div>
-              <div>Lang: <span id="pvLang"></span></div>
-              <div>Country: <span id="pvCountry"></span></div>
-              <div>Games: <span id="pvGames"></span></div>
+          <div id="adminTools" class="glass p-3 mt-3 hidden">
+            <div class="font-semibold">Admin Tools</div>
+            <div class="mt-2 grid grid-cols-2 gap-2">
+              <input id="adminDeletePostId2" placeholder="Post ID to delete" />
+              <button id="adminDeleteBtn2" class="btn" style="background:var(--mh-danger); color:white; padding:.5rem .8rem; border-radius:8px;">Delete</button>
             </div>
-            <div class="mt-3"><button id="btnEditProfile" class="btn-primary">Edit Profile</button></div>
           </div>
+        </section>
+      </main>
 
-          <div id="profileEdit" class="mt-3 hidden">
-            <div class="profile-grid">
-              <input id="setNick" placeholder="Nickname" />
-              <input id="setGamer" placeholder="Gamer name" />
-              <select id="setSex"><option value="">Prefer not to say</option><option>Male</option><option>Female</option><option>Other</option></select>
-              <input id="setDob" type="date" />
-              <input id="setLang" placeholder="Language" />
-              <input id="setCountry" placeholder="Country" />
-              <input id="setGames" placeholder="Games (comma separated)" />
-              <input id="setAvatar" type="file" accept="image/*" />
-              <textarea id="setBio" rows="3" placeholder="Bio"></textarea>
-            </div>
-            <div class="mt-3 flex gap-2"><button id="btnSaveProfile" class="btn-primary">Save</button><span id="profileSaved" class="hidden text-[var(--mh-ok)]">Saved ✓</span></div>
+      <!-- RIGHT COLUMN -->
+      <aside class="col-span-1 hidden lg:block">
+        <div class="widget">
+          <div class="flex items-center justify-between">
+            <div class="font-semibold">Trending</div>
+            <a href="#" class="text-xs text-[var(--mh-primary)]">See all</a>
           </div>
-        </div>
-
-        <div id="adminTools" class="glass p-3 mt-3 hidden">
-          <div class="font-semibold">Admin Tools</div>
-          <div class="mt-2 grid grid-cols-2 gap-2">
-            <input id="adminDeletePostId2" placeholder="Post ID to delete" />
-            <button id="adminDeleteBtn2" class="btn-danger">Delete</button>
+          <div class="mt-3 small-list">
+            <div class="p-2 rounded bg-white/5">Valorant</div>
+            <div class="p-2 rounded bg-white/5">Skyrim</div>
+            <div class="p-2 rounded bg-white/5">Minecraft</div>
           </div>
         </div>
-      </section>
 
-    </main>
-
-    <!-- Right column -->
-    <aside class="col-span-1 hidden lg:block">
-      <div class="widget">
-        <div class="flex items-center justify-between">
-          <div class="font-semibold">Trending</div>
-          <a href="#" class="text-xs text-[var(--mh-primary)]">See all</a>
+        <div id="onlineFriends" class="widget">
+          <div class="font-semibold">Online Friends</div>
+          <div id="onlineList" class="mt-2 small-list"></div>
         </div>
-        <div class="mt-3 small-list">
-          <div class="p-2 rounded bg-white/5">Valorant</div>
-          <div class="p-2 rounded bg-white/5">Skyrim</div>
-          <div class="p-2 rounded bg-white/5">Minecraft</div>
-        </div>
-      </div>
+      </aside>
+    </div>
 
-      <div id="onlineFriends" class="widget">
-        <div class="font-semibold">Online Friends</div>
-        <div id="onlineList" class="mt-2 small-list"></div>
-      </div>
-    </aside>
-
+    <!-- Bottom mobile nav -->
+    <div class="bottom-tabs md:hidden">
+      <button class="tab active" data-section="feed"><i class="fa fa-house"></i></button>
+      <button class="tab" data-section="friends"><i class="fa fa-user-group"></i></button>
+      <button class="tab" data-section="chat"><i class="fa fa-message"></i></button>
+      <button class="tab" data-section="leaderboard"><i class="fa fa-trophy"></i></button>
+      <button class="tab" data-section="profile"><i class="fa fa-id-card"></i></button>
+    </div>
   </div>
 
-  <!-- Bottom mobile nav -->
-  <div id="bottomTabs" class="md:hidden">
-    <button class="tab active" data-section="feed"><i class="fa fa-house"></i></button>
-    <button class="tab" data-section="friends"><i class="fa fa-user-group"></i></button>
-    <button class="tab" data-section="chat"><i class="fa fa-message"></i></button>
-    <button class="tab" data-section="leaderboard"><i class="fa fa-trophy"></i></button>
-    <button class="tab" data-section="profile"><i class="fa fa-id-card"></i></button>
-  </div>
-
-  <!-- Firebase and main script -->
+  <!-- Firebase + App logic -->
   <script type="module">
-  /***********************************************
-   * Replace placeholders with your Firebase values
-   ***********************************************/
+  /********************************************************
+   * IMPORTANT: Replace firebaseConfig values and ADMIN_UID
+   ********************************************************/
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
   import {
@@ -369,17 +368,18 @@ const firebaseConfig = {
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // Minimal helper utilities
+  /* ---------- helpers ---------- */
   const $ = s => document.querySelector(s);
   const $$ = s => Array.from(document.querySelectorAll(s));
   const byId = id => document.getElementById(id);
-  function toast(msg, type='info'){
+
+  function toast(msg, time=3000){
     const t = document.createElement('div'); t.className='toast glass'; t.textContent = msg;
-    byId('toasts').appendChild(t);
-    setTimeout(()=> t.remove(), 3000);
+    byId('toasts').appendChild(t); setTimeout(()=> t.remove(), time);
   }
-  function initialsAvatar(text='Player', size=256){
-    const initials = (text||'P').split(/\s+/).map(p=>p[0]||'').slice(0,2).join('').toUpperCase();
+
+  function initialsAvatar(name='Player', size=256){
+    const initials = (name||'P').split(/\s+/).map(p=>p[0]||'').slice(0,2).join('').toUpperCase();
     const colors = ['#6c5ce7','#00cec9','#fd79a8','#0984e3','#00b894','#e17055','#e84393'];
     const bg = colors[(initials.charCodeAt(0)||1) % colors.length];
     const c = document.createElement('canvas'); c.width=c.height=size; const ctx=c.getContext('2d');
@@ -388,72 +388,60 @@ const firebaseConfig = {
     ctx.fillText(initials, size/2, size/2);
     return c.toDataURL('image/png');
   }
-  function tsToText(ts){ try{ const d = ts?.toDate ? ts.toDate() : new Date(ts); return d.toLocaleString(); } catch { return 'just now'; } }
-  function shortId(id=''){ return (id||'').slice(0,4) + '…' + (id||'').slice(-3); }
+
+  function tsToText(ts){
+    try{ const d = ts?.toDate ? ts.toDate() : new Date(ts); return d.toLocaleString(); } catch { return 'just now' }
+  }
+  function shortId(id=''){ return (id||'').slice(0,4)+'…'+(id||'').slice(-3); }
   function escapeHtml(s=''){ return String(s).replace(/[&<>"'`]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])); }
 
-  // App state
+  /* ---------- app state ---------- */
   let me = null, meDoc = null;
-  let feedUnsub = null, friendsUnsub = null, friendRequestsUnsub = null, notifUnsub = null, chatUnsub = null;
-  let commentUnsubs = {}, currentChatCid = null;
-  let pendingImageBase64 = null;
+  let feedUnsub=null, friendsUnsub=null, friendRequestsUnsub=null, notifUnsub=null, chatUnsub=null;
+  let commentUnsubs = {}, pendingImageBase64 = null, currentChatCid = null;
 
-  // Basic DOM shortcuts
-  function showSection(name){
-    const sections = ['feed','chat','friends','leaderboard','notifications','profile'];
-    sections.forEach(s => {
-      const el = document.getElementById('section-' + s);
-      if(el) el.classList.toggle('hidden', s !== name);
-    });
-    // mobile bottom tabs active
-    $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.section === name));
-    // close sidebar if mobile
-    if(window.innerWidth < 768) document.getElementById('sidebar').classList.add(' -translate-x-full');
-    // if chat opened ensure chatWindow visible
-    if(name !== 'chat') document.getElementById('chatWindow')?.classList.add('hidden');
-  }
-
-  // Auth gate
+  /* ---------- session gate & auth ---------- */
   onAuthStateChanged(auth, async (user) => {
+    const gate = byId('gate'), appDiv = byId('app');
     if(!user){
-      const path = window.location.pathname.split('/').pop();
-      if(path !== 'auth.html') location.href = 'auth.html';
+      // Not logged in: send to auth page
+      location.href = 'auth.html';
       return;
     }
-    me = user;
-    await ensureUserDoc(me);
-    hydrateUI();
+    try{
+      me = user;
+      await ensureUserDoc(me);
+      await hydrateUI();
+      gate.style.display = 'none';
+      appDiv.classList.remove('hidden');
+    } catch(err){
+      console.error('Auth hydration error', err);
+      toast('Error initialising session');
+      gate.style.display = 'none';
+    }
   });
 
-  // Ensure user doc
   async function ensureUserDoc(user){
-    const ref = doc(db,'users', user.uid);
+    const ref = doc(db,'users',user.uid);
     const snap = await getDoc(ref);
     if(!snap.exists()){
-      const nickname = user.displayName || ('Player_' + user.uid.slice(0,4));
-      const avatar = user.photoURL || initialsAvatar(nickname);
-      await setDoc(ref, {
-        uid: user.uid, nickname, gamerName: nickname, avatar,
-        bio:'', sex:'', dob:'', language:'', country:'', games:'',
-        points: 0, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
-      });
+      const nick = user.displayName || ('Player_'+user.uid.slice(0,4));
+      const avatar = user.photoURL || initialsAvatar(nick);
+      await setDoc(ref, { uid:user.uid, nickname:nick, gamerName:nick, avatar, bio:'', sex:'', dob:'', language:'', country:'', games:'', points:0, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
     }
     meDoc = (await getDoc(ref)).data();
   }
 
-  // Hydrate UI and wire up handlers
+  /* ---------- hydrate UI ---------- */
   function hydrateUI(){
-    byId('gate').style.display = 'none';
-    document.getElementById('app').style.display = '';
-
     const fallback = meDoc.avatar || initialsAvatar(meDoc.nickname || 'Player');
-    ['navAvatar','cpAvatar','sideAvatar','pvAvatar','pvAvatar'].forEach(id => { if(byId(id)) byId(id).src = fallback; });
-    byId('cpAvatar').src = fallback;
+    const elIds = ['navAvatar','cpAvatar','pvAvatar'];
+    elIds.forEach(id => { if(byId(id)) byId(id).src = fallback; });
     byId('sideNick').textContent = meDoc.nickname || 'Player';
-    byId('sidePoints').textContent = meDoc.points || 0;
-    byId('pvNick').textContent = meDoc.nickname || 'Player';
-    byId('pvPoints').textContent = meDoc.points || 0;
-    byId('pvRank').textContent = rankFromPoints(meDoc.points || 0);
+    byId('sidePoints').textContent = meDoc.points||0;
+    byId('pvNick').textContent = meDoc.nickname||'Player';
+    byId('pvPoints').textContent = meDoc.points||0;
+    byId('pvRank').textContent = rankFromPoints(meDoc.points||0);
 
     if(me.uid === ADMIN_UID){
       byId('adminCard').classList.remove('hidden');
@@ -470,13 +458,13 @@ const firebaseConfig = {
     if(p>90) return 4; if(p>50) return 3; if(p>20) return 2; return 1;
   }
 
-  // Bind static UI events
   function bindUI(){
-    // nav link clicks
+    // nav clicks
     $$('.nav-link').forEach(b => b.addEventListener('click', ()=> {
-      showSection(b.dataset.section || 'feed');
-      $$('.nav-link').forEach(nb => nb.classList.remove('nav-active'));
-      b.classList.add('nav-active');
+      const target = b.dataset.section || 'feed';
+      showSection(target);
+      $$('.nav-link').forEach(nb => nb.classList.remove('active'));
+      b.classList.add('active');
     }));
     // bottom tabs
     $$('.tab').forEach(t => t.addEventListener('click', ()=> {
@@ -485,14 +473,18 @@ const firebaseConfig = {
       t.classList.add('active');
     }));
 
-    // search
-    byId('searchBox')?.addEventListener('input', e => filterFeed(e.target.value.trim().toLowerCase()));
+    // profile menu toggle
+    byId('profileToggle').addEventListener('click', ()=> byId('profileMenu').classList.toggle('show'));
+    document.addEventListener('click', e => { if(!byId('profileMenu').contains(e.target) && !byId('profileToggle').contains(e.target)) byId('profileMenu').classList.remove('show'); });
 
-    // post image attach
-    byId('postImage').addEventListener('change', async (e) => {
+    // logout
+    byId('btnLogout').addEventListener('click', ()=> signOut(auth).catch(()=>{}));
+
+    // post image
+    byId('postImage').addEventListener('change', async e => {
       const f = e.target.files?.[0]; if(!f) return;
       if(f.size > 6*1024*1024){ toast('Image too large (6MB)'); byId('postImage').value=''; return; }
-      try{ pendingImageBase64 = await fileToBase64(f, 1200, .82); toast('Image attached'); } catch(err){ console.error(err); toast('Image error'); pendingImageBase64 = null; }
+      try{ pendingImageBase64 = await fileToBase64(f,1200,0.82); toast('Image attached'); } catch(e){ console.error(e); toast('Image error'); pendingImageBase64 = null; }
     });
 
     // create post
@@ -503,49 +495,77 @@ const firebaseConfig = {
     byId('chatInput').addEventListener('keydown', e => { if(e.key==='Enter') sendChat(); });
 
     // profile edit/save
-    byId('btnEditProfile').addEventListener('click', ()=> { byId('profileView').classList.add('hidden'); byId('profileEdit').classList.remove('hidden'); });
+    byId('btnEditProfile').addEventListener('click', ()=> { byId('profileView').classList.add('hidden'); byId('profileEdit').classList.remove('hidden'); preloadProfileInputs(); });
     byId('btnSaveProfile').addEventListener('click', saveProfile);
 
-    // admin deletes
-    byId('btnAdminDeletePost')?.addEventListener('click', async ()=>{
-      if(me.uid !== ADMIN_UID){ toast('Not admin'); return; }
+    // admin action
+    byId('btnAdminDeletePost')?.addEventListener('click', async ()=> {
+      if(me.uid !== ADMIN_UID) return toast('Not admin');
       const id = byId('adminDeletePostId').value.trim(); if(!id) return toast('Add post id');
       try{ await deleteDoc(doc(db,'posts',id)); toast('Deleted'); } catch(e){ console.error(e); toast('Delete failed'); }
     });
-    byId('adminDeleteBtn2')?.addEventListener('click', async ()=>{
-      if(me.uid !== ADMIN_UID){ toast('Not admin'); return; }
-      const id = byId('adminDeletePostId2').value.trim(); if(!id) return toast('Add post id');
+    byId('adminDeleteBtn2')?.addEventListener('click', async ()=> {
+      if(me.uid !== ADMIN_UID) return toast('Not admin'); const id = byId('adminDeletePostId2').value.trim(); if(!id) return toast('Add post id');
       try{ await deleteDoc(doc(db,'posts',id)); toast('Deleted'); } catch(e){ console.error(e); toast('Delete failed'); }
     });
 
-    // profile menu toggle and logout
-    document.addEventListener('click', (e) => {
-      if(e.target.closest('#profileToggle')){ byId('profileMenu')?.classList.toggle('show'); return; }
-      if(!e.target.closest('#profileMenu')){ byId('profileMenu')?.classList.remove('show'); }
-      // delegation for dynamic buttons
-      const like = e.target.closest('[data-like]'); if(like){ toggleLike(like.dataset.like); return; }
-      const copen = e.target.closest('[data-cmt-open]'); if(copen){ toggleComments(copen.dataset.cmtOpen); return; }
-      const csend = e.target.closest('[data-cmt-send]'); if(csend){ addComment(csend.dataset.cmtSend); return; }
-      const addFriendBtn = e.target.closest('[data-add]'); if(addFriendBtn){ sendFriendRequest(addFriendBtn.dataset.add); return; }
-      const acceptBtn = e.target.closest('[data-accept]'); if(acceptBtn){ acceptFriend(acceptBtn.dataset.accept); return; }
-      const declineBtn = e.target.closest('[data-decline]'); if(declineBtn){ deleteDoc(doc(db,'friendRequests',declineBtn.dataset.decline)).then(()=>toast('Declined')); return; }
-      const openChatBtn = e.target.closest('[data-open-chat]'); if(openChatBtn){ openChatWithUid(openChatBtn.dataset.openChat); return; }
-      const deleteBtn = e.target.closest('[data-delete-post]'); if(deleteBtn){ deletePost(deleteBtn.dataset.deletePost); return; }
-      const pinBtn = e.target.closest('[data-pin-post]'); if(pinBtn){ pinPost(pinBtn.dataset.pinPost); return; }
-      const saveBtn = e.target.closest('[data-save-post]'); if(saveBtn){ savePost(saveBtn.dataset.savePost); return; }
-      const reportBtn = e.target.closest('[data-report]'); if(reportBtn){ reportPost(reportBtn.dataset.report); return; }
-      const more = e.target.closest('[data-more]'); if(more){ const id = more.dataset.more; const menu = byId('menu-'+id); if(menu) menu.classList.toggle('show'); return; }
-      const img = e.target.closest('.img-thumb'); if(img){ byId('imgLarge').src = img.src; byId('imgViewer').classList.remove('hidden'); return; }
+    // delegation for dynamic elements
+    document.addEventListener('click', async (e) => {
+      // like button
+      const likeBtn = e.target.closest('[data-like]');
+      if(likeBtn){ await toggleLike(likeBtn.dataset.like); return; }
+
+      // comment open
+      const copen = e.target.closest('[data-cmt-open]');
+      if(copen){ toggleComments(copen.dataset.cmtOpen); return; }
+
+      // send comment
+      const csend = e.target.closest('[data-cmt-send]');
+      if(csend){ addComment(csend.dataset.cmtSend); return; }
+
+      // add friend
+      const addBtn = e.target.closest('[data-add]');
+      if(addBtn){ sendFriendRequest(addBtn.dataset.add); return; }
+
+      // accept / decline friend
+      const accept = e.target.closest('[data-accept]');
+      if(accept){ acceptFriend(accept.dataset.accept); return; }
+      const decline = e.target.closest('[data-decline]');
+      if(decline){ deleteDoc(doc(db,'friendRequests',decline.dataset.decline)).then(()=>toast('Declined')); return; }
+
+      // open chat
+      const openChatBtn = e.target.closest('[data-open-chat]');
+      if(openChatBtn){ openChatWithUid(openChatBtn.dataset.openChat); return; }
+
+      // menu toggles
+      const more = e.target.closest('[data-more]');
+      if(more){ const id = more.dataset.more; const menu = byId('menu-'+id); if(menu) menu.classList.toggle('show'); return; }
+
+      // delete / pin / save / report / add user
+      const del = e.target.closest('[data-delete-post]'); if(del){ deletePost(del.dataset.deletePost); return; }
+      const pin = e.target.closest('[data-pin-post]'); if(pin){ pinPost(pin.dataset.pinPost); return; }
+      const save = e.target.closest('[data-save-post]'); if(save){ savePost(save.dataset.savePost); return; }
+      const rep = e.target.closest('[data-report]'); if(rep){ reportPost(rep.dataset.report); return; }
+      const addu = e.target.closest('[data-add-user]'); if(addu){ sendFriendRequest(addu.dataset.addUser); return; }
+
+      // image zoom
+      const img = e.target.closest('.img-thumb');
+      if(img){ byId('imgLarge').src = img.src; byId('imgViewer').style.display = 'flex'; return; }
+      // close img viewer
+      if(e.target.id === 'imgClose') { byId('imgViewer').style.display = 'none'; byId('imgLarge').src=''; return; }
     });
-
-    // image viewer close
-    byId('imgClose').addEventListener('click', ()=> { byId('imgViewer').classList.add('hidden'); byId('imgLarge').src=''; });
-
-    // logout
-    byId('btnLogout').addEventListener('click', ()=> signOut(auth).catch(()=>{}));
   }
 
-  /* --------------------- Live listeners --------------------- */
+  function showSection(name){
+    const sections = ['feed','chat','friends','leaderboard','notifications','profile'];
+    sections.forEach(s => { const el = byId('section-'+s); if(el) el.classList.toggle('hidden', s !== name); });
+    $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.section === name));
+    // close profile menu
+    byId('profileMenu').classList.remove('show');
+  }
+
+  /* ---------- Live subscriptions ---------- */
+
   function startLive(){
     startFeed();
     subscribeFriendRequests();
@@ -554,41 +574,26 @@ const firebaseConfig = {
     loadSuggestions();
     loadLeaderboard();
     preloadProfileInputs();
+    showSection('feed');
   }
 
-  // Feed
+  // FEED: subscribe posts
   function startFeed(){
     if(feedUnsub) feedUnsub();
     const q = query(collection(db,'posts'), orderBy('createdAt','desc'), limit(100));
     feedUnsub = onSnapshot(q, snap => {
-      byId('feedList').innerHTML = '';
-      const pinnedEls = [];
+      const feed = byId('feedList'); feed.innerHTML = '';
+      const pinned = [];
       snap.forEach(d => {
         const p = d.data();
         const el = renderPost(d.id, p);
-        if(p.pinned) pinnedEls.push(el); else byId('feedList').appendChild(el);
+        if(p.pinned) pinned.push(el); else feed.appendChild(el);
       });
-      const pinnedList = byId('pinnedList'); pinnedList.innerHTML = ''; pinnedEls.forEach(pe => pinnedList.appendChild(pe));
-    }, err => { console.error(err); toast('Feed error');});
+      const pinnedList = byId('pinnedList'); pinnedList.innerHTML=''; pinned.forEach(pe=> pinnedList.appendChild(pe));
+    }, err => { console.error(err); toast('Feed error'); });
   }
 
-  // Create / render posts
-  async function createPost(){
-    const text = byId('postText').value.trim(); const link = byId('postLink').value.trim() || null;
-    if(!text && !pendingImageBase64 && !link){ toast('Write something'); return; }
-    try{
-      const p = await addDoc(collection(db,'posts'), {
-        uid: me.uid, nickname: meDoc.nickname, avatar: meDoc.avatar || initialsAvatar(meDoc.nickname),
-        text: text || null, link: link || null, image: pendingImageBase64 || null,
-        likes:0, comments:0, pinned:false, createdAt: serverTimestamp()
-      });
-      // reward +5
-      await updateDoc(doc(db,'users',me.uid), { points: (meDoc.points||0) + 5 }).catch(()=>{});
-      byId('postText').value=''; byId('postLink').value=''; byId('postImage').value=''; pendingImageBase64=null;
-      toast('Posted');
-    }catch(e){ console.error(e); toast('Post failed'); }
-  }
-
+  // render post DOM
   function renderPost(id, p){
     const wrapper = document.createElement('div'); wrapper.className='post-card relative';
     const avatar = p.avatar || initialsAvatar(p.nickname||'Player');
@@ -598,13 +603,11 @@ const firebaseConfig = {
         <img class="avatar" src="${avatar}" />
         <div class="flex-1">
           <div class="flex justify-between items-start">
-            <div>
-              <div class="font-semibold">${escapeHtml(p.nickname||'Player')} <span class="muted-xs ml-2">${created}</span></div>
-            </div>
+            <div><div class="font-semibold">${escapeHtml(p.nickname||'Player')} <span class="muted-xs ml-2">${created}</span></div></div>
             <div class="relative">
               <button data-more="${id}" class="px-2 py-1 rounded btn"><i class="fa fa-ellipsis"></i></button>
               <div id="menu-${id}" class="menu">
-                <button class="w-full text-left px-3 py-2" data-add="${p.uid}">Add user</button>
+                <button class="w-full text-left px-3 py-2" data-add-user data-add-user="${p.uid}">Add user</button>
                 <button class="w-full text-left px-3 py-2" data-report="${id}">Report</button>
                 <button class="w-full text-left px-3 py-2" data-save-post="${id}">Save</button>
                 ${ (me.uid === p.uid || me.uid === ADMIN_UID) ? `<button class="w-full text-left px-3 py-2 text-red-400" data-delete-post="${id}">Delete</button>` : '' }
@@ -612,6 +615,7 @@ const firebaseConfig = {
               </div>
             </div>
           </div>
+
           <div class="post-body">
             ${p.text ? `<div class="text-sm mt-2">${escapeHtml(p.text)}</div>` : ''}
             ${p.link ? `<div class="mt-2"><a href="${escapeHtml(p.link)}" target="_blank" class="text-[var(--mh-accent)] break-words">${escapeHtml(p.link)}</a></div>` : ''}
@@ -628,15 +632,15 @@ const firebaseConfig = {
               <div id="cList-${id}" class="comment-list"></div>
               <div class="flex gap-2 mt-2">
                 <input id="cInput-${id}" class="flex-1 p-2 rounded bg-[transparent]" placeholder="Write a comment" />
-                <button data-cmt-send="${id}" class="btn-primary">Send</button>
+                <button data-cmt-send="${id}" class="btn" style="background:var(--mh-primary); color:white; padding:.4rem .7rem; border-radius:8px;">Send</button>
               </div>
             </div>
           </div>
         </div>
       </div>
     `;
-    // reactions: emojis quick row
-    const emojis = ['👍','❤️','😂','🔥','😮','😢','🙌'];
+    // quick emoji reactions (optional)
+    const emojis = ['👍','❤️','😂','🔥'];
     const reactionRow = document.createElement('div'); reactionRow.className='mt-2 flex gap-1';
     emojis.forEach(emo => {
       const b = document.createElement('button'); b.className='px-2 py-1 rounded bg-white/5'; b.textContent = emo;
@@ -650,19 +654,21 @@ const firebaseConfig = {
   }
 
   // toggle comments with subscription
-  function toggleComments(postId){
-    const box = byId('cbox-'+postId); if(!box) return;
+  async function toggleComments(postId){
+    const box = byId('cbox-'+postId);
+    if(!box) return;
     if(box.classList.contains('comment-hidden')){
       box.classList.remove('comment-hidden');
       const q = query(collection(db,'posts',postId,'comments'), orderBy('createdAt','asc'), limit(200));
       commentUnsubs[postId] = onSnapshot(q, snap => {
-        const list = byId('cList-'+postId); list.innerHTML='';
+        const list = byId('cList-'+postId); list.innerHTML = '';
         snap.forEach(d => {
-          const c = d.data(); const row = document.createElement('div'); row.className='comment-item';
+          const c = d.data();
+          const row = document.createElement('div'); row.className='comment-item';
           row.innerHTML = `<img src="${c.avatar || initialsAvatar(c.nickname)}" /><div class="bubble"><div class="font-semibold">${escapeHtml(c.nickname)}</div><div>${escapeHtml(c.text)}</div><div class="muted-xs mt-1">${tsToText(c.createdAt)}</div></div>`;
           list.appendChild(row);
         });
-      }, err => console.error(err));
+      });
     } else {
       box.classList.add('comment-hidden');
       if(commentUnsubs[postId]){ commentUnsubs[postId](); delete commentUnsubs[postId]; }
@@ -670,19 +676,25 @@ const firebaseConfig = {
   }
 
   async function addComment(postId){
-    const ip = byId('cInput-'+postId); if(!ip) return;
-    const text = ip.value.trim(); if(!text) return;
+    const ip = byId('cInput-'+postId);
+    if(!ip) return; const text = ip.value.trim(); if(!text) return;
     try{
       await addDoc(collection(db,'posts',postId,'comments'), { uid: me.uid, nickname: meDoc.nickname, avatar: meDoc.avatar, text, createdAt: serverTimestamp() });
-      // increment comments count (simple optimistic)
-      await updateDoc(doc(db,'posts',postId), { comments: (await getDoc(doc(db,'posts',postId))).data().comments + 1 });
+      // increment comments
+      await runTransaction(db, async (t) => {
+        const pRef = doc(db,'posts',postId);
+        const psnap = await t.get(pRef);
+        if(!psnap.exists()) return;
+        t.update(pRef, { comments: (psnap.data().comments||0) + 1 });
+      });
+      // +1 point for commenter
       await updateDoc(doc(db,'users',me.uid), { points: (meDoc.points||0) + 1 }).catch(()=>{});
       ip.value='';
       toast('Comment added');
     } catch(e){ console.error(e); toast('Comment failed'); }
   }
 
-  // Likes via transaction to avoid race conditions
+  // Likes using transaction to avoid race condition
   async function toggleLike(postId){
     const postRef = doc(db,'posts',postId);
     const likeRef = doc(db,'posts',postId,'likes',me.uid);
@@ -716,13 +728,32 @@ const firebaseConfig = {
     } catch(e){ console.error('toggleLike', e); toast('Like failed'); }
   }
 
-  // save/pin/report/delete helpers
+  // create post
+  async function createPost(){
+    const text = byId('postText').value.trim(); const link = byId('postLink').value.trim() || null;
+    if(!text && !pendingImageBase64 && !link){ toast('Write something, attach image or link'); return; }
+    try{
+      await addDoc(collection(db,'posts'), {
+        uid: me.uid, nickname: meDoc.nickname, avatar: meDoc.avatar || initialsAvatar(meDoc.nickname),
+        text: text || null, link: link || null, image: pendingImageBase64 || null,
+        likes:0, comments:0, pinned:false, createdAt: serverTimestamp()
+      });
+      // reward points: +5
+      await updateDoc(doc(db,'users',me.uid), { points: (meDoc.points||0) + 5 }).catch(()=>{});
+      byId('postText').value=''; byId('postLink').value=''; byId('postImage').value=''; pendingImageBase64=null;
+      toast('Posted');
+    } catch(e){ console.error(e); toast('Post failed'); }
+  }
+
+  // save / pin / delete / report
   async function savePost(postId){ try{ await setDoc(doc(db,'users',me.uid,'savedPosts',postId), { postId, createdAt: serverTimestamp() }); toast('Saved'); } catch(e){ console.error(e); toast('Save failed'); } }
-  async function pinPost(postId){ try{ const p = await getDoc(doc(db,'posts',postId)); if(!p.exists()) return; const isPinned = p.data().pinned; await updateDoc(doc(db,'posts',postId), { pinned: !isPinned }); toast(isPinned ? 'Unpinned' : 'Pinned'); } catch(e){ console.error(e); toast('Pin failed'); } }
+  async function pinPost(postId){ try{ const p = await getDoc(doc(db,'posts',postId)); if(!p.exists()) return; const pinned = p.data().pinned; await updateDoc(doc(db,'posts',postId), { pinned: !pinned }); toast(pinned ? 'Unpinned' : 'Pinned'); } catch(e){ console.error(e); toast('Pin failed'); } }
   async function deletePost(postId){ try{ const p = await getDoc(doc(db,'posts',postId)); if(!p.exists()) return; if(me.uid !== p.data().uid && me.uid !== ADMIN_UID){ toast('No permission'); return; } await deleteDoc(doc(db,'posts',postId)); toast('Deleted'); } catch(e){ console.error(e); toast('Delete failed'); } }
   async function reportPost(postId){ try{ await addDoc(collection(db,'reports'), { postId, from: me.uid, createdAt: serverTimestamp() }); toast('Reported'); } catch(e){ console.error(e); toast('Report failed'); } }
 
-  // Friend suggestions & requests
+  /* ---------- Friends ---------- */
+
+  // load suggestions
   async function loadSuggestions(){
     try{
       const snaps = await getDocs(query(collection(db,'users'), orderBy('createdAt','desc'), limit(48)));
@@ -741,6 +772,7 @@ const firebaseConfig = {
     } catch(e){ console.error(e); }
   }
 
+  // send friend request (doc id pair)
   async function sendFriendRequest(toUid){
     try{
       if(toUid === me.uid){ toast("Can't add yourself"); return; }
@@ -759,6 +791,7 @@ const firebaseConfig = {
     } catch(e){ console.error(e); toast('Request failed'); }
   }
 
+  // subscribe incoming requests
   function subscribeFriendRequests(){
     if(friendRequestsUnsub) friendRequestsUnsub();
     const q = query(collection(db,'friendRequests'), where('to','==',me.uid), orderBy('createdAt','desc'));
@@ -773,6 +806,7 @@ const firebaseConfig = {
     }, err => console.error(err));
   }
 
+  // accept friend
   async function acceptFriend(reqId){
     try{
       const reqSnap = await getDoc(doc(db,'friendRequests',reqId));
@@ -780,11 +814,12 @@ const firebaseConfig = {
       const r = reqSnap.data(); const pair = [r.from, r.to].sort().join('_');
       await setDoc(doc(db,'friends',pair), { uids: [r.from, r.to], since: serverTimestamp() });
       await deleteDoc(doc(db,'friendRequests',reqId));
-      await setDoc(doc(db,'chats',pair), { members: [r.from, r.to], updatedAt: serverTimestamp() }, { merge: true });
+      await setDoc(doc(db,'chats',pair), { members: [r.from, r.to], updatedAt: serverTimestamp() }, { merge:true });
       toast('Friend added');
     } catch(e){ console.error(e); toast('Accept failed'); }
   }
 
+  // subscribe friends list
   function subscribeFriends(){
     if(friendsUnsub) friendsUnsub();
     const q = query(collection(db,'friends'), where('uids','array-contains', me.uid));
@@ -808,14 +843,14 @@ const firebaseConfig = {
 
   async function unfriend(peerUid){ if(!confirm('Remove friend?')) return; try{ const pair = [me.uid, peerUid].sort().join('_'); await deleteDoc(doc(db,'friends',pair)); toast('Removed'); } catch(e){ console.error(e); toast('Remove failed'); } }
 
-  // Chats
+  /* ---------- Private Chat ---------- */
   function convoIdFor(a,b){ return [a,b].sort().join('_'); }
   async function openChatWithUid(peerUid){
     const peerSnap = await getDoc(doc(db,'users',peerUid)); const peer = peerSnap.exists() ? peerSnap.data() : { uid:peerUid, nickname:shortId(peerUid), avatar:initialsAvatar('User') };
     byId('chatPeerNick').textContent = peer.nickname || 'Player';
     byId('chatPeerAvatar').src = peer.avatar || initialsAvatar(peer.nickname);
     byId('chatPeerStatus').textContent = 'Online';
-    showSection('chat'); document.getElementById('chatWindow')?.classList.remove('hidden');
+    showSection('chat');
     const cid = convoIdFor(me.uid, peerUid); currentChatCid = cid; await setDoc(doc(db,'chats',cid), { members: [me.uid, peerUid], updatedAt: serverTimestamp() }, { merge:true });
     if(chatUnsub) chatUnsub();
     const q = query(collection(db,'chats',cid,'messages'), orderBy('createdAt','asc'), limit(500));
@@ -841,12 +876,12 @@ const firebaseConfig = {
     }catch(e){ console.error(e); toast('Send failed'); }
   }
 
-  // Notifications
+  /* ---------- Notifications ---------- */
   function startNotifications(){
     if(notifUnsub) notifUnsub();
     const q = query(collection(db,'users',me.uid,'notifications'), orderBy('createdAt','desc'), limit(100));
     notifUnsub = onSnapshot(q, snap => {
-      const list = byId('notifList'); list.innerHTML = ''; let unseen=0;
+      const list = byId('notifList'); list.innerHTML = ''; let unseen = 0;
       snap.forEach(d => {
         const n = d.data(); if(!n.seen) unseen++;
         const row = document.createElement('div'); row.className='flex items-start gap-3 p-2 bg-white/3 rounded';
@@ -858,10 +893,16 @@ const firebaseConfig = {
     }, err => console.error(err));
   }
 
-  // Leaderboard
-  function loadLeaderboard(){ const q = query(collection(db,'users'), orderBy('points','desc'), limit(50)); onSnapshot(q, snap => { const rows = byId('leaderRows'); rows.innerHTML=''; let i=0; snap.forEach(d => { i++; const u = d.data(); const tr = document.createElement('tr'); tr.innerHTML = `<td class="py-2 px-2">${i}</td><td class="py-2 px-2"><div class="flex items-center gap-2"><img src="${u.avatar||initialsAvatar(u.nickname)}" class="w-7 h-7 rounded" /><span>${escapeHtml(u.nickname||shortId(u.uid))}</span></div></td><td class="py-2 px-2">${u.points||0}</td>`; rows.appendChild(tr); }); }); }
+  /* ---------- Leaderboard ---------- */
+  function loadLeaderboard(){
+    const q = query(collection(db,'users'), orderBy('points','desc'), limit(50));
+    onSnapshot(q, snap => {
+      const rows = byId('leaderRows'); rows.innerHTML = ''; let i=0;
+      snap.forEach(d => { i++; const u = d.data(); const tr = document.createElement('tr'); tr.innerHTML = `<td class="py-2 px-2">${i}</td><td class="py-2 px-2"><div class="flex items-center gap-2"><img src="${u.avatar||initialsAvatar(u.nickname)}" class="w-7 h-7 rounded" /><span>${escapeHtml(u.nickname||shortId(u.uid))}</span></div></td><td class="py-2 px-2">${u.points||0}</td>`; rows.appendChild(tr); });
+    });
+  }
 
-  // Profile load/save
+  /* ---------- Profile ---------- */
   async function preloadProfileInputs(){
     byId('setNick').value = meDoc.nickname || '';
     byId('setGamer').value = meDoc.gamerName || '';
@@ -914,7 +955,7 @@ const firebaseConfig = {
     } catch(e){ console.error(e); toast('Save failed'); }
   }
 
-  // Helpers: file -> base64
+  /* ---------- Utility: file->base64 ---------- */
   function fileToBase64(file, maxW=1000, quality=0.82){
     return new Promise((resolve,reject)=>{
       const reader = new FileReader();
@@ -931,32 +972,27 @@ const firebaseConfig = {
     });
   }
 
-  // filter feed
-  function filterFeed(q){ const items = byId('feedList').children; for(const item of items){ item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none'; } }
-
-  // Safe wrappers for imports used earlier
-  import { getDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-  // Initial UI wiring for buttons that require elements that may be added later
-  document.addEventListener('DOMContentLoaded', ()=> {
-    // show feed initially
-    showSection('feed');
-  });
-
-  // Cleanup unsubscribes
+  /* ---------- cleanup ---------- */
   window.addEventListener('beforeunload', ()=>{
     if(feedUnsub) feedUnsub(); if(friendsUnsub) friendsUnsub(); if(friendRequestsUnsub) friendRequestsUnsub(); if(notifUnsub) notifUnsub(); if(chatUnsub) chatUnsub();
     Object.values(commentUnsubs).forEach(fn => { try{ fn(); } catch{} });
   });
 
+  /* ---------- initial DOM ready ---------- */
+  document.addEventListener('DOMContentLoaded', ()=> {
+    // bottom tabs: wire to showSection
+    $$('.tab').forEach(t => t.addEventListener('click', ()=> {
+      showSection(t.dataset.section);
+      $$('.tab').forEach(x => x.classList.remove('active')); t.classList.add('active');
+    }));
+  });
   </script>
 
-  <!-- small non-module script to close menus on click outside -->
+  <!-- Legacy small script (close menus on outside click) -->
   <script>
     document.addEventListener('click', (e)=>{
       document.querySelectorAll('.menu').forEach(m => { if(!m.contains(e.target) && !e.target.closest('[data-more]')) m.classList.remove('show'); });
-      // close image viewer if clicked outside image
-      if(document.getElementById('imgViewer') && !document.getElementById('imgViewer').contains(e.target)) { document.getElementById('imgViewer').classList.add('hidden'); }
+      if(document.getElementById('imgViewer') && !document.getElementById('imgViewer').contains(e.target)) { document.getElementById('imgViewer').style.display = 'none'; }
     });
   </script>
 </body>

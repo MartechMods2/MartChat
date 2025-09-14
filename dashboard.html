@@ -5,949 +5,860 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Mod Hive — Dashboard</title>
 
-  <!-- Tailwind + Font Awesome -->
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
   <style>
-    :root{
-      --mh-primary:#6c5ce7; --mh-primary-2:#5649c0; --mh-accent:#00cec9;
-      --mh-dark:#0b0f13; --mh-panel:#111317; --mh-muted:#93a1b1;
-      --ok:#10b981; --danger:#ef4444;
-    }
-    html,body,#root{height:100%}
-    body{background:var(--mh-dark); color:#e8eef6; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;}
-    .glass{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); backdrop-filter: blur(6px)}
-    .tiny{font-size:.85rem}
-    .muted{color:var(--mh-muted)}
-    .btn{transition:transform .08s ease}
-    .btn:active{transform:scale(.985)}
-    .spinner{width:22px;height:22px;border-radius:999px;border:3px solid rgba(255,255,255,.08);border-top-color:var(--mh-primary);animation:spin 1s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .img-thumb{width:100%;max-height:420px;object-fit:cover;border-radius:8px;cursor:zoom-in}
-    .comments-hidden{display:none}
-    .menu{position:absolute;right:8px;top:36px;min-width:160px;display:none}
-    .menu.show{display:block}
-    .nav-active{background:rgba(255,255,255,.04)}
-    /* mobile-first layout */
-    .layout{display:grid; grid-template-columns:1fr; gap:12px; padding:12px; max-width:1100px; margin:0 auto}
-    @media(min-width:1000px){ .layout { grid-template-columns: 280px 1fr 320px; padding:20px } }
-    /* bottom-tab for mobile */
-    .bottom-tab{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--mh-panel);border-top:1px solid rgba(255,255,255,.03);display:flex}
-    .bottom-tab button{flex:1;padding:10px 0;color:#cbd6ef80}
-    .bottom-tab .active{color:#fff}
-    /* ensure app fits viewport on mobile */
-    .app-wrap{min-height:100vh; display:flex; flex-direction:column;}
-    /* skeleton loader */
-    .skeleton{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.04), rgba(255,255,255,0.02)); border-radius:6px; height:12px}
-    /* small responsive fixes */
-    .hidden-md { display: none; }
-    @media(min-width:768px) { .hidden-md { display: block; } }
+  /* ===============================
+     MOD HIVE - EXPANDED DASHBOARD CSS
+     Mobile-first, Gaming Inspired
+     =============================== */
+
+  :root{
+    --mh-primary:#6c5ce7; --mh-primary-2:#4834d4;
+    --mh-dark:#0e0f12; --mh-panel:#1a1c23; --mh-panel-2:#20232b;
+    --mh-text:#eaeaea; --mh-muted:#9ca3af; --mh-danger:#ef4444;
+    --mh-ok:#10b981; --mh-warn:#fbbf24; --mh-accent:#00cec9;
+  }
+  html,body{height:100%; margin:0; padding:0; font-family:'Montserrat',system-ui,-apple-system,Segoe UI,Roboto,Arial; background:var(--mh-dark); color:var(--mh-text); -webkit-font-smoothing:antialiased;}
+  .glass{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); backdrop-filter: blur(6px); border-radius:12px;}
+  .btn{transition:transform .08s ease, box-shadow .08s ease;}
+  .btn:active{transform:scale(.985);}
+  .muted{color:var(--mh-muted);}
+  .nav-active{background:var(--mh-primary); color:#fff;}
+  .hidden-mobile{display:none;}
+  @media(min-width:768px){ .hidden-desktop{display:none;} .hidden-mobile{display:block;} }
+  .img-thumb{width:100%; max-height:420px; object-fit:cover; border-radius:10px; cursor:zoom-in;}
+  .toast{position:fixed; right:1rem; bottom:5rem; z-index:8000; min-width:220px; padding:.6rem .9rem; border-radius:.5rem; background:rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.04)}
+  .menu{position:absolute; right:8px; top:36px; min-width:160px; background:var(--mh-panel); border:1px solid rgba(255,255,255,0.04); border-radius:8px; padding:.25rem; display:none; z-index:9000;}
+  .menu.show{display:block;}
+  .comment-hidden{display:none;}
+  .spinner{border:3px solid rgba(255,255,255,0.06); border-top-color:var(--mh-primary); border-radius:50%; width:22px; height:22px; animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);} }
+
+  /* Sidebar */
+  #sidebar{background:var(--mh-panel); width:260px; transition:transform .28s ease; transform:translateX(-100%); position:fixed; top:0; bottom:0; left:0; z-index:60; padding:1rem;}
+  #sidebar.open{transform:translateX(0);}
+  #sidebar .nav-link{display:flex; gap:.8rem; align-items:center; padding:.6rem .8rem; border-radius:10px;}
+  #sidebar .nav-link:hover{background:rgba(255,255,255,.04);}
+  #sidebar .nav-link i{width:22px; text-align:center;}
+
+  /* Responsive layout containers */
+  .main-wrap{max-width:1100px; margin:0 auto; padding:1rem; display:grid; grid-template-columns: 1fr; gap:1rem;}
+  @media(min-width:1024px){ .main-wrap{grid-template-columns: 260px 1fr 300px;} }
+
+  /* Header */
+  header.appbar{position:sticky; top:0; z-index:50; backdrop-filter:blur(6px); background:rgba(10,12,15,0.8); border-bottom:1px solid rgba(255,255,255,0.04); padding:.6rem 1rem; display:flex; justify-content:space-between; align-items:center;}
+  .appbar .brand{display:flex; align-items:center; gap:.6rem;}
+  .appbar .brand .logo{width:38px; height:38px; display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--mh-primary); font-weight:700; color:#fff;}
+
+  /* Feed & posts */
+  .feed{display:flex; flex-direction:column; gap:1rem;}
+  .post-card{background:var(--mh-panel-2); border-radius:12px; padding:1rem; box-shadow:0 6px 20px rgba(0,0,0,0.35);}
+  .post-top{display:flex; gap:0.8rem; align-items:flex-start;}
+  .post-top img.avatar{width:48px; height:48px; border-radius:50%; object-fit:cover;}
+  .post-body{margin-top:.6rem;}
+  .post-actions{display:flex; gap:.5rem; margin-top:.75rem;}
+  .post-actions button{flex:1; padding:.5rem .6rem; border-radius:8px; background:rgba(255,255,255,0.03); display:flex; align-items:center; gap:.6rem; justify-content:center;}
+  .post-actions button:hover{background:rgba(255,255,255,0.06);}
+
+  /* Comments */
+  .comment-list{margin-top:.6rem; display:flex; flex-direction:column; gap:.5rem; max-height:280px; overflow:auto;}
+  .comment-item{display:flex; gap:.6rem; align-items:flex-start;}
+  .comment-item img{width:36px; height:36px; border-radius:50%;}
+  .comment-item .bubble{background:rgba(255,255,255,0.03); padding:.5rem .7rem; border-radius:10px; font-size:.9rem;}
+
+  /* Chat */
+  .chat-window{background:var(--mh-panel-2); border-radius:12px; display:flex; flex-direction:column; height:68vh; overflow:hidden;}
+  .chat-header{display:flex; align-items:center; gap:.6rem; padding:.8rem; border-bottom:1px solid rgba(255,255,255,0.03);}
+  .chat-stream{flex:1; padding:1rem; overflow:auto; display:flex; flex-direction:column; gap:.6rem;}
+  .chat-msg{max-width:78%; padding:.6rem .8rem; border-radius:12px; font-size:.95rem;}
+  .chat-msg.me{margin-left:auto; background:var(--mh-primary); color:#fff;}
+  .chat-msg.them{margin-right:auto; background:rgba(255,255,255,0.03);}
+  .chat-input{display:flex; gap:.6rem; padding:.6rem; border-top:1px solid rgba(255,255,255,0.03);}
+
+  /* Profile */
+  .profile-card{background:var(--mh-panel-2); border-radius:12px; padding:1rem;}
+  .profile-card .avatar-lg{width:96px; height:96px; border-radius:12px; object-fit:cover;}
+  .profile-grid{display:grid; gap:.6rem;}
+  @media(min-width:768px){ .profile-grid{grid-template-columns:1fr 1fr;} }
+
+  /* Friends */
+  .friend-card{display:flex; align-items:center; gap:.6rem; background:rgba(255,255,255,0.03); padding:.6rem; border-radius:10px;}
+  .friend-card img{width:46px; height:46px; border-radius:50%; object-fit:cover;}
+
+  /* Right column widgets */
+  .widget{background:var(--mh-panel-2); border-radius:12px; padding:.8rem; margin-bottom:1rem;}
+  .small-list{display:flex; flex-direction:column; gap:.5rem; max-height:40vh; overflow:auto;}
+
+  /* Toast */
+  .toast{position:fixed; right:1rem; bottom:4.5rem; z-index:9999; padding:.6rem .9rem; border-radius:.6rem; background:rgba(0,0,0,0.55); border:1px solid rgba(255,255,255,0.04); color:#fff;}
+
+  /* Image viewer */
+  #imgViewer{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.85); z-index:10000; padding:1rem;}
+  #imgViewer img{max-width:96vw; max-height:92vh; border-radius:10px;}
+
+  /* Buttons */
+  .btn-primary{background:var(--mh-primary); color:#fff; padding:.5rem .8rem; border-radius:8px;}
+  .btn-danger{background:var(--mh-danger); color:#fff; padding:.5rem .8rem; border-radius:8px;}
+
+  /* small helpers */
+  .muted-xs{font-size:.82rem; color:var(--mh-muted);}
+
+  /* Responsive tweaks */
+  @media(max-width:767px){
+    #sidebar{display:none;}
+    .main-wrap{padding-bottom:76px;}
+    .post-top img.avatar{width:40px;height:40px;}
+    .chat-window{height:56vh;}
+  }
+
   </style>
 </head>
-<body class="antialiased">
 
-  <!-- Gate spinner while auth checked -->
-  <div id="gate" class="fixed inset-0 z-50 flex items-center justify-center bg-[var(--mh-dark)]/95">
-    <div class="glass p-6 rounded-lg text-center w-11/12 max-w-sm">
-      <div class="mx-auto mb-3 spinner"></div>
+<body class="h-full antialiased">
+
+  <!-- AUTH GATE (spinner while checking auth) -->
+  <div id="gate" class="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(5,6,8,0.9)]">
+    <div class="glass p-6 rounded-lg w-[92%] max-w-sm text-center">
+      <div class="spinner mx-auto mb-3"></div>
       <h2 class="text-lg font-semibold">Mod Hive</h2>
-      <p class="muted tiny mt-2">Checking your session…</p>
+      <p class="muted text-sm mt-2">Checking your session…</p>
     </div>
   </div>
 
-  <!-- image viewer modal -->
-  <div id="imgViewer" class="fixed inset-0 hidden items-center justify-center z-60 bg-black/80">
-    <button id="imgClose" class="absolute top-4 right-4 p-2 rounded bg-white/10 text-white"><i class="fa fa-times"></i></button>
-    <img id="imgLarge" src="" class="max-w-[96vw] max-h-[86vh] rounded" alt=""/>
+  <!-- Image viewer (hidden) -->
+  <div id="imgViewer" class="hidden">
+    <button id="imgClose" class="absolute top-6 right-6 p-2 rounded bg-white/10 text-white"><i class="fa fa-times"></i></button>
+    <img id="imgLarge" src="" alt="Preview" />
   </div>
 
-  <!-- confirm modal -->
-  <div id="confirmModal" class="fixed inset-0 hidden items-center justify-center z-70 bg-black/60">
-    <div class="glass rounded p-4 max-w-sm w-11/12">
-      <h3 id="confirmTitle" class="font-semibold">Confirm</h3>
-      <p id="confirmText" class="muted tiny mt-1">Are you sure?</p>
-      <div class="mt-4 flex justify-end gap-2">
-        <button id="confirmCancel" class="px-3 py-1 rounded bg-white/10">Cancel</button>
-        <button id="confirmOk" class="px-3 py-1 rounded bg-[var(--danger)] text-white">OK</button>
+  <!-- Toast container -->
+  <div id="toasts" aria-live="polite" class="fixed z-50 right-4 bottom-6 space-y-2"></div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="">
+    <div class="mb-4">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="logo text-white font-bold p-2 rounded" style="background:var(--mh-primary); width:44px; height:44px; display:flex; align-items:center; justify-content:center;">MH</div>
+        <div>
+          <div id="sideNick" class="font-semibold">Player</div>
+          <div class="muted text-xs">Points: <span id="sidePoints">0</span></div>
+        </div>
       </div>
+      <nav class="space-y-2">
+        <button class="nav-link nav-active" data-section="feed"><i class="fa fa-house"></i> <span>Feed</span></button>
+        <button class="nav-link" data-section="chat"><i class="fa fa-message"></i> <span>Chat</span></button>
+        <button class="nav-link" data-section="friends"><i class="fa fa-user-group"></i> <span>Friends</span></button>
+        <button class="nav-link" data-section="leaderboard"><i class="fa fa-trophy"></i> <span>Leaderboard</span></button>
+        <button class="nav-link" data-section="notifications"><i class="fa fa-bell"></i> <span>Notifications</span></button>
+        <button class="nav-link" data-section="profile"><i class="fa fa-id-card"></i> <span>Profile</span></button>
+        <a href="main.html" class="nav-link"><i class="fa fa-rotate-left"></i> <span>Back to Main</span></a>
+      </nav>
     </div>
-  </div>
 
-  <!-- toast container -->
-  <div id="toasts" class="fixed right-4 bottom-24 z-80 space-y-2"></div>
-
-  <div id="root" class="app-wrap hidden">
-    <!-- topbar -->
-    <header class="glass w-full border-b border-white/5 py-3 px-3 sticky top-0 z-40">
-      <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <button id="burger" class="md:hidden p-2 rounded bg-white/5 btn"><i class="fa fa-bars"></i></button>
-          <div class="flex items-center gap-2">
-            <div id="logo" class="w-8 h-8 rounded bg-[var(--mh-primary)] flex items-center justify-center text-white font-bold">MH</div>
-            <div><div class="font-semibold">Mod Hive</div><div class="tiny muted">Gaming social</div></div>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <div class="hidden md:flex items-center bg-[var(--mh-panel)] rounded px-2 py-1">
-            <i class="fa fa-search text-white/50 mr-2"></i>
-            <input id="searchBox" placeholder="Search posts, users…" class="bg-transparent outline-none text-sm text-white/75 w-64"/>
-          </div>
-          <button id="notifBtn" class="p-2 rounded bg-white/5 relative btn"><i class="fa-regular fa-bell"></i><span id="notifDot" class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[var(--mh-accent)] hidden"></span></button>
-          <div class="relative">
-            <button id="profileBtn" class="flex items-center gap-2 px-2 py-1 rounded bg-white/5 btn">
-              <img id="navAvatar" class="w-8 h-8 rounded object-cover" src="" alt="avatar">
-              <span id="navNick" class="hidden md:inline tiny">Player</span>
-            </button>
-            <div id="profileMenu" class="menu glass rounded p-2">
-              <button data-section="profile" class="w-full text-left px-2 py-2 rounded hover:bg-white/5">Profile</button>
-              <button data-section="notifications" class="w-full text-left px-2 py-2 rounded hover:bg-white/5">Notifications</button>
-              <button id="btnLogout" class="w-full text-left px-2 py-2 rounded hover:bg-white/5 text-red-400">Sign out</button>
-            </div>
-          </div>
-        </div>
+    <div id="friendSuggestionsCard" class="glass p-3">
+      <div class="flex items-center justify-between mb-2">
+        <div class="font-semibold">Suggestions</div>
+        <button id="refreshSuggestions" class="text-xs muted">Refresh</button>
       </div>
-    </header>
+      <div id="friendSuggestions" class="grid grid-cols-3 gap-2"></div>
+    </div>
 
-    <!-- layout -->
-    <main class="layout max-w-7xl mx-auto">
-      <!-- left column -->
-      <aside class="space-y-3">
-        <div class="glass p-3 rounded flex items-center gap-3">
-          <img id="sideAvatar" class="w-12 h-12 rounded object-cover" src="">
-          <div>
-            <div id="sideNick" class="font-semibold">Player</div>
-            <div class="tiny muted">Lv <span id="sideRank">1</span> · <span id="sidePoints">0</span> pts</div>
-          </div>
-        </div>
+    <div id="adminCard" class="glass p-3 mt-4 hidden">
+      <div class="font-semibold text-red-300">Admin Tools</div>
+      <input id="adminDeletePostId" placeholder="Post id to delete" class="mt-2 p-2 rounded bg-[transparent] w-full" />
+      <button id="btnAdminDeletePost" class="btn-danger mt-2 w-full">Delete Post</button>
+    </div>
+  </aside>
 
-        <nav id="leftNav" class="glass p-2 rounded hidden md:block space-y-2">
-          <button data-section="feed" class="navbtn w-full text-left px-3 py-2 rounded nav-active"> <i class="fa fa-house mr-2"></i> Feed</button>
-          <button data-section="chat" class="navbtn w-full text-left px-3 py-2 rounded"> <i class="fa fa-message mr-2"></i> Chat</button>
-          <button data-section="friends" class="navbtn w-full text-left px-3 py-2 rounded"> <i class="fa fa-user-group mr-2"></i> Friends</button>
-          <button data-section="leaderboard" class="navbtn w-full text-left px-3 py-2 rounded"> <i class="fa fa-trophy mr-2"></i> Leaderboard</button>
-          <button data-section="notifications" class="navbtn w-full text-left px-3 py-2 rounded"> <i class="fa fa-bell mr-2"></i> Notifications</button>
-          <button data-section="profile" class="navbtn w-full text-left px-3 py-2 rounded"> <i class="fa fa-id-card mr-2"></i> Profile</button>
-          <a href="main.html" class="w-full text-left px-3 py-2 rounded hover:bg-white/5 block"> <i class="fa fa-rotate-left mr-2"></i> Back to main</a>
-        </nav>
+  <!-- App main -->
+  <div class="main-wrap" id="app" style="display:none;">
 
-        <div id="friendSuggestionsCard" class="glass p-3 rounded">
-          <div class="flex items-center justify-between"><div class="font-semibold">Suggestions</div><button id="refreshSuggestions" class="tiny muted">Refresh</button></div>
-          <div id="friendSuggestions" class="mt-2 grid grid-cols-3 gap-2"></div>
-        </div>
-
-        <div id="adminCard" class="glass p-3 rounded hidden">
-          <div class="font-semibold text-red-300">Admin</div>
-          <input id="adminDeletePostId" placeholder="Post ID" class="mt-2 w-full bg-[var(--mh-panel)] p-2 rounded tiny"/>
-          <div class="mt-2 flex gap-2"><button id="btnAdminDeletePost" class="px-3 py-1 bg-red-500 rounded btn">Delete</button></div>
-        </div>
-      </aside>
-
-      <!-- center: main content -->
-      <section class="space-y-3">
-        <!-- FEED -->
-        <div id="section-feed" class="space-y-3">
-          <div class="glass p-3 rounded">
-            <div class="flex gap-3">
-              <img id="cpAvatar" class="w-10 h-10 rounded object-cover" src="">
-              <div class="flex-1">
-                <textarea id="postText" rows="2" class="w-full bg-transparent outline-none resize-none text-sm" placeholder="Share your gaming moment..."></textarea>
-                <div class="mt-2 flex items-center gap-2 flex-wrap">
-                  <label class="px-3 py-1 bg-white/5 rounded cursor-pointer"><i class="fa-regular fa-image mr-2"></i><span class="tiny">Image</span><input id="postImage" class="hidden" type="file" accept="image/*"></label>
-                  <div class="flex items-center bg-[var(--mh-panel)] rounded px-2 py-1">
-                    <i class="fa fa-link text-white/50 mr-2"></i>
-                    <input id="postLink" class="bg-transparent outline-none text-sm w-36" placeholder="Optional link"/>
-                  </div>
-                  <button id="btnPost" class="ml-auto px-3 py-1 bg-[var(--mh-primary)] rounded btn">Post</button>
-                </div>
+    <!-- Left column (on desktop) handled by CSS grid -->
+    <!-- Center column -->
+    <main class="col-span-1">
+      <!-- Create post -->
+      <section id="section-feed" class="feed">
+        <div class="post-card">
+          <div class="post-top">
+            <img id="cpAvatar" class="avatar" src="" alt="avatar" />
+            <div class="flex-1">
+              <textarea id="postText" rows="2" placeholder="Share your gaming moment…" class="w-full bg-[transparent] p-2 rounded resize-none outline-none"></textarea>
+              <div class="mt-3 flex gap-2 items-center">
+                <label class="px-3 py-1 rounded bg-white/5 cursor-pointer">
+                  <i class="fa-regular fa-image"></i> <input id="postImage" type="file" accept="image/*" class="hidden" />
+                </label>
+                <input id="postLink" placeholder="Optional link" class="bg-[transparent] p-2 rounded flex-1" />
+                <button id="btnPost" class="btn-primary">Post</button>
               </div>
             </div>
           </div>
-
-          <!-- feed list -->
-          <div id="feedList" class="space-y-3 min-h-[120px]">
-            <!-- skeleton while loading -->
-            <div id="feedSkeleton" class="space-y-2">
-              <div class="glass p-3 rounded"><div class="flex gap-3"><div class="skeleton w-12 h-12"></div><div class="flex-1"><div class="skeleton w-1/4 mb-2"></div><div class="skeleton w-full"></div></div></div></div>
-            </div>
-          </div>
         </div>
 
-        <!-- CHAT -->
-        <div id="section-chat" class="hidden space-y-3">
-          <div class="glass p-3 rounded">
-            <div class="font-semibold">Private Chats</div>
-            <input id="chatSearch" class="mt-2 w-full bg-[var(--mh-panel)] p-2 rounded tiny" placeholder="Find friend...">
-            <div id="chatUsers" class="mt-2 space-y-2 max-h-[42vh] overflow-auto"></div>
-          </div>
+        <div id="pinnedList"></div>
+        <div id="feedList"></div>
+      </section>
 
-          <div class="glass p-3 rounded">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <img id="chatPeerAvatar" class="w-10 h-10 rounded object-cover" src="">
-                <div>
-                  <div id="chatPeerNick" class="font-semibold tiny">Select friend</div>
-                  <div id="chatPeerStatus" class="muted tiny">—</div>
-                </div>
-              </div>
-              <div class="tiny muted">Private</div>
-            </div>
-
-            <div id="chatStream" class="mt-3 max-h-[44vh] overflow-auto space-y-2"></div>
-            <div class="mt-3 flex gap-2 items-center">
-              <input id="chatInput" class="flex-1 bg-[var(--mh-panel)] p-2 rounded tiny" placeholder="Type message (Enter to send)"/>
-              <button id="btnSendChat" class="px-3 py-2 bg-[var(--mh-primary)] rounded"><i class="fa fa-paper-plane"></i></button>
-            </div>
-          </div>
-        </div>
-
-        <!-- FRIENDS -->
-        <div id="section-friends" class="hidden space-y-3">
-          <div class="glass p-3 rounded">
-            <div class="font-semibold">Incoming Requests</div>
-            <div id="incomingRequests" class="mt-2 space-y-2"></div>
-          </div>
-
-          <div class="glass p-3 rounded">
-            <div class="font-semibold">Your Friends</div>
-            <div id="friendList" class="mt-2 grid grid-cols-2 gap-2"></div>
-          </div>
-        </div>
-
-        <!-- LEADERBOARD -->
-        <div id="section-leaderboard" class="hidden">
-          <div class="glass p-3 rounded">
-            <div class="font-semibold">Top Players</div>
-            <div class="mt-3 overflow-auto"><table class="w-full tiny"><thead class="muted text-left"><tr><th>#</th><th>Nick</th><th>Points</th></tr></thead><tbody id="leaderRows"></tbody></table></div>
-          </div>
-        </div>
-
-        <!-- NOTIFICATIONS -->
-        <div id="section-notifications" class="hidden">
-          <div class="glass p-3 rounded">
-            <div class="flex justify-between items-center"><div class="font-semibold">Notifications</div><button id="btnClearSeen" class="tiny muted">Mark seen</button></div>
-            <div id="notifList" class="mt-2 space-y-2"></div>
-          </div>
-        </div>
-
-        <!-- PROFILE -->
-        <div id="section-profile" class="hidden">
-          <div class="glass p-3 rounded">
+      <!-- Chat -->
+      <section id="section-chat" class="hidden">
+        <div class="chat-window">
+          <div class="chat-header">
             <div class="flex items-center gap-3">
-              <img id="pvAvatar" class="w-16 h-16 rounded object-cover" src="">
-              <div>
-                <div id="pvNick" class="font-semibold">Player</div>
-                <div class="tiny muted">Lv <span id="pvRank">1</span> · <span id="pvPoints">0</span> pts</div>
-              </div>
+              <img id="chatPeerAvatar" class="w-10 h-10 rounded" src="" />
+              <div><div id="chatPeerNick" class="font-semibold">Select a friend</div><div id="chatPeerStatus" class="muted-xs">—</div></div>
             </div>
+          </div>
+          <div class="chat-stream" id="chatStream"></div>
+          <div class="chat-input">
+            <input id="chatInput" placeholder="Type a message… (Enter to send)" />
+            <button id="btnSendChat" class="btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
+          </div>
+        </div>
 
-            <div id="profileView" class="mt-3 hidden">
-              <div id="pvBio" class="muted tiny"></div>
-              <div class="mt-3 grid grid-cols-2 gap-2 tiny muted">
-                <div>Gamer name: <span id="pvGamer"></span></div>
-                <div>Sex: <span id="pvSex"></span></div>
-                <div>DOB: <span id="pvDob"></span></div>
-                <div>Lang: <span id="pvLang"></span></div>
-                <div>Country: <span id="pvCountry"></span></div>
-                <div>Games: <span id="pvGames"></span></div>
-              </div>
-              <div class="mt-3"><button id="btnEditProfile" class="px-3 py-1 bg-white/5 rounded tiny">Edit Profile</button></div>
-            </div>
-
-            <div id="profileEdit" class="mt-3">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <input id="setNick" placeholder="Nickname" class="bg-[var(--mh-panel)] p-2 rounded tiny"/>
-                <input id="setGamer" placeholder="Gamer name" class="bg-[var(--mh-panel)] p-2 rounded tiny"/>
-                <select id="setSex" class="bg-[var(--mh-panel)] p-2 rounded tiny"><option value="">Prefer not</option><option>Male</option><option>Female</option><option>Other</option></select>
-                <input id="setDob" type="date" class="bg-[var(--mh-panel)] p-2 rounded tiny"/>
-                <input id="setLang" placeholder="Language" class="bg-[var(--mh-panel)] p-2 rounded tiny"/>
-                <input id="setCountry" placeholder="Country" class="bg-[var(--mh-panel)] p-2 rounded tiny"/>
-                <input id="setGames" placeholder="Games (comma separated)" class="bg-[var(--mh-panel)] p-2 rounded tiny sm:col-span-2"/>
-                <input id="setAvatar" type="file" accept="image/*" class="tiny sm:col-span-2"/>
-                <textarea id="setBio" rows="3" placeholder="Bio" class="bg-[var(--mh-panel)] p-2 rounded tiny sm:col-span-2"></textarea>
-              </div>
-              <div class="mt-3 flex gap-2">
-                <button id="btnSaveProfile" class="px-3 py-1 bg-[var(--mh-primary)] rounded">Save</button>
-                <span id="profileSaved" class="hidden tiny text-[var(--ok)]">Saved ✓</span>
-              </div>
-            </div>
+        <div class="mt-4">
+          <div class="glass p-3">
+            <div class="flex items-center justify-between mb-2"><div class="font-semibold">Private Chats</div></div>
+            <input id="chatSearch" placeholder="Find friend…" class="w-full p-2 rounded bg-[transparent]" />
+            <div id="chatUsers" class="mt-3 space-y-2"></div>
           </div>
         </div>
       </section>
 
-      <!-- right column (hidden on mobile) -->
-      <aside class="hidden md:block">
-        <div class="glass p-3 rounded">
-          <div class="font-semibold">Trending</div>
-          <div class="mt-2 grid gap-2"><div class="p-2 bg-white/5 rounded tiny">Valorant</div><div class="p-2 bg-white/5 rounded tiny">Skyrim</div></div>
+      <!-- Friends -->
+      <section id="section-friends" class="hidden">
+        <div class="glass p-3">
+          <div class="font-semibold">Incoming Friend Requests</div>
+          <div id="incomingRequests" class="mt-3 space-y-2"></div>
         </div>
-        <div id="onlineFriends" class="glass p-3 rounded mt-3 tiny muted">
-          <div class="font-semibold">Online</div><div id="onlineList" class="mt-2"></div>
+
+        <div class="glass p-3 mt-3">
+          <div class="font-semibold">Your Friends</div>
+          <div id="friendList" class="mt-3 grid sm:grid-cols-2 gap-3"></div>
         </div>
-      </aside>
+      </section>
+
+      <!-- Leaderboard -->
+      <section id="section-leaderboard" class="hidden">
+        <div class="glass p-3">
+          <div class="font-semibold">Top Players</div>
+          <table class="w-full mt-2 text-sm">
+            <thead class="muted"><tr><th>#</th><th>Player</th><th>Points</th></tr></thead>
+            <tbody id="leaderRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Notifications -->
+      <section id="section-notifications" class="hidden">
+        <div class="glass p-3">
+          <div class="flex items-center justify-between"><div class="font-semibold">Notifications</div><button id="btnClearSeen" class="text-xs muted">Mark all seen</button></div>
+          <div id="notifList" class="mt-3 space-y-2"></div>
+        </div>
+      </section>
+
+      <!-- Profile -->
+      <section id="section-profile" class="hidden">
+        <div class="profile-card">
+          <div class="flex gap-4 items-center">
+            <img id="pvAvatar" class="avatar-lg" src="" alt="avatar" />
+            <div>
+              <div id="pvNick" class="font-semibold">Player</div>
+              <div class="muted-xs">Lv <span id="pvRank">1</span> · <span id="pvPoints">0</span> pts</div>
+            </div>
+          </div>
+
+          <div id="profileView" class="mt-3">
+            <div id="pvBio" class="muted-xs"></div>
+            <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 muted-xs">
+              <div>Gamer name: <span id="pvGamer"></span></div>
+              <div>Sex: <span id="pvSex"></span></div>
+              <div>DOB: <span id="pvDob"></span></div>
+              <div>Lang: <span id="pvLang"></span></div>
+              <div>Country: <span id="pvCountry"></span></div>
+              <div>Games: <span id="pvGames"></span></div>
+            </div>
+            <div class="mt-3"><button id="btnEditProfile" class="btn-primary">Edit Profile</button></div>
+          </div>
+
+          <div id="profileEdit" class="mt-3 hidden">
+            <div class="profile-grid">
+              <input id="setNick" placeholder="Nickname" />
+              <input id="setGamer" placeholder="Gamer name" />
+              <select id="setSex"><option value="">Prefer not to say</option><option>Male</option><option>Female</option><option>Other</option></select>
+              <input id="setDob" type="date" />
+              <input id="setLang" placeholder="Language" />
+              <input id="setCountry" placeholder="Country" />
+              <input id="setGames" placeholder="Games (comma separated)" />
+              <input id="setAvatar" type="file" accept="image/*" />
+              <textarea id="setBio" rows="3" placeholder="Bio"></textarea>
+            </div>
+            <div class="mt-3 flex gap-2"><button id="btnSaveProfile" class="btn-primary">Save</button><span id="profileSaved" class="hidden text-[var(--mh-ok)]">Saved ✓</span></div>
+          </div>
+        </div>
+
+        <div id="adminTools" class="glass p-3 mt-3 hidden">
+          <div class="font-semibold">Admin Tools</div>
+          <div class="mt-2 grid grid-cols-2 gap-2">
+            <input id="adminDeletePostId2" placeholder="Post ID to delete" />
+            <button id="adminDeleteBtn2" class="btn-danger">Delete</button>
+          </div>
+        </div>
+      </section>
+
     </main>
 
-    <!-- mobile bottom nav -->
-    <div class="bottom-tab md:hidden">
-      <button data-section="feed" class="tab active"> <i class="fa fa-house"></i> </button>
-      <button data-section="chat" class="tab"> <i class="fa fa-message"></i> </button>
-      <button data-section="friends" class="tab"> <i class="fa fa-user-group"></i> </button>
-      <button data-section="leaderboard" class="tab"> <i class="fa fa-trophy"></i> </button>
-      <button data-section="profile" class="tab"> <i class="fa fa-id-card"></i> </button>
-    </div>
+    <!-- Right column -->
+    <aside class="col-span-1 hidden lg:block">
+      <div class="widget">
+        <div class="flex items-center justify-between">
+          <div class="font-semibold">Trending</div>
+          <a href="#" class="text-xs text-[var(--mh-primary)]">See all</a>
+        </div>
+        <div class="mt-3 small-list">
+          <div class="p-2 rounded bg-white/5">Valorant</div>
+          <div class="p-2 rounded bg-white/5">Skyrim</div>
+          <div class="p-2 rounded bg-white/5">Minecraft</div>
+        </div>
+      </div>
+
+      <div id="onlineFriends" class="widget">
+        <div class="font-semibold">Online Friends</div>
+        <div id="onlineList" class="mt-2 small-list"></div>
+      </div>
+    </aside>
+
   </div>
 
-<!-- Firebase module -->
-<script type="module">
+  <!-- Bottom mobile nav -->
+  <div id="bottomTabs" class="md:hidden">
+    <button class="tab active" data-section="feed"><i class="fa fa-house"></i></button>
+    <button class="tab" data-section="friends"><i class="fa fa-user-group"></i></button>
+    <button class="tab" data-section="chat"><i class="fa fa-message"></i></button>
+    <button class="tab" data-section="leaderboard"><i class="fa fa-trophy"></i></button>
+    <button class="tab" data-section="profile"><i class="fa fa-id-card"></i></button>
+  </div>
+
+  <!-- Firebase and main script -->
+  <script type="module">
+  /***********************************************
+   * Replace placeholders with your Firebase values
+   ***********************************************/
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
   import {
-    getFirestore, doc, getDoc, setDoc, updateDoc, addDoc, collection, serverTimestamp,
-    onSnapshot, query, where, orderBy, limit, getDocs, deleteDoc, runTransaction
+    getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
+    serverTimestamp, onSnapshot, query, where, orderBy, limit, runTransaction
   } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
- // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAgx0jy6we6cvnIgKbS1fBoeRfSD2MDszo",
-  authDomain: "mod-hive.firebaseapp.com",
-  projectId: "mod-hive",
-  storageBucket: "mod-hive.firebasestorage.app",
-  messagingSenderId: "982583858832",
-  appId: "1:982583858832:web:44d5e4e2edd77fac06ea15",
-  measurementId: "G-PK2DRED7FB"
-};
-  const ADMIN_UID = "7aTPZ6wEIpQaPjlXWDrz5Ajc4By1";
-  /* ========================================================== */
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT",
+    appId: "YOUR_APP_ID"
+  };
+  const ADMIN_UID = "YOUR_ADMIN_UID_HERE";
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // state
-  let me = null;
-  let meDoc = null;
-  const unsub = {}; // store unsubscribe functions
-  let feedUnsub = null;
-  let chatUnsub = null;
-  let currentChatCid = null;
-  let pendingImgBase64 = null;
-  let authResolved = false;
-
-  // DOM helpers
+  // Minimal helper utilities
   const $ = s => document.querySelector(s);
   const $$ = s => Array.from(document.querySelectorAll(s));
   const byId = id => document.getElementById(id);
-
-  // utils
-  function toast(msg, type="info"){
-    const wrap = byId('toasts');
-    const el = document.createElement('div');
-    el.className = 'glass px-3 py-2 rounded flex items-center gap-3';
-    el.style.minWidth = '200px';
-    el.innerHTML = `${type==='ok'? "<i class='fa fa-check text-[var(--ok)]'></i>" : type==='error'? "<i class='fa fa-triangle-exclamation text-[var(--danger)]'></i>" : "<i class='fa fa-bell'></i>"}<div class="flex-1">${msg}</div>`;
-    wrap.appendChild(el);
-    setTimeout(()=>{ el.style.transition='opacity .25s, transform .25s'; el.style.opacity='0'; el.style.transform='translateY(8px)'; setTimeout(()=>el.remove(),270); }, 2600);
+  function toast(msg, type='info'){
+    const t = document.createElement('div'); t.className='toast glass'; t.textContent = msg;
+    byId('toasts').appendChild(t);
+    setTimeout(()=> t.remove(), 3000);
   }
-
-  function confirmDialog(title, text){
-    return new Promise(resolve=>{
-      byId('confirmTitle').textContent = title;
-      byId('confirmText').textContent = text;
-      const modal = byId('confirmModal'); modal.classList.remove('hidden'); modal.style.display='flex';
-      const ok = byId('confirmOk'), cancel = byId('confirmCancel');
-      const cleanup = ()=>{ modal.classList.add('hidden'); modal.style.display='none'; ok.onclick = cancel.onclick = null; };
-      ok.onclick = ()=>{ cleanup(); resolve(true); };
-      cancel.onclick = ()=>{ cleanup(); resolve(false); };
-    });
-  }
-
-  function initialsAvatar(name="Player", size=128){
-    const initials = (name||'').split(/\s+/).map(p=>p[0]||'').slice(0,2).join('').toUpperCase() || 'P';
+  function initialsAvatar(text='Player', size=256){
+    const initials = (text||'P').split(/\s+/).map(p=>p[0]||'').slice(0,2).join('').toUpperCase();
     const colors = ['#6c5ce7','#00cec9','#fd79a8','#0984e3','#00b894','#e17055','#e84393'];
     const bg = colors[(initials.charCodeAt(0)||1) % colors.length];
-    const c = document.createElement('canvas'); c.width=c.height=size;
-    const ctx = c.getContext('2d'); ctx.fillStyle=bg; ctx.fillRect(0,0,size,size);
-    ctx.fillStyle='#fff'; ctx.font = `${Math.round(size*0.45)}px sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(initials, size/2, size/2);
+    const c = document.createElement('canvas'); c.width=c.height=size; const ctx=c.getContext('2d');
+    ctx.fillStyle = bg; ctx.fillRect(0,0,size,size);
+    ctx.fillStyle = '#fff'; ctx.font = `${Math.round(size*0.45)}px sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(initials, size/2, size/2);
     return c.toDataURL('image/png');
   }
+  function tsToText(ts){ try{ const d = ts?.toDate ? ts.toDate() : new Date(ts); return d.toLocaleString(); } catch { return 'just now'; } }
+  function shortId(id=''){ return (id||'').slice(0,4) + '…' + (id||'').slice(-3); }
+  function escapeHtml(s=''){ return String(s).replace(/[&<>"'`]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])); }
 
-  function tsToText(ts){
-    try { const d = ts?.toDate ? ts.toDate() : new Date(ts); return d.toLocaleString(); } catch { return 'just now'; }
-  }
-  function shortId(id=''){ if(!id) return ''; return id.slice(0,4) + '…' + id.slice(-3); }
+  // App state
+  let me = null, meDoc = null;
+  let feedUnsub = null, friendsUnsub = null, friendRequestsUnsub = null, notifUnsub = null, chatUnsub = null;
+  let commentUnsubs = {}, currentChatCid = null;
+  let pendingImageBase64 = null;
 
-  // Convert file to base64 (small compression)
-  function fileToBase64(file, maxW=1200, q=0.82){
-    return new Promise((res,rej)=>{
-      const reader = new FileReader();
-      reader.onload = (e)=>{
-        const img = new Image(); img.onload = ()=>{
-          const scale = Math.min(1, maxW/img.width);
-          const w = Math.round(img.width*scale), h = Math.round(img.height*scale);
-          const canvas = document.createElement('canvas'); canvas.width=w; canvas.height=h;
-          const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0,w,h);
-          res(canvas.toDataURL('image/jpeg', q));
-        };
-        img.onerror = rej; img.src = e.target.result;
-      };
-      reader.onerror = rej; reader.readAsDataURL(file);
+  // Basic DOM shortcuts
+  function showSection(name){
+    const sections = ['feed','chat','friends','leaderboard','notifications','profile'];
+    sections.forEach(s => {
+      const el = document.getElementById('section-' + s);
+      if(el) el.classList.toggle('hidden', s !== name);
     });
+    // mobile bottom tabs active
+    $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.section === name));
+    // close sidebar if mobile
+    if(window.innerWidth < 768) document.getElementById('sidebar').classList.add(' -translate-x-full');
+    // if chat opened ensure chatWindow visible
+    if(name !== 'chat') document.getElementById('chatWindow')?.classList.add('hidden');
   }
 
-  // AUTH GATE
-  onAuthStateChanged(auth, async (user)=>{
-    // avoid redirect loop: only redirect user->auth if not already on auth page
-    try {
-      if(!user){
-        authResolved = true;
-        const path = window.location.pathname.split("/").pop();
-        if(path !== "auth.html"){
-          // send to auth page
-          location.href = "auth.html";
-        } else {
-          // we are already on auth page — allow
-          return;
-        }
-        return;
-      }
-      // user logged in
-      me = user;
-      await ensureUserDoc(user);
-      await hydrateUI();
-      authResolved = true;
-    } catch(err){
-      console.error('auth gate error', err);
-      authResolved = true;
-      byId('gate').style.display = 'none';
-      byId('root').classList.remove('hidden');
-      toast('Auth error, try reloading','error');
+  // Auth gate
+  onAuthStateChanged(auth, async (user) => {
+    if(!user){
+      const path = window.location.pathname.split('/').pop();
+      if(path !== 'auth.html') location.href = 'auth.html';
+      return;
     }
+    me = user;
+    await ensureUserDoc(me);
+    hydrateUI();
   });
 
-  // If auth check doesn't resolve in 8s, unstick UI but don't redirect
-  setTimeout(()=> {
-    if(!authResolved){
-      // hide gate and let page load with fallback UI; user will be redirected by onAuthStateChanged later
-      try{ byId('gate').style.display = 'none'; byId('root').classList.remove('hidden'); }catch{}
-      toast('Auth check taking long — if you are not logged in you will be sent to login','error');
-    }
-  }, 8000);
-
+  // Ensure user doc
   async function ensureUserDoc(user){
-    const ref = doc(db,'users',user.uid);
+    const ref = doc(db,'users', user.uid);
     const snap = await getDoc(ref);
     if(!snap.exists()){
-      const nick = user.displayName || ('Player_'+user.uid.slice(0,4));
+      const nickname = user.displayName || ('Player_' + user.uid.slice(0,4));
+      const avatar = user.photoURL || initialsAvatar(nickname);
       await setDoc(ref, {
-        uid: user.uid,
-        nickname: nick,
-        gamerName: nick,
-        avatar: user.photoURL || initialsAvatar(nick),
-        bio: '', sex:'', dob:'', language:'', country:'', games:'',
-        points: 0, status:'online', createdAt: serverTimestamp(), updatedAt: serverTimestamp()
+        uid: user.uid, nickname, gamerName: nickname, avatar,
+        bio:'', sex:'', dob:'', language:'', country:'', games:'',
+        points: 0, createdAt: serverTimestamp(), updatedAt: serverTimestamp()
       });
-      meDoc = (await getDoc(ref)).data();
-    } else {
-      meDoc = snap.data();
-      if(!meDoc.avatar){
-        await updateDoc(ref, { avatar: initialsAvatar(meDoc.nickname || 'Player') });
-        meDoc = (await getDoc(ref)).data();
-      }
     }
+    meDoc = (await getDoc(ref)).data();
   }
 
-  // hydrate UI and attach listeners
-  async function hydrateUI(){
+  // Hydrate UI and wire up handlers
+  function hydrateUI(){
     byId('gate').style.display = 'none';
-    byId('root').classList.remove('hidden');
+    document.getElementById('app').style.display = '';
 
-    // set header/profile visuals
     const fallback = meDoc.avatar || initialsAvatar(meDoc.nickname || 'Player');
-    const avatarIds = ['navAvatar','cpAvatar','sideAvatar','pvAvatar'];
-    avatarIds.forEach(id => { if(byId(id)) byId(id).src = fallback; });
-    byId('navNick').textContent = meDoc.nickname || 'Player';
+    ['navAvatar','cpAvatar','sideAvatar','pvAvatar','pvAvatar'].forEach(id => { if(byId(id)) byId(id).src = fallback; });
+    byId('cpAvatar').src = fallback;
     byId('sideNick').textContent = meDoc.nickname || 'Player';
     byId('sidePoints').textContent = meDoc.points || 0;
     byId('pvNick').textContent = meDoc.nickname || 'Player';
     byId('pvPoints').textContent = meDoc.points || 0;
-    byId('sideRank').textContent = rankFromPoints(meDoc.points || 0);
     byId('pvRank').textContent = rankFromPoints(meDoc.points || 0);
 
-    // admin UI
-    if(me.uid === ADMIN_UID) byId('adminCard').classList.remove('hidden'); else byId('adminCard').classList.add('hidden');
+    if(me.uid === ADMIN_UID){
+      byId('adminCard').classList.remove('hidden');
+      byId('adminTools').classList.remove('hidden');
+    }
 
-    bindUIEvents();
-    startFeed();
-    startNotifications();
-    loadSuggestions();
-    loadFriendAssets();
-    loadLeaderboard();
-    preloadProfileInputs();
-    showSection('feed');
+    bindUI();
+    startLive();
   }
 
   function rankFromPoints(p=0){
-    if(p>2000) return 10;
-    if(p>1000) return 9;
-    if(p>600) return 8;
-    if(p>400) return 7;
-    if(p>250) return 6;
-    if(p>150) return 5;
-    if(p>90) return 4;
-    if(p>50) return 3;
-    if(p>20) return 2;
-    return 1;
+    if(p>2000) return 10; if(p>1000) return 9; if(p>600) return 8;
+    if(p>400) return 7; if(p>250) return 6; if(p>150) return 5;
+    if(p>90) return 4; if(p>50) return 3; if(p>20) return 2; return 1;
   }
 
-  // UI event binding
-  function bindUIEvents(){
-    byId('burger').addEventListener('click', toggleSidebar);
-    // nav buttons
-    $$('.navbtn').forEach(b => b.addEventListener('click', ()=> showSection(b.dataset.section)));
-    $$('.tab').forEach(t=> t.addEventListener('click', ()=> { showSection(t.dataset.section); $$('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active'); }));
-    byId('profileBtn').addEventListener('click', ()=> byId('profileMenu').classList.toggle('show'));
-    document.addEventListener('click', (e)=>{ if(!byId('profileBtn').contains(e.target) && !byId('profileMenu').contains(e.target)) byId('profileMenu').classList.remove('show'); });
-    byId('btnLogout').addEventListener('click', ()=> signOut(auth));
+  // Bind static UI events
+  function bindUI(){
+    // nav link clicks
+    $$('.nav-link').forEach(b => b.addEventListener('click', ()=> {
+      showSection(b.dataset.section || 'feed');
+      $$('.nav-link').forEach(nb => nb.classList.remove('nav-active'));
+      b.classList.add('nav-active');
+    }));
+    // bottom tabs
+    $$('.tab').forEach(t => t.addEventListener('click', ()=> {
+      showSection(t.dataset.section);
+      $$('.tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+    }));
 
-    // header search debounce
-    let debounce;
-    const sbox = byId('searchBox');
-    if(sbox) sbox.addEventListener('input', e=>{
-      clearTimeout(debounce);
-      debounce = setTimeout(()=> filterFeed(e.target.value.trim().toLowerCase()), 300);
-    });
+    // search
+    byId('searchBox')?.addEventListener('input', e => filterFeed(e.target.value.trim().toLowerCase()));
 
-    // post image
-    const postImgEl = byId('postImage');
-    if(postImgEl) postImgEl.addEventListener('change', async (e)=>{
-      const f = e.target.files?.[0];
-      if(!f) { pendingImgBase64 = null; return; }
-      if(f.size > 5*1024*1024){ toast('Image too large (5MB max)','error'); e.target.value=''; pendingImgBase64=null; return; }
-      try{ pendingImgBase64 = await fileToBase64(f, 1200, .82); toast('Image attached'); } catch(e){ toast('Image processing failed','error'); pendingImgBase64=null; }
+    // post image attach
+    byId('postImage').addEventListener('change', async (e) => {
+      const f = e.target.files?.[0]; if(!f) return;
+      if(f.size > 6*1024*1024){ toast('Image too large (6MB)'); byId('postImage').value=''; return; }
+      try{ pendingImageBase64 = await fileToBase64(f, 1200, .82); toast('Image attached'); } catch(err){ console.error(err); toast('Image error'); pendingImageBase64 = null; }
     });
 
     // create post
     byId('btnPost').addEventListener('click', createPost);
 
-    // image viewer
-    byId('imgClose').addEventListener('click', ()=> { byId('imgViewer').classList.add('hidden'); byId('imgLarge').src=''; });
-
     // chat send
     byId('btnSendChat').addEventListener('click', sendChat);
-    byId('chatInput').addEventListener('keydown', (e)=> { if(e.key === 'Enter') sendChat(); });
+    byId('chatInput').addEventListener('keydown', e => { if(e.key==='Enter') sendChat(); });
 
-    // profile save/edit
-    byId('btnSaveProfile').addEventListener('click', saveProfile);
+    // profile edit/save
     byId('btnEditProfile').addEventListener('click', ()=> { byId('profileView').classList.add('hidden'); byId('profileEdit').classList.remove('hidden'); });
+    byId('btnSaveProfile').addEventListener('click', saveProfile);
 
-    // admin delete post
-    byId('btnAdminDeletePost').addEventListener('click', async ()=>{
-      if(me.uid !== ADMIN_UID){ toast('Not admin','error'); return; }
-      const id = byId('adminDeletePostId').value.trim(); if(!id) return toast('Add post id','error');
-      if(await confirmDialog('Delete post','Permanently delete?')){ await deleteDoc(doc(db,'posts',id)); toast('Deleted','ok'); }
+    // admin deletes
+    byId('btnAdminDeletePost')?.addEventListener('click', async ()=>{
+      if(me.uid !== ADMIN_UID){ toast('Not admin'); return; }
+      const id = byId('adminDeletePostId').value.trim(); if(!id) return toast('Add post id');
+      try{ await deleteDoc(doc(db,'posts',id)); toast('Deleted'); } catch(e){ console.error(e); toast('Delete failed'); }
+    });
+    byId('adminDeleteBtn2')?.addEventListener('click', async ()=>{
+      if(me.uid !== ADMIN_UID){ toast('Not admin'); return; }
+      const id = byId('adminDeletePostId2').value.trim(); if(!id) return toast('Add post id');
+      try{ await deleteDoc(doc(db,'posts',id)); toast('Deleted'); } catch(e){ console.error(e); toast('Delete failed'); }
     });
 
-    // friend suggestions refresh
-    byId('refreshSuggestions').addEventListener('click', loadSuggestions);
-
-    // mark seen notifs
-    byId('btnClearSeen').addEventListener('click', async ()=>{
-      const q = query(collection(db,'users',me.uid,'notifications'), where('seen','==',false), limit(50));
-      const snaps = await getDocs(q);
-      for(const d of snaps.docs) await updateDoc(doc(db,'users',me.uid,'notifications',d.id), { seen:true });
-      toast('Marked seen');
-    });
-
-    // delegation: friend chat click
-    const friendListEl = byId('friendList');
-    if(friendListEl) friendListEl.addEventListener('click', (e)=>{
-      const btn = e.target.closest('[data-chat]');
-      if(!btn) return;
-      const uid = btn.dataset.chat;
-      if(uid) openChatWithUid(uid);
-    });
-
-    // chatUsers delegation
-    const chatUsersEl = byId('chatUsers');
-    if(chatUsersEl) chatUsersEl.addEventListener('click', (e)=>{
-      const btn = e.target.closest('[data-open]');
-      if(!btn) return;
-      const uid = btn.dataset.open;
-      if(uid) openChatWithUid(uid);
-    });
-
-    // global delegation for posts
-    document.addEventListener('click', (e)=>{
-      const likeBtn = e.target.closest('[data-like]');
-      if(likeBtn){ const postId = likeBtn.dataset.like; toggleLike(postId); return; }
-      const cbtn = e.target.closest('[data-cmt-toggle]');
-      if(cbtn){ const id = cbtn.dataset.cmtToggle; toggleComments(id); return; }
-      const sendC = e.target.closest('[data-cmt-send]');
-      if(sendC){ const id = sendC.dataset.cmtSend; sendComment(id); return; }
-      const mbtn = e.target.closest('[data-more]');
-      if(mbtn){ const id = mbtn.dataset.more; const menu = byId(`menu-${id}`); if(menu) menu.classList.toggle('show'); return; }
-      const addBtn = e.target.closest('[data-add-user]'); if(addBtn){ sendFriendRequest(addBtn.dataset.addUser); return; }
+    // profile menu toggle and logout
+    document.addEventListener('click', (e) => {
+      if(e.target.closest('#profileToggle')){ byId('profileMenu')?.classList.toggle('show'); return; }
+      if(!e.target.closest('#profileMenu')){ byId('profileMenu')?.classList.remove('show'); }
+      // delegation for dynamic buttons
+      const like = e.target.closest('[data-like]'); if(like){ toggleLike(like.dataset.like); return; }
+      const copen = e.target.closest('[data-cmt-open]'); if(copen){ toggleComments(copen.dataset.cmtOpen); return; }
+      const csend = e.target.closest('[data-cmt-send]'); if(csend){ addComment(csend.dataset.cmtSend); return; }
+      const addFriendBtn = e.target.closest('[data-add]'); if(addFriendBtn){ sendFriendRequest(addFriendBtn.dataset.add); return; }
+      const acceptBtn = e.target.closest('[data-accept]'); if(acceptBtn){ acceptFriend(acceptBtn.dataset.accept); return; }
+      const declineBtn = e.target.closest('[data-decline]'); if(declineBtn){ deleteDoc(doc(db,'friendRequests',declineBtn.dataset.decline)).then(()=>toast('Declined')); return; }
+      const openChatBtn = e.target.closest('[data-open-chat]'); if(openChatBtn){ openChatWithUid(openChatBtn.dataset.openChat); return; }
+      const deleteBtn = e.target.closest('[data-delete-post]'); if(deleteBtn){ deletePost(deleteBtn.dataset.deletePost); return; }
+      const pinBtn = e.target.closest('[data-pin-post]'); if(pinBtn){ pinPost(pinBtn.dataset.pinPost); return; }
+      const saveBtn = e.target.closest('[data-save-post]'); if(saveBtn){ savePost(saveBtn.dataset.savePost); return; }
       const reportBtn = e.target.closest('[data-report]'); if(reportBtn){ reportPost(reportBtn.dataset.report); return; }
-      const delBtn = e.target.closest('[data-delete-post]'); if(delBtn){ deletePost(delBtn.dataset.deletePost); return; }
+      const more = e.target.closest('[data-more]'); if(more){ const id = more.dataset.more; const menu = byId('menu-'+id); if(menu) menu.classList.toggle('show'); return; }
       const img = e.target.closest('.img-thumb'); if(img){ byId('imgLarge').src = img.src; byId('imgViewer').classList.remove('hidden'); return; }
     });
+
+    // image viewer close
+    byId('imgClose').addEventListener('click', ()=> { byId('imgViewer').classList.add('hidden'); byId('imgLarge').src=''; });
+
+    // logout
+    byId('btnLogout').addEventListener('click', ()=> signOut(auth).catch(()=>{}));
   }
 
-  // section switching and cleanup
-  function showSection(name){
-    if(name !== 'chat' && chatUnsub){ chatUnsub(); chatUnsub = null; currentChatCid = null; byId('chatStream').innerHTML = ''; }
-    ['feed','chat','friends','leaderboard','notifications','profile'].forEach(s=>{
-      const el = byId(`section-${s}`); if(el) el.classList.toggle('hidden', s!==name);
-    });
-    $$('.navbtn').forEach(b=> b.classList.toggle('nav-active', b.dataset.section === name));
-    $$('.tab').forEach(t=> t.classList.toggle('active', t.dataset.section === name));
-    window.scrollTo({top:0, behavior:'smooth'});
+  /* --------------------- Live listeners --------------------- */
+  function startLive(){
+    startFeed();
+    subscribeFriendRequests();
+    subscribeFriends();
+    startNotifications();
+    loadSuggestions();
+    loadLeaderboard();
+    preloadProfileInputs();
   }
 
-  function toggleSidebar(){
-    const nav = byId('leftNav');
-    if(nav.classList.contains('hidden')) nav.classList.remove('hidden'); else nav.classList.add('hidden');
-  }
-
-  /* ========== FEED ========== */
-  async function startFeed(){
-    byId('feedSkeleton').classList.remove('hidden');
-    const q = query(collection(db,'posts'), orderBy('createdAt','desc'), limit(30));
+  // Feed
+  function startFeed(){
     if(feedUnsub) feedUnsub();
-    feedUnsub = onSnapshot(q, snap=>{
-      byId('feedSkeleton').classList.add('hidden');
-      const list = byId('feedList'); list.innerHTML = '';
-      snap.forEach(d => list.appendChild(renderPost(d.id, d.data())));
-    }, err => {
-      console.error('feed error', err); toast('Failed to load feed','error');
-      byId('feedSkeleton').classList.add('hidden');
-    });
-  }
-
-  async function createPost(){
-    const text = byId('postText').value.trim();
-    const link = byId('postLink').value.trim() || null;
-    if(!text && !pendingImgBase64 && !link){ toast('Write something or attach an image','error'); return; }
-    try{
-      await addDoc(collection(db,'posts'), {
-        uid: me.uid, nickname: meDoc.nickname || 'Player', avatar: meDoc.avatar || initialsAvatar(meDoc.nickname || 'Player'),
-        text: text || null, link: link || null, image: pendingImgBase64 || null,
-        likes: 0, comments: 0, createdAt: serverTimestamp()
+    const q = query(collection(db,'posts'), orderBy('createdAt','desc'), limit(100));
+    feedUnsub = onSnapshot(q, snap => {
+      byId('feedList').innerHTML = '';
+      const pinnedEls = [];
+      snap.forEach(d => {
+        const p = d.data();
+        const el = renderPost(d.id, p);
+        if(p.pinned) pinnedEls.push(el); else byId('feedList').appendChild(el);
       });
-      // reward (best-effort)
-      try{ await updateDoc(doc(db,'users',me.uid), { points: (meDoc.points||0) + 5 }); }catch(e){}
-      byId('postText').value=''; byId('postLink').value=''; byId('postImage').value=''; pendingImgBase64=null;
-      toast('Posted', 'ok');
-    }catch(e){ console.error(e); toast('Post failed','error'); }
+      const pinnedList = byId('pinnedList'); pinnedList.innerHTML = ''; pinnedEls.forEach(pe => pinnedList.appendChild(pe));
+    }, err => { console.error(err); toast('Feed error');});
   }
 
-  // render post card
+  // Create / render posts
+  async function createPost(){
+    const text = byId('postText').value.trim(); const link = byId('postLink').value.trim() || null;
+    if(!text && !pendingImageBase64 && !link){ toast('Write something'); return; }
+    try{
+      const p = await addDoc(collection(db,'posts'), {
+        uid: me.uid, nickname: meDoc.nickname, avatar: meDoc.avatar || initialsAvatar(meDoc.nickname),
+        text: text || null, link: link || null, image: pendingImageBase64 || null,
+        likes:0, comments:0, pinned:false, createdAt: serverTimestamp()
+      });
+      // reward +5
+      await updateDoc(doc(db,'users',me.uid), { points: (meDoc.points||0) + 5 }).catch(()=>{});
+      byId('postText').value=''; byId('postLink').value=''; byId('postImage').value=''; pendingImageBase64=null;
+      toast('Posted');
+    }catch(e){ console.error(e); toast('Post failed'); }
+  }
+
   function renderPost(id, p){
-    const el = document.createElement('div'); el.className = 'glass p-3 rounded relative';
+    const wrapper = document.createElement('div'); wrapper.className='post-card relative';
+    const avatar = p.avatar || initialsAvatar(p.nickname||'Player');
     const created = tsToText(p.createdAt);
-    const avatar = p.avatar || initialsAvatar(p.nickname || 'Player');
-    el.innerHTML = `
-      <div class="flex gap-3">
-        <img src="${avatar}" class="w-12 h-12 rounded object-cover">
-        <div class="flex-1 relative">
+    wrapper.innerHTML = `
+      <div class="post-top">
+        <img class="avatar" src="${avatar}" />
+        <div class="flex-1">
           <div class="flex justify-between items-start">
-            <div><div class="font-semibold">${escapeHtml(p.nickname||'Player')} <span class="tiny muted">· ${created}</span></div></div>
             <div>
-              <button data-more="${id}" class="px-2 py-1 rounded hover:bg-white/5 btn"><i class="fa fa-ellipsis"></i></button>
-              <div id="menu-${id}" class="menu glass rounded p-1 hidden">
-                <button class="w-full text-left px-2 py-1 tiny" data-add-user="${p.uid}">Add user</button>
-                <button class="w-full text-left px-2 py-1 tiny" data-report="${id}">Report</button>
-                ${(me.uid===p.uid || me.uid===ADMIN_UID) ? `<button class="w-full text-left px-2 py-1 tiny text-red-400" data-delete-post="${id}">Delete</button>` : ''}
+              <div class="font-semibold">${escapeHtml(p.nickname||'Player')} <span class="muted-xs ml-2">${created}</span></div>
+            </div>
+            <div class="relative">
+              <button data-more="${id}" class="px-2 py-1 rounded btn"><i class="fa fa-ellipsis"></i></button>
+              <div id="menu-${id}" class="menu">
+                <button class="w-full text-left px-3 py-2" data-add="${p.uid}">Add user</button>
+                <button class="w-full text-left px-3 py-2" data-report="${id}">Report</button>
+                <button class="w-full text-left px-3 py-2" data-save-post="${id}">Save</button>
+                ${ (me.uid === p.uid || me.uid === ADMIN_UID) ? `<button class="w-full text-left px-3 py-2 text-red-400" data-delete-post="${id}">Delete</button>` : '' }
+                ${ (me.uid === p.uid) ? `<button class="w-full text-left px-3 py-2" data-pin-post="${id}">${p.pinned ? 'Unpin' : 'Pin'}</button>` : '' }
               </div>
             </div>
           </div>
-          ${p.text ? `<div class="mt-2 post-text text-sm">${escapeHtml(p.text)}</div>` : ''}
-          ${p.link ? `<div class="mt-2"><a class="text-[var(--mh-accent)] tiny" target="_blank" rel="noopener" href="${escapeHtml(p.link)}">${escapeHtml(p.link)}</a></div>` : ''}
-          ${p.image ? `<img src="${p.image}" class="img-thumb mt-2" loading="lazy">` : ''}
-          <div class="mt-2 flex items-center justify-between tiny muted">
-            <div><span id="likes-${id}">${p.likes||0}</span> likes · <span id="cmts-${id}">${p.comments||0}</span> comments</div>
-            <div></div>
-          </div>
-          <div class="mt-2 grid grid-cols-3 gap-2">
-            <button class="reaction-btn px-2 py-2 rounded bg-white/5 tiny" data-like="${id}"><i class="fa-regular fa-thumbs-up"></i> Like</button>
-            <button class="reaction-btn px-2 py-2 rounded bg-white/5 tiny" data-cmt-toggle="${id}"><i class="fa-regular fa-comment"></i> Comment</button>
-            <button class="reaction-btn px-2 py-2 rounded bg-white/5 tiny" data-share="${id}"><i class="fa fa-share"></i> Share</button>
-          </div>
-          <div id="cbox-${id}" class="comments-hidden mt-2">
-            <div id="cList-${id}" class="space-y-2 max-h-48 overflow-auto"></div>
-            <div class="flex gap-2 mt-2">
-              <input id="cInput-${id}" class="flex-1 bg-[var(--mh-panel)] p-2 rounded tiny" placeholder="Write a comment...">
-              <button class="px-3 py-1 bg-[var(--mh-primary)] rounded tiny" data-cmt-send="${id}">Send</button>
+          <div class="post-body">
+            ${p.text ? `<div class="text-sm mt-2">${escapeHtml(p.text)}</div>` : ''}
+            ${p.link ? `<div class="mt-2"><a href="${escapeHtml(p.link)}" target="_blank" class="text-[var(--mh-accent)] break-words">${escapeHtml(p.link)}</a></div>` : ''}
+            ${p.image ? `<div class="mt-3"><img src="${p.image}" class="img-thumb" /></div>` : ''}
+            <div class="mt-3 text-xs muted flex items-center justify-between">
+              <div><span id="likes-${id}">${p.likes||0}</span> likes · <span id="cmts-${id}">${p.comments||0}</span> comments</div>
+            </div>
+            <div class="post-actions">
+              <button data-like="${id}"><i class="fa-regular fa-thumbs-up"></i> Like</button>
+              <button data-cmt-open="${id}"><i class="fa-regular fa-comment"></i> Comment</button>
+              <button data-share="${id}"><i class="fa fa-share"></i> Share</button>
+            </div>
+            <div id="cbox-${id}" class="comment-hidden mt-3">
+              <div id="cList-${id}" class="comment-list"></div>
+              <div class="flex gap-2 mt-2">
+                <input id="cInput-${id}" class="flex-1 p-2 rounded bg-[transparent]" placeholder="Write a comment" />
+                <button data-cmt-send="${id}" class="btn-primary">Send</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     `;
-    return el;
+    // reactions: emojis quick row
+    const emojis = ['👍','❤️','😂','🔥','😮','😢','🙌'];
+    const reactionRow = document.createElement('div'); reactionRow.className='mt-2 flex gap-1';
+    emojis.forEach(emo => {
+      const b = document.createElement('button'); b.className='px-2 py-1 rounded bg-white/5'; b.textContent = emo;
+      b.addEventListener('click', async ()=> {
+        try{ await setDoc(doc(db,'posts',id,'reactions',me.uid), { uid: me.uid, emoji: emo, createdAt: serverTimestamp() }); toast('Reacted'); } catch(e){ console.error(e); toast('Reaction failed'); }
+      });
+      reactionRow.appendChild(b);
+    });
+    wrapper.querySelector('.post-body').appendChild(reactionRow);
+    return wrapper;
   }
 
-  // toggle comments: lazy subscribe
-  const commentUnsubs = {};
+  // toggle comments with subscription
   function toggleComments(postId){
-    const box = byId(`cbox-${postId}`);
-    if(!box) return;
-    const isHidden = box.classList.contains('comments-hidden');
-    if(isHidden){
-      box.classList.remove('comments-hidden');
+    const box = byId('cbox-'+postId); if(!box) return;
+    if(box.classList.contains('comment-hidden')){
+      box.classList.remove('comment-hidden');
       const q = query(collection(db,'posts',postId,'comments'), orderBy('createdAt','asc'), limit(200));
-      const unsubC = onSnapshot(q, snap=>{
-        const list = byId(`cList-${postId}`); list.innerHTML = '';
-        snap.forEach(d=>{
-          const c = d.data();
-          const row = document.createElement('div'); row.className='flex gap-2 items-start';
-          row.innerHTML = `<img src="${c.avatar || initialsAvatar(c.nickname||'P')}" class="w-8 h-8 rounded object-cover"><div class="bg-white/5 p-2 rounded"><div class="tiny font-semibold">${escapeHtml(c.nickname||'Player')}</div><div class="tiny">${escapeHtml(c.text)}</div><div class="tiny muted mt-1">${tsToText(c.createdAt)}</div></div>`;
+      commentUnsubs[postId] = onSnapshot(q, snap => {
+        const list = byId('cList-'+postId); list.innerHTML='';
+        snap.forEach(d => {
+          const c = d.data(); const row = document.createElement('div'); row.className='comment-item';
+          row.innerHTML = `<img src="${c.avatar || initialsAvatar(c.nickname)}" /><div class="bubble"><div class="font-semibold">${escapeHtml(c.nickname)}</div><div>${escapeHtml(c.text)}</div><div class="muted-xs mt-1">${tsToText(c.createdAt)}</div></div>`;
           list.appendChild(row);
         });
-      }, err=> console.error('comments err', err));
-      commentUnsubs[postId] = unsubC;
+      }, err => console.error(err));
     } else {
-      box.classList.add('comments-hidden');
-      if(commentUnsubs[postId]) { commentUnsubs[postId](); delete commentUnsubs[postId]; }
+      box.classList.add('comment-hidden');
+      if(commentUnsubs[postId]){ commentUnsubs[postId](); delete commentUnsubs[postId]; }
     }
   }
 
-  async function sendComment(postId){
-    const input = byId(`cInput-${postId}`); if(!input) return;
-    const text = input.value.trim(); if(!text) return;
-    await addDoc(collection(db,'posts',postId,'comments'), {
-      uid: me.uid, nickname: meDoc.nickname, avatar: meDoc.avatar || initialsAvatar(meDoc.nickname), text, createdAt: serverTimestamp()
-    });
-    await updateDoc(doc(db,'posts',postId), { comments: (Number(byId(`cmts-${postId}`)?.textContent||0) + 1) }).catch(()=>{});
-    input.value = '';
-    toast('Comment sent','ok');
+  async function addComment(postId){
+    const ip = byId('cInput-'+postId); if(!ip) return;
+    const text = ip.value.trim(); if(!text) return;
+    try{
+      await addDoc(collection(db,'posts',postId,'comments'), { uid: me.uid, nickname: meDoc.nickname, avatar: meDoc.avatar, text, createdAt: serverTimestamp() });
+      // increment comments count (simple optimistic)
+      await updateDoc(doc(db,'posts',postId), { comments: (await getDoc(doc(db,'posts',postId))).data().comments + 1 });
+      await updateDoc(doc(db,'users',me.uid), { points: (meDoc.points||0) + 1 }).catch(()=>{});
+      ip.value='';
+      toast('Comment added');
+    } catch(e){ console.error(e); toast('Comment failed'); }
   }
 
-  /* Toggle like with runTransaction to ensure counts & owner points are consistent */
+  // Likes via transaction to avoid race conditions
   async function toggleLike(postId){
     const postRef = doc(db,'posts',postId);
-    const likeRef = doc(db,'posts',postId,'likes', me.uid);
+    const likeRef = doc(db,'posts',postId,'likes',me.uid);
     try{
-      await runTransaction(db, async (t)=>{
-        const likeSnap = await t.get(likeRef);
+      await runTransaction(db, async (t) => {
         const postSnap = await t.get(postRef);
-        if(!postSnap.exists()) throw new Error('Post not found');
-        const postData = postSnap.data();
-        const ownerUid = postData.uid;
+        if(!postSnap.exists()) throw new Error('Post missing');
+        const likeSnap = await t.get(likeRef);
+        const ownerUid = postSnap.data().uid;
         if(likeSnap.exists()){
-          // unlike
           t.delete(likeRef);
-          t.update(postRef, { likes: (postData.likes||1) - 1 });
+          t.update(postRef, { likes: (postSnap.data().likes || 1) - 1 });
           if(ownerUid && ownerUid !== me.uid){
             const ownerRef = doc(db,'users',ownerUid);
             const ownerSnap = await t.get(ownerRef);
             const curPts = ownerSnap.exists() ? (ownerSnap.data().points || 0) : 0;
-            t.update(ownerRef, { points: curPts - 1 });
+            t.update(ownerRef, { points: Math.max(0, curPts - 1) });
           }
         } else {
-          // like
           t.set(likeRef, { uid: me.uid, createdAt: serverTimestamp() });
-          t.update(postRef, { likes: (postData.likes||0) + 1 });
+          t.update(postRef, { likes: (postSnap.data().likes || 0) + 1 });
           if(ownerUid && ownerUid !== me.uid){
             const ownerRef = doc(db,'users',ownerUid);
             const ownerSnap = await t.get(ownerRef);
             const curPts = ownerSnap.exists() ? (ownerSnap.data().points || 0) : 0;
             t.update(ownerRef, { points: curPts + 1 });
-            // notification best-effort (outside transaction)
-            addDoc(collection(db,'users',ownerUid,'notifications'), { type:'like', fromUid: me.uid, fromNick: meDoc.nickname, postId, createdAt: serverTimestamp(), seen:false }).catch(()=>{});
+            await setDoc(doc(db,'users',ownerUid,'notifications', `like_${postId}_${me.uid}`), { type:'like', fromUid:me.uid, fromNick:meDoc.nickname, postId, createdAt: serverTimestamp(), seen:false });
           }
         }
       });
-    }catch(e){
-      console.error('like error', e);
-      toast('Like action failed', 'error');
-    }
+    } catch(e){ console.error('toggleLike', e); toast('Like failed'); }
   }
 
-  async function reportPost(postId){
-    await addDoc(collection(db,'posts',postId,'reports'), { from: me.uid, createdAt: serverTimestamp() });
-    toast('Reported', 'ok');
-  }
-  async function deletePost(postId){
-    const pDoc = await getDoc(doc(db,'posts',postId));
-    if(!(me.uid === ADMIN_UID || (pDoc.exists() && pDoc.data().uid === me.uid))){ toast('No permission','error'); return; }
-    if(await confirmDialog('Delete post','Permanently delete?')){ await deleteDoc(doc(db,'posts',postId)); toast('Deleted','ok'); }
-  }
+  // save/pin/report/delete helpers
+  async function savePost(postId){ try{ await setDoc(doc(db,'users',me.uid,'savedPosts',postId), { postId, createdAt: serverTimestamp() }); toast('Saved'); } catch(e){ console.error(e); toast('Save failed'); } }
+  async function pinPost(postId){ try{ const p = await getDoc(doc(db,'posts',postId)); if(!p.exists()) return; const isPinned = p.data().pinned; await updateDoc(doc(db,'posts',postId), { pinned: !isPinned }); toast(isPinned ? 'Unpinned' : 'Pinned'); } catch(e){ console.error(e); toast('Pin failed'); } }
+  async function deletePost(postId){ try{ const p = await getDoc(doc(db,'posts',postId)); if(!p.exists()) return; if(me.uid !== p.data().uid && me.uid !== ADMIN_UID){ toast('No permission'); return; } await deleteDoc(doc(db,'posts',postId)); toast('Deleted'); } catch(e){ console.error(e); toast('Delete failed'); } }
+  async function reportPost(postId){ try{ await addDoc(collection(db,'reports'), { postId, from: me.uid, createdAt: serverTimestamp() }); toast('Reported'); } catch(e){ console.error(e); toast('Report failed'); } }
 
-  /* ========= FRIENDS ========= */
+  // Friend suggestions & requests
   async function loadSuggestions(){
-    const q = query(collection(db,'users'), orderBy('createdAt','desc'), limit(48));
-    const snaps = await getDocs(q);
-    const container = byId('friendSuggestions'); container.innerHTML = '';
-    snaps.forEach(d=>{
-      const u = d.data(); if(!u || u.uid === me.uid) return;
-      const card = document.createElement('div'); card.className='p-2 bg-white/3 rounded flex flex-col items-center gap-2';
-      card.innerHTML = `<img src="${u.avatar || initialsAvatar(u.nickname)}" class="w-12 h-12 rounded"><div class="tiny font-semibold">${u.nickname||shortId(u.uid)}</div><button class="px-2 py-1 bg-[var(--mh-primary)] rounded tiny" data-sug="${u.uid}">Add</button>`;
-      card.querySelector('[data-sug]')?.addEventListener('click', ()=> sendFriendRequest(u.uid));
-      container.appendChild(card);
-    });
+    try{
+      const snaps = await getDocs(query(collection(db,'users'), orderBy('createdAt','desc'), limit(48)));
+      const container = byId('friendSuggestions'); container.innerHTML = '';
+      const frSnaps = await getDocs(query(collection(db,'friends'), where('uids','array-contains', me.uid)));
+      const friendSet = new Set(frSnaps.docs.map(d=>d.data().uids.find(u=>u!==me.uid)));
+      const pendingSnaps = await getDocs(query(collection(db,'friendRequests'), where('from','==',me.uid)));
+      const pendingSet = new Set(pendingSnaps.docs.map(d=>d.data().to));
+      snaps.forEach(d => {
+        const u = d.data(); if(!u || u.uid===me.uid) return;
+        if(friendSet.has(u.uid)) return; if(pendingSet.has(u.uid)) return;
+        const card = document.createElement('div'); card.className='p-2 bg-white/3 rounded flex flex-col items-center';
+        card.innerHTML = `<img src="${u.avatar || initialsAvatar(u.nickname)}" class="w-12 h-12 rounded"><div class="text-xs font-semibold mt-1">${escapeHtml(u.nickname||shortId(u.uid))}</div><button class="mt-2 px-2 py-1 bg-[var(--mh-primary)] text-white text-xs rounded" data-add="${u.uid}">Add</button>`;
+        container.appendChild(card);
+      });
+    } catch(e){ console.error(e); }
   }
 
   async function sendFriendRequest(toUid){
-    if(toUid === me.uid) return toast("Can't add yourself",'error');
-    // prevent duplicates (client-side check)
-    const q1 = query(collection(db,'friendRequests'), where('from','==',me.uid), where('to','==',toUid), limit(1));
-    const q2 = query(collection(db,'friendRequests'), where('from','==',toUid), where('to','==',me.uid), limit(1));
-    const r1 = await getDocs(q1), r2 = await getDocs(q2);
-    if(!r1.empty) return toast('Request already sent','error');
-    if(!r2.empty){ // mutual -> accept
-      const docRef = r2.docs[0];
-      await acceptFriend(docRef.id, docRef.data());
-      return toast('Accepted mutual request','ok');
-    }
-    await addDoc(collection(db,'friendRequests'), { from: me.uid, to: toUid, fromNick: meDoc.nickname, fromAvatar: meDoc.avatar || initialsAvatar(meDoc.nickname), createdAt: serverTimestamp() });
-    await addDoc(collection(db,'users',toUid,'notifications'), { type:'friend-request', fromUid: me.uid, fromNick: meDoc.nickname, createdAt: serverTimestamp(), seen:false });
-    toast('Request sent','ok');
-  }
-
-  function loadFriendAssets(){
-    // incoming requests
-    unsub['friendRequests'] = onSnapshot(query(collection(db,'friendRequests'), where('to','==',me.uid), orderBy('createdAt','desc')), snap=>{
-      const container = byId('incomingRequests'); container.innerHTML = '';
-      if(snap.empty) container.innerHTML = '<div class="tiny muted">No requests</div>';
-      snap.forEach(d=>{
-        const r = d.data();
-        const row = document.createElement('div'); row.className='flex items-center justify-between gap-2 p-2 bg-white/3 rounded';
-        row.innerHTML = `<div class="flex items-center gap-2"><img src="${r.fromAvatar||initialsAvatar(r.fromNick||'U')}" class="w-10 h-10 rounded"><div><div class="tiny font-semibold">${r.fromNick||shortId(r.from)}</div><div class="tiny muted">${tsToText(r.createdAt)}</div></div></div><div class="flex gap-2"><button class="px-2 py-1 bg-[var(--ok)]/20 rounded tiny" data-acc="${d.id}">Accept</button><button class="px-2 py-1 bg-white/5 rounded tiny" data-dec="${d.id}">Decline</button></div>`;
-        container.appendChild(row);
-        row.querySelector(`[data-acc="${d.id}"]`).addEventListener("click", ()=> acceptFriend(d.id, r));
-        row.querySelector(`[data-dec="${d.id}"]`).addEventListener("click", ()=> deleteDoc(doc(db,'friendRequests',d.id)).then(()=>toast('Declined')));
-      });
-    });
-
-    // friends
-    unsub['friends'] = onSnapshot(query(collection(db,'friends')), async snap=>{
-      const list = byId('friendList'); const chatBox = byId('chatUsers'); list.innerHTML = ''; chatBox.innerHTML = '';
-      const pairs = [];
-      snap.forEach(d=> pairs.push(d.data()));
-      const myPairs = pairs.filter(p => Array.isArray(p.uids) && p.uids.includes(me.uid));
-      if(myPairs.length === 0){ list.innerHTML = '<div class="tiny muted">No friends yet</div>'; chatBox.innerHTML = '<div class="tiny muted">Add friends to chat</div>'; return; }
-      for(const fr of myPairs){
-        const peerUid = fr.uids.find(u=>u!==me.uid);
-        const peerSnap = await getDoc(doc(db,'users',peerUid)); const u = peerSnap.exists() ? peerSnap.data() : { uid: peerUid, nickname: shortId(peerUid), avatar: initialsAvatar('User')};
-        const card = document.createElement('div'); card.className='flex items-center justify-between p-2 bg-white/3 rounded';
-        card.innerHTML = `<div class="flex items-center gap-2"><img src="${u.avatar||initialsAvatar(u.nickname)}" class="w-10 h-10 rounded"><div><div class="tiny font-semibold">${u.nickname||'Player'}</div><div class="tiny muted">${shortId(u.uid)}</div></div></div><div class="flex gap-2"><button class="px-2 py-1 bg-white/5 rounded tiny" data-chat="${u.uid}">Msg</button><button class="px-2 py-1 bg-red-500/20 rounded tiny" data-unf="${u.uid}">Unfriend</button></div>`;
-        list.appendChild(card);
-        card.querySelector(`[data-unf="${u.uid}"]`).addEventListener("click", async ()=> {
-          if(await confirmDialog('Unfriend','Remove friend?')){ await deleteDoc(doc(db,'friends',[me.uid,u.uid].sort().join('_'))); toast('Removed','ok'); }
-        });
-
-        // chat list
-        const li = document.createElement('div'); li.className='flex items-center justify-between p-2 bg-white/3 rounded';
-        li.innerHTML = `<div class="flex items-center gap-2"><img src="${u.avatar||initialsAvatar(u.nickname)}" class="w-9 h-9 rounded"><div><div class="tiny font-semibold">${u.nickname}</div><div class="tiny muted">Tap to chat</div></div></div><button class="px-2 py-1 bg-white/5 rounded tiny" data-open="${u.uid}"><i class="fa fa-comment"></i></button>`;
-        li.querySelector(`[data-open="${u.uid}"]`).addEventListener('click', ()=> openChatWithUid(u.uid));
-        chatBox.appendChild(li);
+    try{
+      if(toUid === me.uid){ toast("Can't add yourself"); return; }
+      const pair = [me.uid, toUid].sort().join('_');
+      const reqRef = doc(db,'friendRequests',pair);
+      const reqSnap = await getDoc(reqRef);
+      if(reqSnap.exists()){
+        const data = reqSnap.data();
+        if(data.to === me.uid && data.from === toUid){ await acceptFriend(pair); toast('Mutual accepted'); return; }
+        toast('Request pending'); return;
       }
-    });
+      await setDoc(reqRef, { from: me.uid, to: toUid, fromNick: meDoc.nickname, fromAvatar: meDoc.avatar, createdAt: serverTimestamp() });
+      await setDoc(doc(db,'users',toUid,'notifications', `friendreq_${pair}`), { type:'friend-request', fromUid:me.uid, fromNick:meDoc.nickname, createdAt: serverTimestamp(), seen:false });
+      toast('Request sent');
+      loadSuggestions();
+    } catch(e){ console.error(e); toast('Request failed'); }
   }
 
-  async function acceptFriend(reqId, req){
-    const pair = [req.from, req.to].sort().join('_');
-    await setDoc(doc(db,'friends',pair), { uids: [req.from, req.to], since: serverTimestamp() });
-    await deleteDoc(doc(db,'friendRequests',reqId));
-    toast('Friend added','ok');
+  function subscribeFriendRequests(){
+    if(friendRequestsUnsub) friendRequestsUnsub();
+    const q = query(collection(db,'friendRequests'), where('to','==',me.uid), orderBy('createdAt','desc'));
+    friendRequestsUnsub = onSnapshot(q, snap => {
+      const box = byId('incomingRequests'); box.innerHTML = '';
+      if(snap.empty) box.innerHTML = '<div class="muted text-sm">No requests</div>';
+      snap.forEach(d => {
+        const r = d.data(); const row = document.createElement('div'); row.className='flex items-center justify-between p-2 bg-white/3 rounded';
+        row.innerHTML = `<div class="flex items-center gap-3"><img src="${r.fromAvatar || initialsAvatar(r.fromNick)}" class="w-10 h-10 rounded"><div><div class="font-semibold">${escapeHtml(r.fromNick||shortId(r.from))}</div><div class="text-xs muted">${tsToText(r.createdAt)}</div></div></div><div class="flex gap-2"><button class="px-2 py-1 bg-[var(--mh-ok)]/20 rounded" data-accept="${d.id}">Accept</button><button class="px-2 py-1 bg-white/5 rounded" data-decline="${d.id}">Decline</button></div>`;
+        box.appendChild(row);
+      });
+    }, err => console.error(err));
   }
 
-  /* ========= PRIVATE CHAT ========= */
+  async function acceptFriend(reqId){
+    try{
+      const reqSnap = await getDoc(doc(db,'friendRequests',reqId));
+      if(!reqSnap.exists()){ toast('Missing'); return; }
+      const r = reqSnap.data(); const pair = [r.from, r.to].sort().join('_');
+      await setDoc(doc(db,'friends',pair), { uids: [r.from, r.to], since: serverTimestamp() });
+      await deleteDoc(doc(db,'friendRequests',reqId));
+      await setDoc(doc(db,'chats',pair), { members: [r.from, r.to], updatedAt: serverTimestamp() }, { merge: true });
+      toast('Friend added');
+    } catch(e){ console.error(e); toast('Accept failed'); }
+  }
+
+  function subscribeFriends(){
+    if(friendsUnsub) friendsUnsub();
+    const q = query(collection(db,'friends'), where('uids','array-contains', me.uid));
+    friendsUnsub = onSnapshot(q, async snap => {
+      const list = byId('friendList'); list.innerHTML = ''; const chatUsers = byId('chatUsers'); chatUsers.innerHTML = '';
+      if(snap.empty){ list.innerHTML = '<div class="muted text-sm">No friends</div>'; chatUsers.innerHTML = '<div class="muted text-sm">Add friends to chat</div>'; return; }
+      for(const d of snap.docs){
+        const fr = d.data(); const peerUid = fr.uids.find(u=>u!==me.uid);
+        const userSnap = await getDoc(doc(db,'users',peerUid)); const u = userSnap.exists() ? userSnap.data() : { uid:peerUid, nickname:shortId(peerUid), avatar:initialsAvatar('User') };
+        const card = document.createElement('div'); card.className='friend-card';
+        card.innerHTML = `<div class="flex items-center gap-3"><img src="${u.avatar}" class="rounded" /><div><div class="font-semibold">${escapeHtml(u.nickname)}</div><div class="text-xs muted">${shortId(u.uid)}</div></div></div><div class="flex gap-2"><button class="px-2 py-1 bg-white/5 rounded" data-open-chat="${u.uid}">Msg</button><button class="px-2 py-1 bg-red-500/20 rounded" data-unfriend="${u.uid}">Unfriend</button></div>`;
+        card.querySelector('[data-open-chat]')?.addEventListener('click', ()=> openChatWithUid(u.uid));
+        card.querySelector('[data-unfriend]')?.addEventListener('click', ()=> unfriend(u.uid));
+        list.appendChild(card);
+        const li = document.createElement('div'); li.className='friend-card';
+        li.innerHTML = `<div class="flex items-center gap-3"><img src="${u.avatar}" class="rounded" /><div><div class="font-semibold">${escapeHtml(u.nickname)}</div><div class="text-xs muted">Tap to chat</div></div></div><button class="px-2 py-1 bg-white/5 rounded" data-open-chat="${u.uid}"><i class="fa fa-comment"></i></button>`;
+        chatUsers.appendChild(li);
+      }
+    }, err => console.error(err));
+  }
+
+  async function unfriend(peerUid){ if(!confirm('Remove friend?')) return; try{ const pair = [me.uid, peerUid].sort().join('_'); await deleteDoc(doc(db,'friends',pair)); toast('Removed'); } catch(e){ console.error(e); toast('Remove failed'); } }
+
+  // Chats
   function convoIdFor(a,b){ return [a,b].sort().join('_'); }
   async function openChatWithUid(peerUid){
-    const snap = await getDoc(doc(db,'users',peerUid));
-    const u = snap.exists() ? snap.data() : { uid: peerUid, nickname: shortId(peerUid), avatar: initialsAvatar('User') };
-    byId('chatPeerNick').textContent = u.nickname || 'Player';
-    byId('chatPeerAvatar').src = u.avatar || initialsAvatar(u.nickname);
+    const peerSnap = await getDoc(doc(db,'users',peerUid)); const peer = peerSnap.exists() ? peerSnap.data() : { uid:peerUid, nickname:shortId(peerUid), avatar:initialsAvatar('User') };
+    byId('chatPeerNick').textContent = peer.nickname || 'Player';
+    byId('chatPeerAvatar').src = peer.avatar || initialsAvatar(peer.nickname);
     byId('chatPeerStatus').textContent = 'Online';
-    showSection('chat');
-
-    $$('#friendList [data-chat]').forEach(b=> b.classList.toggle('nav-active', b.dataset.chat === peerUid));
-
-    if(chatUnsub){ chatUnsub(); chatUnsub = null; currentChatCid = null; byId('chatStream').innerHTML = ''; }
-
-    const cid = convoIdFor(me.uid, peerUid);
-    currentChatCid = cid;
-    await setDoc(doc(db,'chats',cid), { members: [me.uid, peerUid], updatedAt: serverTimestamp() }, { merge: true });
+    showSection('chat'); document.getElementById('chatWindow')?.classList.remove('hidden');
+    const cid = convoIdFor(me.uid, peerUid); currentChatCid = cid; await setDoc(doc(db,'chats',cid), { members: [me.uid, peerUid], updatedAt: serverTimestamp() }, { merge:true });
+    if(chatUnsub) chatUnsub();
     const q = query(collection(db,'chats',cid,'messages'), orderBy('createdAt','asc'), limit(500));
-    chatUnsub = onSnapshot(q, snap=>{
-      const box = byId('chatStream');
-      snap.docChanges().forEach(change=>{
-        if(change.type === 'added'){
-          const m = change.doc.data();
-          const mine = m.from === me.uid;
-          const row = document.createElement('div'); row.className = `max-w-[75%] ${mine? 'ml-auto text-right':'mr-auto'}`;
-          row.innerHTML = `<div class="p-2 rounded ${mine? 'bg-[var(--mh-primary)] text-white':'bg-white/5'} tiny">${escapeHtml(m.text)}<div class="tiny muted mt-1">${tsToText(m.createdAt)}</div></div>`;
-          box.appendChild(row);
-        }
+    chatUnsub = onSnapshot(q, snap => {
+      const box = byId('chatStream'); box.innerHTML = '';
+      snap.forEach(d => {
+        const m = d.data(); const mine = m.from === me.uid;
+        const div = document.createElement('div'); div.className = 'chat-msg ' + (mine ? 'me' : 'them'); div.innerHTML = `<div>${escapeHtml(m.text)}</div><div class="muted-xs mt-1">${tsToText(m.createdAt)}</div>`;
+        box.appendChild(div);
       });
       box.scrollTop = box.scrollHeight;
-      byId('chatInput').focus();
-    }, err=> console.error('chat error', err));
+    }, err => console.error('chat sub', err));
   }
 
   async function sendChat(){
-    const text = byId('chatInput').value.trim(); if(!text || !currentChatCid) return;
-    await setDoc(doc(db,'chats',currentChatCid), { updatedAt: serverTimestamp() }, { merge: true });
-    await addDoc(collection(db,'chats',currentChatCid,'messages'), { from: me.uid, to: currentChatCid.replace(me.uid,'').replace('_',''), text, createdAt: serverTimestamp() });
-    byId('chatInput').value = '';
-    toast('Sent','ok');
+    const text = byId('chatInput').value.trim(); if(!text) return; if(!currentChatCid){ toast('Select a friend'); return; }
+    const peerUid = currentChatCid.split('_').find(x => x !== me.uid);
+    try{
+      await setDoc(doc(db,'chats',currentChatCid), { members: [me.uid, peerUid], updatedAt: serverTimestamp() }, { merge:true });
+      await addDoc(collection(db,'chats',currentChatCid,'messages'), { from: me.uid, to: peerUid, text, createdAt: serverTimestamp() });
+      await setDoc(doc(db,'users',peerUid,'notifications', `dm_${currentChatCid}_${Date.now()}`), { type:'dm', fromUid:me.uid, fromNick:meDoc.nickname, text, createdAt: serverTimestamp(), seen:false });
+      byId('chatInput').value = ''; toast('Sent');
+    }catch(e){ console.error(e); toast('Send failed'); }
   }
 
-  /* ========= NOTIFICATIONS ========= */
+  // Notifications
   function startNotifications(){
+    if(notifUnsub) notifUnsub();
     const q = query(collection(db,'users',me.uid,'notifications'), orderBy('createdAt','desc'), limit(100));
-    unsub['notifs'] = onSnapshot(q, snap=>{
-      const container = byId('notifList'); container.innerHTML = '';
-      let unseen = 0;
-      snap.forEach(d=>{
-        const n = d.data();
-        if(!n.seen) unseen++;
-        const row = document.createElement('div'); row.className = 'p-2 bg-white/3 rounded flex gap-2 items-start';
-        row.innerHTML = `<div class="w-9 h-9 rounded bg-white/5 flex items-center justify-center tiny"><i class="fa ${n.type==='dm'?'fa-message': n.type==='like'?'fa-thumbs-up': n.type==='comment'?'fa-comment':'fa-user-plus'}"></i></div><div class="flex-1"><div class="tiny font-semibold">${n.fromNick || 'Someone'}</div><div class="tiny muted">${n.text||''}</div><div class="tiny muted mt-1">${tsToText(n.createdAt)}</div></div><div><button class="px-2 py-1 bg-white/5 rounded tiny" data-mark="${d.id}">Mark</button></div>`;
-        row.querySelector(`[data-mark="${d.id}"]`).addEventListener('click', ()=> updateDoc(doc(db,'users',me.uid,'notifications',d.id), { seen:true }));
-        container.appendChild(row);
+    notifUnsub = onSnapshot(q, snap => {
+      const list = byId('notifList'); list.innerHTML = ''; let unseen=0;
+      snap.forEach(d => {
+        const n = d.data(); if(!n.seen) unseen++;
+        const row = document.createElement('div'); row.className='flex items-start gap-3 p-2 bg-white/3 rounded';
+        row.innerHTML = `<div class="w-9 h-9 rounded bg-white/6 flex items-center justify-center text-sm"><i class="fa ${n.type==='dm'?'fa-message': n.type==='like'?'fa-thumbs-up': n.type==='comment'?'fa-comment':'fa-user-plus'}"></i></div><div class="flex-1"><div class="font-semibold">${escapeHtml(n.fromNick||'Someone')}</div><div class="text-sm muted">${escapeHtml(n.text||'')}</div><div class="text-xs muted mt-1">${tsToText(n.createdAt)}</div></div><div><button class="px-2 py-1 bg-white/5 rounded" data-mark="${d.id}">Mark</button></div>`;
+        row.querySelector(`[data-mark="${d.id}"]`)?.addEventListener('click', ()=> updateDoc(doc(db,'users',me.uid,'notifications',d.id), { seen:true }).then(()=>toast('Marked')));
+        list.appendChild(row);
       });
       byId('notifDot').classList.toggle('hidden', unseen === 0);
-    }, err=> console.error(err));
+    }, err => console.error(err));
   }
 
-  /* ========= LEADERBOARD ========= */
-  function loadLeaderboard(){
-    unsub['leader'] = onSnapshot(query(collection(db,'users'), orderBy('points','desc'), limit(50)), snap=>{
-      const rows = byId('leaderRows'); rows.innerHTML = ''; let i=0;
-      snap.forEach(d => { i++; const u = d.data(); const tr = document.createElement('tr'); tr.innerHTML = `<td class="tiny">${i}</td><td class="tiny">${escapeHtml(u.nickname||shortId(u.uid))}</td><td class="tiny">${u.points||0}</td>`; rows.appendChild(tr); });
-    });
-  }
+  // Leaderboard
+  function loadLeaderboard(){ const q = query(collection(db,'users'), orderBy('points','desc'), limit(50)); onSnapshot(q, snap => { const rows = byId('leaderRows'); rows.innerHTML=''; let i=0; snap.forEach(d => { i++; const u = d.data(); const tr = document.createElement('tr'); tr.innerHTML = `<td class="py-2 px-2">${i}</td><td class="py-2 px-2"><div class="flex items-center gap-2"><img src="${u.avatar||initialsAvatar(u.nickname)}" class="w-7 h-7 rounded" /><span>${escapeHtml(u.nickname||shortId(u.uid))}</span></div></td><td class="py-2 px-2">${u.points||0}</td>`; rows.appendChild(tr); }); }); }
 
-  /* ========= PROFILE ========= */
-  async function saveProfile(){
-    const nickname = byId('setNick').value.trim() || meDoc.nickname || 'Player';
-    const gamerName = byId('setGamer').value.trim() || nickname;
-    const sex = byId('setSex').value || '';
-    const dob = byId('setDob').value || '';
-    const language = byId('setLang').value.trim() || '';
-    const country = byId('setCountry').value.trim() || '';
-    const games = byId('setGames').value.trim() || '';
-    const bio = byId('setBio').value.trim() || '';
-    let avatarData = meDoc.avatar || initialsAvatar(nickname);
-    const f = byId('setAvatar').files?.[0];
-    if(f){
-      if(f.size > 5*1024*1024){ toast('Avatar too large','error'); return; }
-      try{ avatarData = await fileToBase64(f, 800, .8); }catch(e){ toast('Avatar failed','error'); }
-    }
-    await updateDoc(doc(db,'users',me.uid), { nickname, gamerName, sex, dob, language, country, games, bio, avatar: avatarData, updatedAt: serverTimestamp() });
-    meDoc = (await getDoc(doc(db,'users',me.uid))).data();
-    ['navAvatar','sideAvatar','cpAvatar','pvAvatar'].forEach(id => { if(byId(id)) byId(id).src = meDoc.avatar || initialsAvatar(meDoc.nickname); });
-    byId('navNick').textContent = meDoc.nickname; byId('sideNick').textContent = meDoc.nickname;
-    toast('Profile saved','ok'); byId('profileSaved').classList.remove('hidden'); setTimeout(()=> byId('profileSaved').classList.add('hidden'), 1200);
-    byId('profileView').classList.remove('hidden'); byId('profileEdit').classList.add('hidden');
-    fillProfileView();
-  }
-
+  // Profile load/save
   async function preloadProfileInputs(){
-    await new Promise(r=>setTimeout(r,200));
     byId('setNick').value = meDoc.nickname || '';
     byId('setGamer').value = meDoc.gamerName || '';
     byId('setSex').value = meDoc.sex || '';
@@ -974,31 +885,75 @@ const firebaseConfig = {
     byId('profileEdit').classList.add('hidden');
   }
 
-  /* ========= CLEANUP ========= */
-  window.addEventListener('beforeunload', ()=> {
-    if(feedUnsub) feedUnsub();
-    if(chatUnsub) chatUnsub();
-    Object.values(unsub).forEach(f => { try{ if(typeof f==='function') f(); } catch{} });
-    Object.values(commentUnsubs).forEach(f => { try{ f(); } catch{} });
-  });
-
-  /* small helpers */
-  function escapeHtml(s=''){ return String(s).replace(/[&<>"'`]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;'}[c])); }
-
-  // simple feed filter
-  function filterFeed(q){
-    const items = byId('feedList').children;
-    for(const card of items) card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+  async function saveProfile(){
+    const nickname = byId('setNick').value.trim() || meDoc.nickname || 'Player';
+    const gamerName = byId('setGamer').value.trim() || nickname;
+    const sex = byId('setSex').value || '';
+    const dob = byId('setDob').value || '';
+    const language = byId('setLang').value.trim() || '';
+    const country = byId('setCountry').value.trim() || '';
+    const games = byId('setGames').value.trim() || '';
+    const bio = byId('setBio').value.trim() || '';
+    let avatarData = meDoc.avatar || initialsAvatar(nickname);
+    const file = byId('setAvatar').files?.[0];
+    if(file){
+      if(file.size > 5*1024*1024){ toast('Avatar too large'); return; }
+      try{ avatarData = await fileToBase64(file, 800, 0.82); } catch(e){ console.error(e); toast('Avatar error'); }
+    }
+    try{
+      await setDoc(doc(db,'users',me.uid), { nickname, gamerName, sex, dob, language, country, games, bio, avatar: avatarData, updatedAt: serverTimestamp() }, { merge:true });
+      meDoc = (await getDoc(doc(db,'users',me.uid))).data();
+      ['navAvatar','sideAvatar','cpAvatar','pvAvatar'].forEach(id => { if(byId(id)) byId(id).src = meDoc.avatar || initialsAvatar(meDoc.nickname); });
+      byId('navNick').textContent = meDoc.nickname; byId('sideNick').textContent = meDoc.nickname;
+      byId('profileSaved').classList.remove('hidden'); setTimeout(()=> byId('profileSaved').classList.add('hidden'), 1500);
+      fillProfileView(); toast('Saved');
+    } catch(e){ console.error(e); toast('Save failed'); }
   }
-</script>
 
-<!-- small non-module helpers -->
-<script>
-  document.addEventListener('click', (e)=>{
-    const menuEls = document.querySelectorAll('.menu.show');
-    menuEls.forEach(m => { if(!m.contains(e.target) && !e.target.closest('[data-more]')) m.classList.remove('show'); });
+  // Helpers: file -> base64
+  function fileToBase64(file, maxW=1000, quality=0.82){
+    return new Promise((resolve,reject)=>{
+      const reader = new FileReader();
+      reader.onload = e=>{
+        const img = new Image();
+        img.onload = ()=>{
+          const scale = Math.min(1, maxW/img.width); const w = Math.round(img.width*scale); const h = Math.round(img.height*scale);
+          const canvas = document.createElement('canvas'); canvas.width=w; canvas.height=h; const ctx = canvas.getContext('2d');
+          ctx.drawImage(img,0,0,w,h); resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = reject; img.src = e.target.result;
+      };
+      reader.onerror = reject; reader.readAsDataURL(file);
+    });
+  }
+
+  // filter feed
+  function filterFeed(q){ const items = byId('feedList').children; for(const item of items){ item.style.display = item.textContent.toLowerCase().includes(q) ? '' : 'none'; } }
+
+  // Safe wrappers for imports used earlier
+  import { getDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+  // Initial UI wiring for buttons that require elements that may be added later
+  document.addEventListener('DOMContentLoaded', ()=> {
+    // show feed initially
+    showSection('feed');
   });
-</script>
 
+  // Cleanup unsubscribes
+  window.addEventListener('beforeunload', ()=>{
+    if(feedUnsub) feedUnsub(); if(friendsUnsub) friendsUnsub(); if(friendRequestsUnsub) friendRequestsUnsub(); if(notifUnsub) notifUnsub(); if(chatUnsub) chatUnsub();
+    Object.values(commentUnsubs).forEach(fn => { try{ fn(); } catch{} });
+  });
+
+  </script>
+
+  <!-- small non-module script to close menus on click outside -->
+  <script>
+    document.addEventListener('click', (e)=>{
+      document.querySelectorAll('.menu').forEach(m => { if(!m.contains(e.target) && !e.target.closest('[data-more]')) m.classList.remove('show'); });
+      // close image viewer if clicked outside image
+      if(document.getElementById('imgViewer') && !document.getElementById('imgViewer').contains(e.target)) { document.getElementById('imgViewer').classList.add('hidden'); }
+    });
+  </script>
 </body>
 </html>

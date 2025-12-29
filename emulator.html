@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="google-site-verification" content="c3lAawSJwbEEgt674R__IYb93wgaY2_2i1jwrpnRz4I" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="Emulator Game Mods - Download mods for Dolphin, PCSX2, PPSSPP, and more. Console game modifications and enhancements.">
+    <meta name="keywords" content="emulator mods, Dolphin mods, PCSX2 mods, PPSSPP mods, console game mods, retro gaming mods">
+    <meta name="author" content="Mod Hive Team">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Emulator Game Mods - Mod Hive">
+    <meta property="og:description" content="Download the latest emulator mods for Dolphin, PCSX2, PPSSPP, and more. Enhance your retro gaming experience.">
+    <meta property="og:image" content="lg.png">
+    <meta property="og:url" content="https://modhive.com/emulator.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/png" href="lg.png">
+    <link rel="apple-touch-icon" href="lg.png">
+    <title>Emulator Game Mods - Mod Hive</title>
+    <link rel="stylesheet" href="main2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+      </head>
+
+    <body class="light-theme">
+        <!-- Scroll Progress Bar -->
+        <div id="scroll-progress"></div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <h2>Loading Emulator Mods...</h2>
+                <div class="loading-progress">
+                    <div class="progress-bar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back to Top Button -->
+        <button id="back-to-top" onclick="scrollToTop()">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+
+        <!-- Navigation -->
+        <div class="navbar">
+            <img id="navbar-logo" src="lg.png" alt="Mod Hive Logo"
+            width="45px" height="40px" class="mm2">
+            <h1>Emulator Mods</h1>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search emulator mods..." class="search-input">
+                <button onclick="searchMods()" class="search-btn">🔍</button>
+            </div>
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <div class="theme-icon" id="themeToggle" onclick="toggleTheme()">
+                🌙
+            </div>
+        </div>
+
+        <div class="side-nav" id="mySidenav">
+            <div class="close-icon" onclick="toggleMenu()" style="cursor: pointer; color: white; font-size: 20px; padding: 10px;">✖</div>
+            <a href="ModHive.html" class="side-nav-link" onclick="setActive(this); toggleDropdown('homeDropdown')"><t>Home</t></a>
+            <div class="dropdown" id="homeDropdown">
+                <a href="dashboard.html">Dashboard</a>
+            </div>
+            <a href="pc.html" class="side-nav-link" onclick="setActive(this); toggleDropdown('pcDropdown')"><t>PC Mods</t></a>
+            <div class="dropdown" id="pcDropdown">
+                <a href="pc.html">Browse PC Mods</a>
+            </div>
+            <a href="AndroidMod.html" class="side-nav-link" onclick="setActive(this); toggleDropdown('androidDropdown')"><t>Android Mods</t></a>
+            <div class="dropdown" id="androidDropdown">
+                <a href="AndroidMod.html">Browse Android Mods</a>
+            </div>
+            <a href="emulator.html" class="side-nav-link active" onclick="setActive(this); toggleDropdown('emulatorDropdown')"><t>Emulator Mods</t></a>
+            <div class="dropdown" id="emulatorDropdown">
+                <a href="#wii">Wii/GameCube</a>
+                <a href="#ps2">PlayStation 2</a>
+                <a href="#psp">PSP</a>
+                <a href="#nintendo">Nintendo DS</a>
+            </div>
+            <a href="#contact" class="side-nav-link" onclick="setActive(this); toggleDropdown('contactDropdown')"><t>Contact</t></a>
+            <div class="dropdown" id="contactDropdown">
+                <a href="https://www.facebook.com/martechmods1">Facebook</a>
+                <a href="t.me/martechmods">Telegram</a>
+                <a href="https://chat.whatsapp.com/DsvyRgBCUgBLQrx6vNauQe?mode=ac_t">WhatsApp</a>
+            </div>
+            <a href="dashboard.html"><t>Dashboard</t></a>
+        </div>
+
+        <!-- Hero Section -->
+        <section id="emulator-hero" class="hero-section fade-in">
+            <div class="hero-content">
+                <h1>Emulator Game Mods</h1>
+                <p>Relive the golden age of gaming with our comprehensive collection of emulator modifications. From Dolphin to PCSX2, enhance your retro gaming experience with modern improvements.</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <h3>300+</h3>
+                        <p>Emulator Mods</p>
+                    </div>
+                    <div class="stat">
+                        <h3>15+</h3>
+                        <p>Emulators Supported</p>
+                    </div>
+                    <div class="stat">
+                        <h3>4K</h3>
+                        <p>Ultra HD Graphics</p>
+                    </div>
+                </div>
+                <div class="cta-buttons">
+                    <a href="#mods" class="btn-primary">Browse Mods</a>
+                    <a href="#emulators" class="btn-secondary">Emulator Setup</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img id="hero-logo" src="lg.png" alt="Mod Hive Logo" class="hero-logo">
+            </div>
+        </section>
+
+        <!-- Featured Emulator Mods -->
+        <section id="mods" class="fade-in">
+            <h2>Featured Emulator Mods</h2>
+            <div class="mod-categories">
+                <div class="category-tabs">
+                    <button class="tab-btn active" onclick="showCategory('wii')">Wii/GameCube</button>
+                    <button class="tab-btn" onclick="showCategory('ps2')">PlayStation 2</button>
+                    <button class="tab-btn" onclick="showCategory('psp')">PSP</button>
+                    <button class="tab-btn" onclick="showCategory('nintendo')">Nintendo DS</button>
+                </div>
+
+                <div id="wii" class="mod-grid active">
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3>Dolphin HD Texture Pack</h3>
+                        <p>Complete high-definition texture overhaul for Wii and GameCube games. 4K resolution support with enhanced graphics.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">🎮 450K+ Downloads</span>
+                            <span class="rating">⭐ 4.9/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h3>Super Mario Galaxy HD</h3>
+                        <p>Complete HD remake with enhanced graphics, physics, and gameplay improvements for the ultimate experience.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">⭐ 320K+ Downloads</span>
+                            <span class="rating">⭐ 4.8/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-wind"></i>
+                        </div>
+                        <h3>Wind Waker HD Graphics</h3>
+                        <p>Beautiful HD textures and enhanced lighting for The Legend of Zelda: The Wind Waker.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">🗡️ 280K+ Downloads</span>
+                            <span class="rating">⭐ 4.7/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3>Super Smash Bros Melee HD</h3>
+                        <p>HD textures, character models, and stages for the ultimate fighting game experience.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">🥊 350K+ Downloads</span>
+                            <span class="rating">⭐ 4.8/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="ps2" class="mod-grid">
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-compact-disc"></i>
+                        </div>
+                        <h3>PCSX2 HD Collection</h3>
+                        <p>Ultimate texture pack collection for PlayStation 2 games with 4K resolution support.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">💿 380K+ Downloads</span>
+                            <span class="rating">⭐ 4.9/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-ghost"></i>
+                        </div>
+                        <h3>Silent Hill 2 Enhanced</h3>
+                        <p>HD textures, improved lighting, and enhanced atmosphere for the horror classic.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">👻 220K+ Downloads</span>
+                            <span class="rating">⭐ 4.7/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <h3>Gran Turismo 4 HD</h3>
+                        <p>Ultra-realistic graphics overhaul with 4K textures and enhanced car models.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">🏎️ 190K+ Downloads</span>
+                            <span class="rating">⭐ 4.6/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="psp" class="mod-grid">
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>PPSSPP Texture Pack</h3>
+                        <p>High-resolution texture packs for PSP games running on PPSSPP emulator.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">📱 290K+ Downloads</span>
+                            <span class="rating">⭐ 4.8/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-dragon"></i>
+                        </div>
+                        <h3>Final Fantasy HD</h3>
+                        <p>Complete HD overhaul for Final Fantasy games on PSP with enhanced graphics.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">🔮 180K+ Downloads</span>
+                            <span class="rating">⭐ 4.7/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-person-running"></i>
+                        </div>
+                        <h3>God of War HD</h3>
+                        <p>Enhanced textures and graphics for the PSP version of God of War: Chains of Olympus.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">⚔️ 160K+ Downloads</span>
+                            <span class="rating">⭐ 4.5/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="nintendo" class="mod-grid">
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-tablet-alt"></i>
+                        </div>
+                        <h3>DeSmuME Enhancement Pack</h3>
+                        <p>High-resolution textures and filters for Nintendo DS games on DeSmuME emulator.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">🎯 240K+ Downloads</span>
+                            <span class="rating">⭐ 4.6/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-mario"></i>
+                        </div>
+                        <h3>New Super Mario Bros HD</h3>
+                        <p>HD textures and enhanced graphics for the DS classic on modern emulators.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">🍄 320K+ Downloads</span>
+                            <span class="rating">⭐ 4.8/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+
+                    <div class="mod-card">
+                        <div class="mod-icon">
+                            <i class="fas fa-pokemon"></i>
+                        </div>
+                        <h3>Pokemon HeartGold/SoulSilver HD</h3>
+                        <p>Enhanced graphics and textures for the Pokemon DS remakes.</p>
+                        <div class="mod-meta">
+                            <span class="downloads">⚡ 280K+ Downloads</span>
+                            <span class="rating">⭐ 4.7/5</span>
+                        </div>
+                        <div class="mod-actions">
+                            <button class="action-btn" data-tooltip="Download this mod">Download</button>
+                            <button class="action-btn secondary" data-tooltip="View installation guide">Tutorial</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emulator Setup Section -->
+        <section id="emulators" class="fade-in">
+            <h2>Emulator Setup Guides</h2>
+            <div class="emulator-grid">
+                <div class="emulator-card">
+                    <div class="emulator-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3>Dolphin Emulator</h3>
+                    <p>Setup guide for Wii and GameCube emulation with optimal settings and performance tips.</p>
+                    <div class="emulator-meta">
+                        <span class="compatibility">Wii • GameCube</span>
+                        <span class="difficulty">Intermediate</span>
+                    </div>
+                    <a href="#" class="emulator-link">Setup Guide</a>
+                </div>
+
+                <div class="emulator-card">
+                    <div class="emulator-icon">
+                        <i class="fas fa-compact-disc"></i>
+                    </div>
+                    <h3>PCSX2</h3>
+                    <p>Complete installation and configuration guide for PlayStation 2 emulation.</p>
+                    <div class="emulator-meta">
+                        <span class="compatibility">PS2</span>
+                        <span class="difficulty">Advanced</span>
+                    </div>
+                    <a href="#" class="emulator-link">Setup Guide</a>
+                </div>
+
+                <div class="emulator-card">
+                    <div class="emulator-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>PPSSPP</h3>
+                    <p>PSP emulation setup with performance optimization and control configuration.</p>
+                    <div class="emulator-meta">
+                        <span class="compatibility">PSP</span>
+                        <span class="difficulty">Beginner</span>
+                    </div>
+                    <a href="#" class="emulator-link">Setup Guide</a>
+                </div>
+
+                <div class="emulator-card">
+                    <div class="emulator-icon">
+                        <i class="fas fa-tablet-alt"></i>
+                    </div>
+                    <h3>DeSmuME</h3>
+                    <p>Nintendo DS emulation guide with touchscreen controls and save state management.</p>
+                    <div class="emulator-meta">
+                        <span class="compatibility">Nintendo DS</span>
+                        <span class="difficulty">Beginner</span>
+                    </div>
+                    <a href="#" class="emulator-link">Setup Guide</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Tips -->
+        <section id="performance" class="fade-in">
+            <h2>Performance Optimization</h2>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Graphics Settings</h3>
+                    <p>Optimize your emulator settings for the best balance between visual quality and performance.</p>
+                </div>
+
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-memory"></i>
+                    </div>
+                    <h3>RAM Management</h3>
+                    <p>Learn how to manage memory usage and prevent crashes during long gaming sessions.</p>
+                </div>
+
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Anti-Aliasing</h3>
+                    <p>Configure anti-aliasing and post-processing effects for smoother graphics.</p>
+                </div>
+
+                <div class="tip-card">
+                    <div class="tip-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <h3>Frame Rate Control</h3>
+                    <p>Maintain consistent frame rates and eliminate stuttering in demanding games.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Section -->
+        <section id="newsletter" class="newsletter-section fade-in">
+            <div class="newsletter-content">
+                <h2>Stay Updated!</h2>
+                <p>Get notified about new emulator mods, compatibility updates, and retro gaming news.</p>
+                <div class="newsletter-form">
+                    <input type="email" id="newsletterEmail" placeholder="Enter your email" class="newsletter-input">
+                    <button onclick="subscribeNewsletter()" class="newsletter-btn">Subscribe</button>
+                </div>
+                <p class="newsletter-note">We respect your privacy. Unsubscribe at any time.</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <h6>About Emulator Mods</h6>
+                        <p class="text-justify">Our emulator modding section brings retro gaming into the modern era. From Dolphin texture packs to PCSX2 enhancements, experience your favorite classic games with stunning HD graphics and improved performance.</p>
+                    </div>
+                    <div class="cont1">
+                        <h6>Categories</h6>
+                        <ul class="footer-links">
+                            <li><a href="AndroidMod.html">Android Mods</a></li>
+                            <li><a href="pc.html">PC Mods</a></li>
+                            <li><a href="emulator.html">Emulator Mods</a></li>
+                        </ul>
+                    </div>
+                    <div class="cont1">
+                        <h6>Quick Links</h6>
+                        <ul class="footer-links">
+                            <li><a href="ModHive.html">Home</a></li>
+                            <li><a href="#emulators">Emulator Setup</a></li>
+                            <li><a href="#performance">Performance Tips</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 col-sm-6 col-xs-12">
+                            <p class="copyright-text">Copyright &copy; 2025 All Rights Reserved by
+                                <a href="ModHive.html">Mod Hive</a>.
+                            </p>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <ul class="social-icons">
+                                <li><a class="facebook" href="https://www.facebook.com/martechmods1"><img src="4.png" alt="" height="40px" width="40px"></img></i></a></li>
+                                <li><a class="Telegram" href="t.me/martechmods"><img src="1.png" alt="" height="40px" width="40px"></img></i></a></li>
+                                <li><a class="WhatsApp" href="https://chat.whatsapp.com/DsvyRgBCUgBLQrx6vNauQe?mode=ac_t"><img src="3.png" alt="" height="40px" width="40px"></img></i></a></li>
+                                <li><a class="YouTube" href="https://www.youtube.com/@martechmods"><img src="2.png" alt="" height="40px" width="40px"></img></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Scripts -->
+        <script>
+            // Navigation functions
+            function toggleMenu() {
+                const sidenav = document.getElementById('mySidenav');
+                sidenav.classList.toggle('active');
+            }
+
+            function setActive(link) {
+                const links = document.querySelectorAll('.side-nav-link');
+                links.forEach(item => item.classList.remove('active'));
+                link.classList.add('active');
+            }
+
+            function toggleDropdown(dropdownId) {
+                const dropdown = document.getElementById(dropdownId);
+                dropdown.classList.toggle('active');
+            }
+
+            // Theme toggle with logo switching
+            function toggleTheme() {
+                const body = document.body;
+                const themeIcon = document.getElementById('themeToggle');
+                const navbarLogo = document.getElementById('navbar-logo');
+                const heroLogo = document.getElementById('hero-logo');
+
+                body.style.transition = 'background-color 0.5s ease, color 0.5s ease';
+
+                if (body.classList.contains('light-theme')) {
+                    body.classList.remove('light-theme');
+                    body.classList.add('dark-theme');
+                    themeIcon.innerHTML = '🌞';
+                    themeIcon.style.transform = 'rotate(180deg)';
+
+                    // Switch to dark theme logo
+                    navbarLogo.src = 'lg2.png';
+                    heroLogo.src = 'lg2.png';
+
+                    // Save theme preference
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    body.classList.remove('dark-theme');
+                    body.classList.add('light-theme');
+                    themeIcon.innerHTML = '🌙';
+                    themeIcon.style.transform = 'rotate(0deg)';
+
+                    // Switch to light theme logo
+                    navbarLogo.src = 'lg.png';
+                    heroLogo.src = 'lg.png';
+
+                    // Save theme preference
+                    localStorage.setItem('theme', 'light');
+                }
+
+                setTimeout(() => {
+                    themeIcon.style.transform = 'rotate(0deg)';
+                }, 300);
+            }
+
+            // Load saved theme on page load
+            window.addEventListener('DOMContentLoaded', function() {
+                const savedTheme = localStorage.getItem('theme');
+                const navbarLogo = document.getElementById('navbar-logo');
+                const heroLogo = document.getElementById('hero-logo');
+
+                if (savedTheme === 'dark') {
+                    document.body.classList.remove('light-theme');
+                    document.body.classList.add('dark-theme');
+                    document.getElementById('themeToggle').innerHTML = '🌞';
+                    navbarLogo.src = 'lg2.png';
+                    heroLogo.src = 'lg2.png';
+                } else {
+                    // Default to light theme
+                    navbarLogo.src = 'lg.png';
+                    heroLogo.src = 'lg.png';
+                }
+            });
+
+            // Loading screen
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    document.getElementById('loading-screen').style.opacity = '0';
+                    setTimeout(function() {
+                        document.getElementById('loading-screen').style.display = 'none';
+                    }, 500);
+                }, 2000);
+            });
+
+            // Back to top button
+            window.addEventListener('scroll', function() {
+                const backToTop = document.getElementById('back-to-top');
+                if (window.pageYOffset > 300) {
+                    backToTop.classList.add('show');
+                } else {
+                    backToTop.classList.remove('show');
+                }
+
+                // Scroll progress
+                const scrollProgress = document.getElementById('scroll-progress');
+                const scrollTop = window.pageYOffset;
+                const docHeight = document.body.offsetHeight - window.innerHeight;
+                const scrollPercent = (scrollTop / docHeight) * 100;
+                scrollProgress.style.width = scrollPercent + '%';
+            });
+
+            function scrollToTop() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+
+            // Search functionality
+            function searchMods() {
+                const query = document.getElementById('searchInput').value.toLowerCase();
+                const modCards = document.querySelectorAll('.mod-card');
+                modCards.forEach(card => {
+                    const text = card.textContent.toLowerCase();
+                    if (text.includes(query) || query === '') {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // Category tabs functionality
+            function showCategory(category) {
+                // Hide all mod grids
+                const grids = document.querySelectorAll('.mod-grid');
+                grids.forEach(grid => grid.classList.remove('active'));
+
+                // Remove active class from all tab buttons
+                const tabs = document.querySelectorAll('.tab-btn');
+                tabs.forEach(tab => tab.classList.remove('active'));
+
+                // Show selected category and activate tab
+                document.getElementById(category).classList.add('active');
+                event.target.classList.add('active');
+            }
+
+            // Newsletter subscription
+            function subscribeNewsletter() {
+                const email = document.getElementById('newsletterEmail').value;
+                if (email) {
+                    alert('Thank you for subscribing! We\'ll keep you updated with the latest emulator mods and news.');
+                    document.getElementById('newsletterEmail').value = '';
+                } else {
+                    alert('Please enter a valid email address.');
+                }
+            }
+
+            // Smooth scrolling for navigation
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                // Escape key closes side menu
+                if (e.key === 'Escape') {
+                    const sidenav = document.getElementById('mySidenav');
+                    sidenav.classList.remove('active');
+                }
+
+                // T key toggles theme
+                if (e.key === 't' || e.key === 'T') {
+                    toggleTheme();
+                }
+
+                // S key focuses search
+                if (e.key === 's' || e.key === 'S') {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+            });
+
+            // Intersection Observer for fade-in animations
+            const faders = document.querySelectorAll('.fade-in');
+            const appearOptions = {
+                threshold: 0.5
+            };
+            const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    } else {
+                        entry.target.classList.add('active');
+                        appearOnScroll.unobserve(entry.target);
+                    }
+                });
+            }, appearOptions);
+            faders.forEach(fader => {
+                appearOnScroll.observe(fader);
+            });
+        </script>
+
+        <!-- Firebase Scripts -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+        <script>
+            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            const firebaseConfig = {
+                apiKey: "AIzaSyAgx0jy6we6cvnIgKbS1fBoeRfSD2MDszo",
+                authDomain: "mod-hive.firebaseapp.com",
+                projectId: "mod-hive",
+                storageBucket: "mod-hive.firebasestorage.app",
+                messagingSenderId: "982583858832",
+                appId: "1:982583858832:web:44d5e4e2edd77fac06ea15",
+                measurementId: "G-PK2DRED7FB"
+            };
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+
+         // Protect the page & set greeting
+     auth.onAuthStateChanged(user => {
+        if (!user) {
+          window.location.href = "auth.html";
+       } else {
+           let firstName = user.displayName || user.email.split("@")[0];
+          document.getElementById('welcomeMsg').textContent = `Welcome, ${firstName}!`;
+        }
+    });
+
+    // Go to dashboard
+   function goDashboard() {
+    window.location.href = "dashboard.html";
+    }
+
+    // Logout function
+    function logout() {
+       auth.signOut().then(() => {
+         window.location.href = "auth.html";
+      });
+  }
+        </script>
+    </body>
+</html>

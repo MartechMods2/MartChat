@@ -32,6 +32,20 @@
   .spinner{border:3px solid rgba(255,255,255,0.06); border-top-color:var(--mh-primary); border-radius:50%; width:22px; height:22px; animation:spin 1s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);} }
 
+  /* Loading enhancements */
+  .loading-logo {
+    animation: float 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(108, 92, 231, 0.5));
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  .progress-bar {
+    background: linear-gradient(90deg, var(--mh-primary), var(--mh-accent));
+    box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
+  }
+
   /* Layout */
   header.appbar{position:sticky; top:0; z-index:50; backdrop-filter:blur(6px); background:rgba(8,9,11,0.85); border-bottom:1px solid rgba(255,255,255,0.03); padding:.6rem 1rem; display:flex; justify-content:space-between; align-items:center;}
   .appbar .brand{display:flex; align-items:center; gap:.6rem;}
@@ -99,10 +113,26 @@
 <!-- SESSION GATE -->
 <div id="gate" class="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(6,7,9,0.92)]">
   <div class="glass p-6 rounded-lg w-[92%] max-w-sm text-center">
-    <!-- Spinner -->
-    <div class="mx-auto mb-3" style="width:44px;height:44px;border-radius:999px;border:4px solid rgba(255,255,255,0.06);border-top-color:var(--mh-primary);animation:spin 1s linear infinite"></div>
-    <h2 class="text-lg font-semibold">Mod Hive</h2>
-    <p class="muted text-sm mt-2"> loading 😎…</p>
+    <!-- Animated Logo -->
+    <div class="mx-auto mb-3 relative loading-logo">
+      <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center animate-pulse">
+        <i class="fas fa-gamepad text-white text-2xl"></i>
+      </div>
+      <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-500 animate-spin"></div>
+    </div>
+    <h2 class="text-lg font-semibold mb-2">Mod Hive</h2>
+    <p id="loading-text" class="muted text-sm mt-2">Initializing dashboard...</p>
+    <!-- Progress Bar -->
+    <div class="mt-4">
+      <div class="w-full bg-gray-700 rounded-full h-2">
+        <div id="progress-bar" class="progress-bar h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+      <p id="progress-text" class="text-xs text-gray-400 mt-1">0%</p>
+    </div>
+    <!-- Random Tip -->
+    <p id="loading-tip" class="text-xs text-gray-500 mt-3 italic">Tip: Explore the latest mods in the feed!</p>
+    <!-- Current Time -->
+    <p id="current-time" class="text-xs text-gray-600 mt-1"></p>
   </div>
 </div>
   
@@ -398,8 +428,61 @@ const firebaseConfig = {
   let feedUnsub=null, friendsUnsub=null, friendRequestsUnsub=null, notifUnsub=null, chatUnsub=null;
   let commentUnsubs = {}, pendingImageBase64 = null, currentChatCid = null;
 
+  /* ---------- loading animation ---------- */
+  function startLoadingAnimation() {
+    const progressBar = byId('progress-bar');
+    const progressText = byId('progress-text');
+    const loadingText = byId('loading-text');
+    const loadingTip = byId('loading-tip');
+    const currentTime = byId('current-time');
+    let progress = 0;
+    const messages = [
+      'Initializing dashboard...',
+      'Loading user data...',
+      'Connecting to servers...',
+      'Fetching mods...',
+      'Almost ready...'
+    ];
+    const tips = [
+      'Tip: Explore the latest mods in the feed!',
+      'Tip: Connect with fellow gamers in chat!',
+      'Tip: Customize your profile for better visibility!',
+      'Tip: Share your favorite mods with friends!',
+      'Tip: Check out tutorials for advanced modding!'
+    ];
+    let messageIndex = 0;
+
+    // Update time every second
+    const timeInterval = setInterval(() => {
+      const now = new Date();
+      currentTime.textContent = now.toLocaleTimeString();
+    }, 1000);
+
+    const interval = setInterval(() => {
+      progress += Math.random() * 15;
+      if (progress > 100) progress = 100;
+      progressBar.style.width = progress + '%';
+      progressText.textContent = Math.round(progress) + '%';
+
+      if (progress > (messageIndex + 1) * 20) {
+        messageIndex = Math.min(messageIndex + 1, messages.length - 1);
+        loadingText.textContent = messages[messageIndex];
+        loadingTip.textContent = tips[Math.floor(Math.random() * tips.length)];
+      }
+
+      if (progress >= 100) {
+        clearInterval(interval);
+        clearInterval(timeInterval);
+        loadingText.textContent = 'Welcome to Mod Hive!';
+        loadingTip.textContent = 'Enjoy your gaming experience!';
+        currentTime.textContent = '';
+      }
+    }, 200);
+  }
+
   /* ---------- session gate & auth ---------- */
   onAuthStateChanged(auth, async (user) => {
+    startLoadingAnimation();
     const gate = byId('gate'), appDiv = byId('app');
     if(!user){
       // Not logged in: send to auth page

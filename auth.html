@@ -5,6 +5,7 @@
 <title>Mod Hive Auth</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="main2.css">
 <style>
     .lg{
         height: 50px;
@@ -40,13 +41,15 @@
 </style>
 <style>
 body { 
-  background: linear-gradient(135deg, #0a0a0a 0%, #0f0f0f 50%, #1a1a1a 100%); 
-  color: #fff; 
-  font-family: 'Segoe UI', sans-serif; 
+  font-family: Arial, sans-serif; 
   display: flex; 
   align-items: center; 
   justify-content: center; 
   height: 100vh; 
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  transition: background-color 1.3s, color 1.3s;
 }
 .auth-card {
   background: #0f0f0f;
@@ -110,6 +113,43 @@ button {
 button:hover {
   background: #0097a7;
 }
+.light-theme .auth-card {
+  background: #ffffff;
+  border: 2px solid #00bcd4;
+  box-shadow: 0 0 20px rgba(0,188,212,0.3);
+}
+.light-theme input {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #000;
+}
+.light-theme input:focus {
+  border-color: #00bcd4;
+  box-shadow: 0 0 8px rgba(0,188,212,0.5);
+}
+.light-theme button {
+  background: #00bcd4;
+  color: #fff;
+  border: 1.5px solid #0097a7;
+}
+.light-theme button:hover {
+  background: #0097a7;
+}
+.light-theme .tab-buttons button {
+  color: #00bcd4;
+}
+.light-theme .tab-buttons button.active {
+  background: #00bcd4;
+  color: #fff;
+}
+.light-theme .auth-btn {
+  background: #f5f5f5;
+  color: #000;
+  border: 1px solid #ccc;
+}
+.light-theme .auth-btn:hover {
+  background: #e0e0e0;
+}
 .tab { display: none; }
 .tab.active { display: block; }
 .tab-buttons button {
@@ -156,11 +196,12 @@ button:hover {
 }
 </style>
 </head>
-<body>
+<body class="light-theme">
 
 <div class="auth-card">
     <div class="lg">
   <img src="best logo.png" width="58px" alt="" height="58px"></img></div>
+  <div class="theme-icon" id="themeToggle" onclick="toggleTheme()" style="position: absolute; top: 10px; right: 10px; font-size: 20px; cursor: pointer;">🌙</div>
   <h1 style="font-size: 25px;" ><img style="width: 220px; padding: 10px: 45px; display: block; margin: 0 auto;" src="lg3.png"></h1>
   <h2 style="font-size: 10px;" >Advanced Moderation for the Digital Age</h2>
   <p class="text-gray-400 text-center mb-4" style="font-size: 8px; animation: fade 2s">"Welcome to 2026: The future belongs to those who innovate."</p>
@@ -376,6 +417,49 @@ function togglePassword(id) {
     btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
   }
 }
+
+// Enhanced theme toggle with animation and persistence
+function toggleTheme() {
+    const body = document.body;
+    const themeIcon = document.getElementById('themeToggle');
+    
+    body.style.transition = 'background-color 0.5s ease, color 0.5s ease';
+    
+    if (body.classList.contains('light-theme')) {
+        body.classList.remove('light-theme');
+        body.classList.add('dark-theme');
+        themeIcon.innerHTML = '🌞';
+        themeIcon.style.transform = 'rotate(180deg)';
+        
+        // Save theme preference
+        localStorage.setItem('theme', 'dark');
+    } else {
+        body.classList.remove('dark-theme');
+        body.classList.add('light-theme');
+        themeIcon.innerHTML = '🌙';
+        themeIcon.style.transform = 'rotate(0deg)';
+        
+        // Save theme preference
+        localStorage.setItem('theme', 'light');
+    }
+    
+    setTimeout(() => {
+        themeIcon.style.transform = 'rotate(0deg)';
+    }, 300);
+}
+
+// Load saved theme on page load
+window.addEventListener('DOMContentLoaded', function() {
+    const savedTheme = localStorage.getItem('theme');
+    
+    if (savedTheme === 'dark') {
+        document.body.classList.remove('light-theme');
+        document.body.classList.add('dark-theme');
+        document.getElementById('themeToggle').innerHTML = '🌞';
+    } else {
+        // Default to light theme
+    }
+});
 </script>
 
 </body>

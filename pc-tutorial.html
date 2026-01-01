@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Modding Tutorials - Mod Hive</title>
+    <link rel="stylesheet" href="main2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="light-theme">
+    <div class="navbar">
+        <img id="navbar-logo" src="best logo.png" alt="Mod Hive Logo" width="45px" height="40px" class="mm2">
+        <h1>PC Tutorials</h1>
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <div class="theme-icon" id="themeToggle" onclick="toggleTheme()">🌙</div>
+    </div>
+
+    <div class="side-nav" id="mySidenav">
+        <div class="close-icon" onclick="toggleMenu()" style="cursor: pointer; color: white; font-size: 20px; padding: 10px;">✖</div>
+        <a href="ModHive.html" class="side-nav-link">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="pc.html">PC Mods</a>
+        <a href="android-tutorial.html">Android Tutorials</a>
+        <a href="emulator-tutorial.html">Emulator Tutorials</a>
+    </div>
+
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>PC Modding Tutorials</h1>
+            <p>Master PC game modding with our comprehensive guides.</p>
+        </div>
+    </section>
+
+    <section class="tutorials-section">
+        <h2>Step-by-Step Guides</h2>
+        <div class="tutorial-card">
+            <h3>1. Installing Mod Managers</h3>
+            <p>Use tools like Vortex or Mod Organizer for Skyrim, Fallout, etc.</p>
+            <ul>
+                <li>Download and install the mod manager.</li>
+                <li>Link it to your game directory.</li>
+                <li>Download mods from Nexus Mods.</li>
+            </ul>
+        </div>
+        <div class="tutorial-card">
+            <h3>2. Manual Mod Installation</h3>
+            <p>For games without managers.</p>
+            <ul>
+                <li>Extract mod files to the game folder.</li>
+                <li>Use tools like 7-Zip.</li>
+                <li>Edit INI files if needed.</li>
+            </ul>
+        </div>
+        <div class="tutorial-card">
+            <h3>3. Creating Custom Mods</h3>
+            <p>Use editors like GECK for Fallout.</p>
+            <ul>
+                <li>Learn scripting basics.</li>
+                <li>Use 3D modeling software.</li>
+                <li>Test mods thoroughly.</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 Mod Hive. <a href="privacy-policy.html">Privacy Policy</a></p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const sidenav = document.getElementById('mySidenav');
+            sidenav.classList.toggle('active');
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeToggle');
+            if (body.classList.contains('light-theme')) {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                themeIcon.innerHTML = '🌞';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                themeIcon.innerHTML = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+                document.getElementById('themeToggle').innerHTML = '🌞';
+            }
+        });
+    </script>
+</body>
+</html></content>
+<parameter name="filePath">c:\Users\showe\OneDrive\Desktop\martech\my web\MartChat-main\pc-tutorial.html

@@ -67,6 +67,14 @@ display: inline-table;
 {
   display:inline-block;
 }
+.footer-link {
+  color:#737373;
+  text-decoration: none;
+}
+.footer-link:hover {
+  color:#3366cc;
+  text-decoration: none;
+}
 .site-footer .social-icons
 {
   text-align:right;

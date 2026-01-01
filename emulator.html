@@ -43,7 +43,7 @@
 
         <!-- Navigation -->
         <div class="navbar">
-            <img id="navbar-logo" src="lg.png" alt="Mod Hive Logo"
+            <img id="navbar-logo" src="best logo.png" alt="Mod Hive Logo"
             width="45px" height="40px" class="mm2">
             <h1>Emulator Mods</h1>
             <div class="search-container">
@@ -521,7 +521,6 @@
             function toggleTheme() {
                 const body = document.body;
                 const themeIcon = document.getElementById('themeToggle');
-                const navbarLogo = document.getElementById('navbar-logo');
                 const heroLogo = document.getElementById('hero-logo');
 
                 body.style.transition = 'background-color 0.5s ease, color 0.5s ease';
@@ -533,9 +532,7 @@
                     themeIcon.style.transform = 'rotate(180deg)';
 
                     // Switch to dark theme logo
-                    navbarLogo.src = 'lg2.png';
-                    heroLogo.src = 'lg2.png';
-
+    heroLogo.src = 'lg3.png';
                     // Save theme preference
                     localStorage.setItem('theme', 'dark');
                 } else {
@@ -545,7 +542,6 @@
                     themeIcon.style.transform = 'rotate(0deg)';
 
                     // Switch to light theme logo
-                    navbarLogo.src = 'lg.png';
                     heroLogo.src = 'lg.png';
 
                     // Save theme preference
@@ -560,21 +556,15 @@
             // Load saved theme on page load
             window.addEventListener('DOMContentLoaded', function() {
                 const savedTheme = localStorage.getItem('theme');
-                const navbarLogo = document.getElementById('navbar-logo');
-                const heroLogo = document.getElementById('hero-logo');
+                        const heroLogo = document.getElementById('hero-logo');
 
-                if (savedTheme === 'dark') {
-                    document.body.classList.remove('light-theme');
-                    document.body.classList.add('dark-theme');
-                    document.getElementById('themeToggle').innerHTML = '🌞';
-                    navbarLogo.src = 'lg2.png';
-                    heroLogo.src = 'lg2.png';
-                } else {
-                    // Default to light theme
-                    navbarLogo.src = 'lg.png';
-                    heroLogo.src = 'lg.png';
-                }
-            });
+                        if (savedTheme === 'dark') {
+                            document.body.classList.remove('light-theme');
+                            document.body.classList.add('dark-theme');
+                            document.getElementById('themeToggle').innerHTML = '🌞';
+                            heroLogo.src = 'lg3.png';
+                        } else {
+                            // Default to light theme
 
             // Loading screen
             window.addEventListener('load', function() {

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emulator Modding Tutorials - Mod Hive</title>
+    <link rel="stylesheet" href="main2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="light-theme">
+    <div class="navbar">
+        <img id="navbar-logo" src="best logo.png" alt="Mod Hive Logo" width="45px" height="40px" class="mm2">
+        <h1>Emulator Tutorials</h1>
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <div class="theme-icon" id="themeToggle" onclick="toggleTheme()">🌙</div>
+    </div>
+
+    <div class="side-nav" id="mySidenav">
+        <div class="close-icon" onclick="toggleMenu()" style="cursor: pointer; color: white; font-size: 20px; padding: 10px;">✖</div>
+        <a href="ModHive.html" class="side-nav-link">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="emulator.html">Emulator Mods</a>
+        <a href="android-tutorial.html">Android Tutorials</a>
+        <a href="pc-tutorial.html">PC Tutorials</a>
+    </div>
+
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Emulator Modding Tutorials</h1>
+            <p>Enhance your retro gaming with emulator mods.</p>
+        </div>
+    </section>
+
+    <section class="tutorials-section">
+        <h2>Step-by-Step Guides</h2>
+        <div class="tutorial-card">
+            <h3>1. Setting Up Emulators</h3>
+            <p>Install and configure emulators like PPSSPP, Dolphin.</p>
+            <ul>
+                <li>Download the emulator from official sites.</li>
+                <li>Configure controls and graphics.</li>
+                <li>Load ROMs legally.</li>
+            </ul>
+        </div>
+        <div class="tutorial-card">
+            <h3>2. Applying Texture Packs</h3>
+            <p>Improve graphics with HD textures.</p>
+            <ul>
+                <li>Find compatible packs.</li>
+                <li>Extract to the textures folder.</li>
+                <li>Enable in emulator settings.</li>
+            </ul>
+        </div>
+        <div class="tutorial-card">
+            <h3>3. Cheat Codes and Patches</h3>
+            <p>Use cheats for fun.</p>
+            <ul>
+                <li>Find cheat databases.</li>
+                <li>Apply via cheat engine.</li>
+                <li>Use responsibly.</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 Mod Hive. <a href="privacy-policy.html">Privacy Policy</a></p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const sidenav = document.getElementById('mySidenav');
+            sidenav.classList.toggle('active');
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeToggle');
+            if (body.classList.contains('light-theme')) {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                themeIcon.innerHTML = '🌞';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                themeIcon.innerHTML = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+                document.getElementById('themeToggle').innerHTML = '🌞';
+            }
+        });
+    </script>
+</body>
+</html></content>
+<parameter name="filePath">c:\Users\showe\OneDrive\Desktop\martech\my web\MartChat-main\emulator-tutorial.html

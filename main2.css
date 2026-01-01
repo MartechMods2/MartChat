@@ -67,6 +67,14 @@ display: inline-table;
 {
   display:inline-block;
 }
+.footer-link {
+  color:#737373;
+  text-decoration: none;
+}
+.footer-link:hover {
+  color:#3366cc;
+  text-decoration: none;
+}
 .site-footer .social-icons
 {
   text-align:right;
@@ -226,6 +234,17 @@ display: inline-table;
 @keyframes load {
     0% { width: 0%; }
     100% { width: 100%; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
 /* Scroll Progress Bar */
@@ -468,7 +487,6 @@ display: inline-table;
    max-width: 1200px;
 }
         .mm2{
-            border-radius: 50%;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
             background: transparent;
@@ -513,6 +531,15 @@ display: inline-table;
         }
         .search-btn:hover {
             background-color: #777;
+        }
+
+        .dark-theme .search-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark-theme .search-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
         }
         .menu-icon{
             margin-left:10px;
@@ -636,9 +663,11 @@ section {
 
         .hero-content {
             flex: 1;
-            max-width: 600px;
-        }
+                max-width: none;
+            }
 
+            .hero-image {
+                margin-top: 2rem;
         .hero-content h1 {
             font-size: 3rem;
             margin-bottom: 1rem;
@@ -712,10 +741,10 @@ section {
         .hero-logo {
             max-width: 250px;
             height: auto;
-            border-radius: 20px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
             transition: all 0.4s ease;
             background: transparent;
+            animation: float 3s ease-in-out infinite;
         }
 
         .hero-logo:hover {
@@ -784,6 +813,7 @@ a:hover{
             color: #ff6b6b;
             text-align: center;
             margin-bottom: 1rem;
+            animation: pulse 2s infinite;
         }
 
         .mod-actions {
@@ -857,12 +887,10 @@ a:hover{
         }
 
         .mod-grid {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
-            overflow: hidden;
-            scroll-behavior: smooth;
             width: 100%;
-            justify-content: center;
         }
 
         .updates-grid {
@@ -1221,6 +1249,16 @@ a:hover{
             transform: translateY(-2px);
         }
 
+        .dark-theme .newsletter-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .dark-theme .newsletter-btn:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
         .newsletter-note {
             font-size: 0.9rem;
             opacity: 0.7;
@@ -1315,6 +1353,16 @@ a:hover{
             box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
         }
 
+        .dark-theme .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .dark-theme .submit-btn:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
         /* ===== RESPONSIVE DESIGN ===== */
 
         /* Mobile First - Base styles are mobile optimized */
@@ -1326,14 +1374,23 @@ a:hover{
             }
 
             .navbar {
-                width: 95%;
+                width: 100%;
                 padding: 8px 12px;
-                top: 1%;
+                top: 0;
+            }
+
+            section {
+                padding-top: 4rem;
             }
 
             .navbar h1 {
                 font-size: 16px;
                 margin-right: 8px;
+            }
+
+            .mm2 {
+                width: 35px;
+                height: 35px;
             }
 
             .search-container {
@@ -1359,8 +1416,22 @@ a:hover{
             }
 
             .hero-section {
-                padding: 2rem 1rem;
+                padding: 6rem 1rem 2rem;
                 min-height: 70vh;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-content {
+                max-width: none;
+            }
+
+            .hero-image {
+                margin-top: 2rem;
+            }
+
+            .hero-logo {
+                max-width: 150px;
             }
 
             .hero-content h1 {
@@ -1416,13 +1487,13 @@ a:hover{
                 display: flex;
                 overflow-x: auto;
                 scroll-snap-type: x mandatory;
-                gap: 1rem;
+                gap: 0.5rem;
                 padding: 1rem;
                 transform: none !important;
             }
 
             .mod-card {
-                flex: 0 0 280px;
+                flex: 0 0 250px;
                 scroll-snap-align: start;
                 margin: 0;
             }
@@ -1501,6 +1572,11 @@ a:hover{
             #back-to-top i {
                 font-size: 16px;
             }
+
+            .container {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
         }
 
         /* Tablet (481px - 768px) */
@@ -1558,6 +1634,10 @@ a:hover{
 
             .contact-form {
                 padding: 2rem;
+            }
+
+            .carousel-btn {
+                display: none;
             }
         }
 
@@ -1649,6 +1729,10 @@ a:hover{
                 grid-template-columns: 1fr 1fr;
                 gap: 4rem;
             }
+
+            .carousel-btn {
+                display: none;
+            }
         }
 
         /* Extra Large Desktop (1441px+) */
@@ -1698,6 +1782,10 @@ a:hover{
 
             .contact-form {
                 padding: 3rem;
+            }
+
+            .carousel-btn {
+                display: none;
             }
         }
 

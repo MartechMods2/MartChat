@@ -275,10 +275,12 @@ display: inline-table;
         body {
  
             font-family: Arial, sans-serif;
-            margin: 0;
+            margin: 0 auto;
             padding: 0;
             overflow-x: hidden; /* Prevent horizontal scroll */
             transition: background-color 1.3s, color 1.3s;
+            width: 1000px;
+            max-width: 1000px;
         }
         .light-theme {
             background-color: #ffffff;
@@ -483,8 +485,8 @@ display: inline-table;
    padding: 10px 20px;
    transition: background-color 3.3s;
    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-   width: 95%;
-   max-width: 1200px;
+   width: 950px;
+   max-width: 950px;
 }
         .mm2{
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -649,6 +651,9 @@ section {
             display: flex;
             flex-direction: column;
             justify-content: center;
+            width: 1000px;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
         .hero-section {
@@ -659,6 +664,9 @@ section {
             align-items: center;
             justify-content: space-between;
             min-height: 80vh;
+            width: 1000px;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
         .hero-content {
@@ -897,7 +905,7 @@ a:hover{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -956,7 +964,7 @@ a:hover{
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
@@ -1367,20 +1375,22 @@ a:hover{
 
         /* Mobile First - Base styles are mobile optimized */
 
-        /* Small Mobile (320px - 480px) */
+        /* Small Mobile (320px - 480px) - Fixed sizes for Android */
         @media (max-width: 480px) {
             body {
                 font-size: 14px;
             }
 
             .navbar {
-                width: 100%;
                 padding: 8px 12px;
                 top: 0;
+                position: fixed;
             }
 
             section {
                 padding-top: 4rem;
+                padding-left: 10px;
+                padding-right: 10px;
             }
 
             .navbar h1 {
@@ -1395,12 +1405,14 @@ a:hover{
 
             .search-container {
                 width: 100%;
+                max-width: 460px;
                 margin: 8px 0;
                 order: 3;
             }
 
             .search-input {
                 width: 100%;
+                max-width: 380px;
                 font-size: 14px;
                 padding: 6px 10px;
             }
@@ -1417,21 +1429,27 @@ a:hover{
 
             .hero-section {
                 padding: 6rem 1rem 2rem;
-                min-height: 70vh;
+                min-height: 400px;
+                height: 400px;
                 flex-direction: column;
                 text-align: center;
             }
 
             .hero-content {
-                max-width: none;
+                max-width: 460px;
+                width: 100%;
             }
 
             .hero-image {
                 margin-top: 2rem;
+                width: 100%;
+                max-width: 460px;
             }
 
             .hero-logo {
                 max-width: 150px;
+                width: 150px;
+                height: 150px;
             }
 
             .hero-content h1 {
@@ -1448,6 +1466,13 @@ a:hover{
                 flex-direction: column;
                 gap: 1rem;
                 margin-bottom: 1.5rem;
+                width: 100%;
+                max-width: 460px;
+            }
+
+            .stat {
+                width: 100%;
+                max-width: 460px;
             }
 
             .stat h3 {
@@ -1461,22 +1486,30 @@ a:hover{
             .cta-buttons {
                 flex-direction: column;
                 gap: 0.5rem;
+                width: 100%;
+                max-width: 460px;
             }
 
             .btn-primary,
             .btn-secondary {
                 width: 100%;
+                max-width: 460px;
                 padding: 12px 20px;
                 font-size: 14px;
             }
 
             .hero-logo {
                 max-width: 200px;
+                width: 200px;
+                height: 200px;
                 margin-top: 2rem;
             }
 
             .mod-carousel {
                 position: relative;
+                width: 100%;
+                max-width: 480px;
+                margin: 0 auto;
             }
 
             .carousel-btn {
@@ -1490,12 +1523,16 @@ a:hover{
                 gap: 0.5rem;
                 padding: 1rem;
                 transform: none !important;
+                width: 100%;
+                max-width: 480px;
             }
 
             .mod-card {
-                flex: 0 0 250px;
+                flex: 0 0 280px;
+                width: 280px;
                 scroll-snap-align: start;
                 margin: 0;
+                min-height: 300px;
             }
 
             .mod-actions {
@@ -1505,6 +1542,7 @@ a:hover{
 
             .action-btn {
                 width: 100%;
+                max-width: 260px;
                 padding: 10px;
                 font-size: 14px;
             }
@@ -1513,22 +1551,32 @@ a:hover{
             .testimonials-container {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
+                width: 100%;
+                max-width: 480px;
+                margin: 0 auto;
             }
 
             .update-card,
             .testimonial-card {
                 padding: 1.5rem;
+                width: 100%;
+                max-width: 460px;
             }
 
             .contact-container {
                 grid-template-columns: 1fr;
                 gap: 2rem;
+                width: 100%;
+                max-width: 480px;
+                margin: 0 auto;
             }
 
             .contact-item {
                 flex-direction: column;
                 text-align: center;
                 gap: 0.5rem;
+                width: 100%;
+                max-width: 460px;
             }
 
             .contact-item i {
@@ -1537,10 +1585,15 @@ a:hover{
 
             .contact-form {
                 padding: 1.5rem;
+                width: 100%;
+                max-width: 460px;
             }
 
             .newsletter-section {
                 padding: 3rem 1rem;
+                width: 100%;
+                max-width: 480px;
+                margin: 0 auto;
             }
 
             .newsletter-content h2 {
@@ -1582,7 +1635,6 @@ a:hover{
         /* Tablet (481px - 768px) */
         @media (min-width: 481px) and (max-width: 768px) {
             .navbar {
-                width: 96%;
                 padding: 10px 15px;
             }
 
@@ -1644,7 +1696,6 @@ a:hover{
         /* Small Desktop (769px - 1024px) */
         @media (min-width: 769px) and (max-width: 1024px) {
             .navbar {
-                width: 97%;
                 padding: 12px 18px;
             }
 
@@ -1686,10 +1737,9 @@ a:hover{
             }
         }
 
-        /* Large Desktop (1025px - 1440px) */
+        /* Large Desktop (1025px - 1440px) - Fixed sizes for PC */
         @media (min-width: 1025px) and (max-width: 1440px) {
             .navbar {
-                width: 98%;
                 padding: 14px 20px;
             }
 
@@ -1704,7 +1754,8 @@ a:hover{
 
             .hero-section {
                 padding: 5rem 4rem;
-                min-height: 85vh;
+                min-height: 600px;
+                height: 600px;
             }
 
             .hero-content h1 {
@@ -1717,17 +1768,31 @@ a:hover{
 
             .mod-grid {
                 gap: 3rem;
+                width: 100%;
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+
+            .mod-card {
+                width: 350px;
+                min-height: 400px;
             }
 
             .updates-grid,
             .testimonials-container {
                 grid-template-columns: repeat(3, 1fr);
                 gap: 3rem;
+                width: 100%;
+                max-width: 1400px;
+                margin: 0 auto;
             }
 
             .contact-container {
                 grid-template-columns: 1fr 1fr;
                 gap: 4rem;
+                width: 100%;
+                max-width: 1400px;
+                margin: 0 auto;
             }
 
             .carousel-btn {
@@ -1738,8 +1803,6 @@ a:hover{
         /* Extra Large Desktop (1441px+) */
         @media (min-width: 1441px) {
             .navbar {
-                width: 95%;
-                max-width: 1400px;
                 padding: 16px 24px;
             }
 

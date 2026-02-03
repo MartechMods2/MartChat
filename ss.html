@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <title>Social Sphere</title>
     <link rel="stylesheet" href="ss.css">
+    <link rel="stylesheet" href="main2.css">
 </head>
 <body>
     <div class="circle">
     <div class="main">
-        <img src="best logo.png" alt="" width="90px" height="70px"></img>
+        <img src="best logo.png" alt="Mod Hive Logo" width="90" height="70" loading="lazy">
     </div>
     </div>
     <h1>Mod Hive</h1>
@@ -18,5 +19,34 @@
     function redirectToPage() {
     window.location.href = 'ModHive.html';
 }
+</script>
+<!-- Site customization + fallback (lightweight) -->
+<div class="settings-toggle" id="mh_settingsToggle" title="Customize site">⚙️</div>
+<div class="settings-panel" id="mh_settingsPanel" aria-hidden="true" style="display:none">
+    <h4>Appearance</h4>
+    <div class="settings-row"><label>Accent</label><input id="mh_accentPicker" type="color" value="#667eea" class="color-swatch"></div>
+    <div class="settings-row"><label>Particles</label><div id="mh_particlesToggle" class="toggle" role="switch"><div class="knob"></div></div></div>
+    <div style="display:flex; gap:8px; margin-top:8px;"><button id="mh_resetPrefs" class="btn">Reset</button><button id="mh_closeSettings" class="btn">Close</button></div>
+</div>
+<div id="mh_particleLayer" class="particle-layer" aria-hidden="true"></div>
+<script>
+ (function(){
+     const toggle = document.getElementById('mh_settingsToggle');
+     const panel = document.getElementById('mh_settingsPanel');
+     const particlesToggle = document.getElementById('mh_particlesToggle');
+     const accent = document.getElementById('mh_accentPicker');
+     const particleLayer = document.getElementById('mh_particleLayer');
+     function createParticles(n=30){ particleLayer.innerHTML=''; for(let i=0;i<n;i++){ const p=document.createElement('div'); p.className='particle'; p.style.left=(Math.random()*100)+'%'; p.style.top=(Math.random()*120+20)+'%'; p.style.width=(4+Math.random()*10)+'px'; p.style.height=p.style.width; p.style.animationDuration=(8+Math.random()*12)+'s'; p.style.opacity=(0.2+Math.random()*0.8); particleLayer.appendChild(p);} }
+     function applyAccent(c){ document.documentElement.style.setProperty('--mh-primary', c); }
+     const prefs = JSON.parse(localStorage.getItem('mh_prefs')||'{}'); if(prefs.accent) accent.value=prefs.accent, applyAccent(prefs.accent); if(prefs.particles){ particlesToggle.classList.add('on'); createParticles(30); }
+     toggle.addEventListener('click', ()=>{ panel.style.display = panel.style.display==='block' ? 'none' : 'block'; });
+     document.getElementById('mh_closeSettings').addEventListener('click', ()=>panel.style.display='none');
+     particlesToggle.addEventListener('click', ()=>{ const on = particlesToggle.classList.toggle('on'); if(on) createParticles(40); else particleLayer.innerHTML=''; save(); });
+     accent.addEventListener('input', (e)=>{ applyAccent(e.target.value); save(); });
+     document.getElementById('mh_resetPrefs').addEventListener('click', ()=>{ localStorage.removeItem('mh_prefs'); location.reload(); });
+     function save(){ localStorage.setItem('mh_prefs', JSON.stringify({accent:accent.value, particles:particlesToggle.classList.contains('on')})); }
+     // image fallback
+     document.querySelectorAll('img').forEach(img=>{ img.loading = img.loading || 'lazy'; img.addEventListener('error', function(){ if(!this.dataset.fallback){ this.dataset.fallback=1; this.src='lg.png'; this.classList.add('box-shadow'); } }); });
+ })();
 </script>
 </html>

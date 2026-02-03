@@ -44,16 +44,20 @@
         <!-- Navigation -->
         <div class="navbar">
             <img id="navbar-logo" src="best logo.png" alt="Mod Hive Logo"
-            width="45px" height="40px" class="mm2">
+            width="45px" height="40px" class="mm2" loading="lazy">
             <h1>Android Mods</h1>
             <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search Android mods..." class="search-input">
-                <button onclick="searchMods()" class="search-btn">🔍</button>
+                <input type="text" id="searchInput" placeholder="Search Android mods..." class="search-input" aria-label="Search Android mods">
+                <button onclick="searchMods()" class="search-btn icon-btn" aria-label="Search">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
             </div>
-            <div class="menu-icon" onclick="toggleMenu()">☰</div>
-            <div class="theme-icon" id="themeToggle" onclick="toggleTheme()">
-                🌙
-            </div>
+            <button class="icon-btn menu-btn" id="menuBtn" aria-label="Open menu" onclick="toggleMenu()" title="Menu">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="icon-btn theme-toggle" id="themeToggle" aria-label="Toggle theme" onclick="toggleTheme()" title="Toggle theme">
+                <svg id="themeIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
         </div>
 
         <div class="side-nav" id="mySidenav">
@@ -111,7 +115,7 @@
                 </div>
             </div>
             <div class="hero-image">
-                <img id="hero-logo" src="lg.png" alt="Mod Hive Logo" class="hero-logo">
+                <img id="hero-logo" src="lg.png" alt="Mod Hive Logo" class="hero-logo" loading="lazy">
             </div>
         </section>
 
@@ -508,10 +512,10 @@
                         </div>
                         <div class="col-md-4 col-sm-6 col-xs-12">
                             <ul class="social-icons">
-                                <li><a class="facebook" href="https://www.facebook.com/martechmods1"><img src="4.png" alt="" height="40px" width="40px"></img></i></a></li>
-                                <li><a class="Telegram" href="t.me/martechmods"><img src="1.png" alt="" height="40px" width="40px"></img></i></a></li>
-                                <li><a class="WhatsApp" href="https://chat.whatsapp.com/DsvyRgBCUgBLQrx6vNauQe?mode=ac_t"><img src="3.png" alt="" height="40px" width="40px"></img></i></a></li>
-                                <li><a class="YouTube" href="https://www.youtube.com/@martechmods"><img src="2.png" alt="" height="40px" width="40px"></img></i></a></li>
+                                <li><a class="facebook" href="https://www.facebook.com/martechmods1"><img src="4.png" alt="Facebook" height="40" width="40" loading="lazy"></a></li>
+                                <li><a class="Telegram" href="t.me/martechmods"><img src="1.png" alt="Telegram" height="40" width="40" loading="lazy"></a></li>
+                                <li><a class="WhatsApp" href="https://chat.whatsapp.com/DsvyRgBCUgBLQrx6vNauQe?mode=ac_t"><img src="3.png" alt="WhatsApp" height="40" width="40" loading="lazy"></a></li>
+                                <li><a class="YouTube" href="https://www.youtube.com/@martechmods"><img src="2.png" alt="YouTube" height="40" width="40" loading="lazy"></a></li>
                             </ul>
                         </div>
                     </div>
@@ -540,37 +544,24 @@
 
             function toggleTheme() {
                 const body = document.body;
-                const themeIcon = document.getElementById('themeToggle');
+                const themeBtn = document.getElementById('themeToggle');
                 const heroLogo = document.getElementById('hero-logo');
+                const sunSVG = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                const moonSVG = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-                body.style.transition = 'background-color 0.5s ease, color 0.5s ease';
-
-                if (body.classList.contains('light-theme')) {
-                    body.classList.remove('light-theme');
-                    body.classList.add('dark-theme');
-                    themeIcon.innerHTML = '🌞';
-                    themeIcon.style.transform = 'rotate(180deg)';
-
-                    // Switch to dark theme logo
-    heroLogo.src = 'lg3.png';
-                    // Save theme preference
-                    localStorage.setItem('theme', 'dark');
-                } else {
+                if (body.classList.contains('dark-theme')) {
                     body.classList.remove('dark-theme');
                     body.classList.add('light-theme');
-                    themeIcon.innerHTML = '🌙';
-                    themeIcon.style.transform = 'rotate(0deg)';
-
-                    // Switch to light theme logo
-                    heroLogo.src = 'lg.png';
-
-                    // Save theme preference
-                    localStorage.setItem('theme', 'light');
+                    themeBtn.innerHTML = moonSVG;
+                    if (heroLogo) heroLogo.src = 'lg.png';
+                    localStorage.setItem('theme','light');
+                } else {
+                    body.classList.remove('light-theme');
+                    body.classList.add('dark-theme');
+                    themeBtn.innerHTML = sunSVG;
+                    if (heroLogo) heroLogo.src = 'lg3.png';
+                    localStorage.setItem('theme','dark');
                 }
-
-                setTimeout(() => {
-                    themeIcon.style.transform = 'rotate(0deg)';
-                }, 300);
             }
 
             // Load saved theme on page load
@@ -588,6 +579,17 @@
                     heroLogo.src = 'lg.png';
                 }
             });
+
+            // apply saved theme on load
+            (function(){
+                const saved = localStorage.getItem('theme');
+                const themeBtn = document.getElementById('themeToggle');
+                const heroLogo = document.getElementById('hero-logo');
+                const sunSVG = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                const moonSVG = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                if (saved === 'dark') { document.body.classList.add('dark-theme'); if (themeBtn) themeBtn.innerHTML = sunSVG; if (heroLogo) heroLogo.src = 'lg3.png'; }
+                else { document.body.classList.add('light-theme'); if (themeBtn) themeBtn.innerHTML = moonSVG; if (heroLogo) heroLogo.src = 'lg.png'; }
+            })();
 
             // Loading screen
             window.addEventListener('load', function() {
@@ -970,7 +972,26 @@
       });
   }
         </script>
-    </body>
+                <!-- Image fallback: set safe fallback for broken images and ensure lazy/alt -->
+                <script>
+                    (function(){
+                        function applyFallback(img){
+                            img.addEventListener('error', function(){
+                                if (!img.dataset.fallbackApplied){
+                                    img.dataset.fallbackApplied = '1';
+                                    img.src = 'lg.png';
+                                    img.classList.add('box-shadow');
+                                }
+                            });
+                        }
+                        document.querySelectorAll('img').forEach(function(img){
+                            if (!img.hasAttribute('loading')) img.setAttribute('loading','lazy');
+                            if (!img.hasAttribute('alt')) img.setAttribute('alt','image');
+                            applyFallback(img);
+                        });
+                    })();
+                </script>
+        </body>
 </html>
 
 <!-- Tutorial Modal -->

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="About ModHive - A professional gaming mods platform founded by MarTech. Discover mods, walkthroughs, and gaming guides for PC, Android, and emulators.">
+    <meta name="keywords" content="game mods, PC mods, Android mods, emulator mods, gaming community, mod platform, walkthroughs, gaming guides, mod creator, Martbot, mod technology, gaming innovation, professional modding">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="About ModHive - Professional Gaming Mods Platform">
+    <meta property="og:description" content="Learn about ModHive: the premier platform for quality game mods across PC, Android, and emulators. Founded by MarTech.">
+    <meta property="og:image" content="lg.png">
+    <meta property="og:url" content="https://modhive.com/about.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>About ModHive - Professional Gaming Mods Platform</title>
+    <link rel="icon" type="image/png" href="lg.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root{
+            --accent:#667eea;
+            --accent-2:#ff6b6b;
+            --muted:#cfcfcf;
+            --glass:rgba(18,18,18,0.6);
+        }
+
+        body{font-family: 'Poppins', Arial, sans-serif; margin:0; background:linear-gradient(135deg,#060606,#121212); color:#e8e8e8;transition:background 400ms}
+        .navbar{display:flex;justify-content:space-between;align-items:center;padding:18px 40px;width:100%;background:rgba(18,18,18,0.7);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.06)}
+        .navbar h1{font-size:1.4rem;margin:0}
+        .container{max-width:1100px;margin:0 auto;padding:120px 5% 60px}
+        .glass{background:var(--glass);padding:35px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);overflow:hidden}
+        a{color:var(--accent);text-decoration:none}
+        footer{margin-top:60px;padding:40px 20px;background:rgba(18,18,18,0.8);color:#a0a0a0}
+
+        /* Hero title shimmer */
+        .hero-title{font-size:2rem;margin-bottom:12px;font-weight:800;background:linear-gradient(90deg,var(--accent),#a0a0a0, var(--accent-2));background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 3s linear infinite}
+
+        @keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+        /* Accent chip */
+        .chip{display:inline-block;padding:6px 10px;background:linear-gradient(90deg,var(--accent),#8fd);color:#021;border-radius:999px;font-weight:700;margin-right:8px}
+
+        /* Feature list */
+        .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:12px}
+        .feature{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;display:flex;gap:12px;align-items:flex-start}
+        .feature i{color:var(--accent);font-size:1.2rem;margin-top:3px}
+        .feature p{margin:0;color:var(--muted);line-height:1.5}
+
+        /* Animations */
+        .fade-in{opacity:0;transform:translateY(12px);animation:fadeUp 600ms ease forwards}
+        .fade-delay-1{animation-delay:120ms}
+        .fade-delay-2{animation-delay:240ms}
+        .fade-delay-3{animation-delay:360ms}
+
+        @keyframes fadeUp{to{opacity:1;transform:none}}
+
+        /* Floating portrait */
+        .portrait{width:120px;height:120px;border-radius:12px;object-fit:cover;box-shadow:0 10px 30px rgba(0,0,0,0.5);transform-origin:center;animation:float 4s ease-in-out infinite}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+        ul.values{color:var(--muted);margin-left:18px}
+        ul.values li{margin-bottom:8px}
+
+        /* FAQ Styles */
+        div[onclick*="expanded"] .faq-answer {
+            display: none !important;
+            transition: all 0.3s ease;
+        }
+
+        div[onclick*="expanded"].expanded .faq-answer {
+            display: block !important;
+        }
+
+        div[onclick*="expanded"]:hover {
+            background: rgba(102, 126, 234, 0.12) !important;
+            transform: translateX(4px);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Sidebar styles */
+        #sidebar {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            height: 100vh;
+            width: 250px;
+            padding: 100px 20px 30px;
+            transition: transform 0.4s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        #sidebar.active {
+            transform: translateX(250px);
+        }
+
+        #sidebar .glass-effect {
+            height: 100%;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0 12px 12px 0;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-nav a {
+            color: #e8e8e8;
+            text-decoration: none;
+            padding: 14px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 300ms;
+            font-weight: 500;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e8e8e8;
+            transform: translateX(5px);
+        }
+
+        .sidebar-nav i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #e8e8e8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 300ms;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar-toggle.active {
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 200px;
+                left: -200px;
+            }
+
+            #sidebar.active {
+                transform: translateX(200px);
+            }
+
+            .sidebar-toggle {
+                width: 48px;
+                height: 48px;
+                min-height: 48px;
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            body { background: linear-gradient(135deg, #f8f9fa, #e9ecef); color: #212529; }
+            .navbar { background: rgba(248, 249, 250, 0.7); border-bottom: 1px solid rgba(0,0,0,0.06); }
+            .glass { background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0,0,0,0.1); }
+            a { color: #667eea; }
+            footer { background: rgba(248, 249, 250, 0.8); color: #495057; }
+            .feature i { color: #667eea; }
+            .hero-title { background: linear-gradient(90deg, #212529, #495057, #212529); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 12px 15px;
+                gap: 12px;
+            }
+            
+            .navbar h1 {
+                font-size: 1.2rem;
+            }
+            
+            .navbar div:last-child {
+                width: 100%;
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .navbar a {
+                font-size: 0.9rem;
+                margin-right: 8px !important;
+            }
+            
+            .container {
+                margin: 100px auto 20px;
+                padding: 15px;
+            }
+            
+            .glass {
+                padding: 25px;
+            }
+            
+            .hero-title {
+                font-size: 1.6rem;
+                margin-bottom: 10px;
+            }
+            
+            section {
+                margin-top: 15px !important;
+            }
+            
+            h3 {
+                font-size: 1.2rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .feature {
+                padding: 10px;
+                gap: 10px;
+            }
+            
+            .feature i {
+                font-size: 1rem;
+            }
+            
+            .feature p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px;
+                gap: 8px;
+            }
+            
+            .navbar img {
+                width: 6cm !important;
+                height: 0.8cm !important;
+            }
+            
+            .navbar h1 {
+                font-size: 1rem;
+                margin: 0;
+            }
+            
+            .navbar div:last-child {
+                display: flex;
+                gap: 8px;
+                flex-direction: column;
+                width: auto;
+            }
+            
+            .navbar a {
+                font-size: 0.75rem;
+                margin-right: 0 !important;
+            }
+            
+            .container {
+                margin: 70px auto 15px;
+                padding: 10px;
+            }
+            
+            .glass {
+                padding: 15px;
+                border-radius: 10px;
+            }
+            
+            .hero-title {
+                font-size: 1.3rem;
+                margin-bottom: 8px;
+            }
+            
+            .chip {
+                padding: 4px 8px;
+                font-size: 0.8rem;
+                margin-right: 4px;
+            }
+            
+            p {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .feature {
+                padding: 8px;
+                border-radius: 8px;
+            }
+            
+            .feature i {
+                font-size: 0.95rem;
+                min-width: 20px;
+            }
+            
+            .feature p {
+                font-size: 0.8rem;
+                margin: 0;
+            }
+            
+            section {
+                margin-top: 12px !important;
+            }
+            
+            h3 {
+                font-size: 1rem;
+                margin-bottom: 6px;
+            }
+            
+            h4 {
+                font-size: 0.95rem;
+                margin: 0 !important;
+            }
+            
+            div[style*="display:flex"][style*="gap:18px"] {
+                gap: 12px !important;
+                flex-direction: column !important;
+            }
+            
+            .portrait {
+                width: 100px !important;
+                height: 100px !important;
+            }
+            
+            ul.values {
+                margin-left: 12px;
+                padding-left: 8px;
+                font-size: 0.9rem;
+            }
+            
+            ul.values li {
+                margin-bottom: 6px;
+            }
+            
+            div[style*="expanded"] {
+                padding: 12px !important;
+                border-radius: 8px;
+                margin-bottom: 10px !important;
+            }
+            
+            div[style*="expanded"] > div:first-child {
+                font-size: 0.9rem !important;
+                gap: 8px !important;
+            }
+            
+            footer {
+                margin-top: 30px;
+                padding: 20px 15px;
+            }
+            
+            footer div {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="sidebar-toggle" id="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <nav class="navbar">
+        <div style="display:flex;align-items:center;gap:12px">
+            <img id="siteLogo" src="lg2.png" alt="ModHive logo" style="width:8cm;height:1cm;object-fit:contain;display:block">
+        </div>
+        <div>
+            <a href="ModHive.html" style="margin-right:16px;color:#a0a0a0">Home</a>
+            <a href="services.html" style="margin-right:16px;color:#a0a0a0">Services</a>
+            <a href="contact.html" style="margin-right:16px;color:#a0a0a0">Contact</a>
+            <a href="auth.html" style="color:#a0a0a0">Login</a>
+        </div>
+    </nav>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar">
+        <div class="glass-effect">
+            <nav class="sidebar-nav">
+                <a href="ModHive.html" onclick="setActive(this)"><i class="fas fa-home"></i> Home</a>
+                <a href="ModHive.html#mods" onclick="setActive(this)"><i class="fas fa-box-open"></i> Mod Library</a>
+                <a href="ModHive.html#updates" onclick="setActive(this)"><i class="fas fa-newspaper"></i> Updates</a>
+                <a href="ModHive.html#testimonials" onclick="setActive(this)"><i class="fas fa-comments"></i> Testimonials</a>
+                <a href="ModHive.html#tutorials" onclick="setActive(this)"><i class="fas fa-graduation-cap"></i> Tutorials</a>
+                <a href="ModHive.html#faq" onclick="setActive(this)"><i class="fas fa-question-circle"></i> FAQ</a>
+                <a href="about.html" class="active" onclick="setActive(this)"><i class="fas fa-info-circle"></i> About</a>
+                <a href="contact.html" onclick="setActive(this)"><i class="fas fa-envelope"></i> Contact</a>
+                <a href="ModHive.html#newsletter" onclick="setActive(this)"><i class="fas fa-bell"></i> Newsletter</a>
+                <a href="dashboard.html" onclick="setActive(this)"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Breadcrumb Navigation -->
+    <div style="max-width:1100px;margin:80px auto 20px;padding:0 20px">
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 20px;background:rgba(18,18,18,0.5);border-radius:8px;font-size:0.9rem;border:1px solid rgba(255,255,255,0.06)">
+            <a href="ModHive.html" style="color:#667eea;text-decoration:none"><i class="fas fa-home"></i> Home</a>
+            <span style="color:#a0a0a0">›</span>
+            <span style="color:#e8e8e8">About</span>
+        </div>
+    </div>
+
+    <main class="container">
+        <div class="glass">
+            <h2 class="hero-title">About ModHive</h2>
+            <p class="fade-in fade-delay-1" style="line-height:1.7;color:var(--muted);max-width:900px">ModHive is a hub for gamers and modders — a place to discover, share and improve game experiences across PC, mobile and emulators. Founded by <strong>MarTech</strong>, ModHive focuses on technology, creative modding and exploring the game world with a community-first approach.</p>
+
+            <section class="fade-in fade-delay-2" style="margin-top:18px">
+                <h3 style="margin-bottom:8px">Our Mission <span class="chip">Accessible Mods</span></h3>
+                <p style="color:var(--muted);max-width:900px">Make high-quality mods and practical game knowledge accessible to every player and creator, while keeping security, compatibility and performance at the center of everything we publish.</p>
+            </section>
+
+            <section class="fade-in fade-delay-3" style="margin-top:18px">
+                <h3 style="margin-bottom:8px">The Story</h3>
+                <p style="color:var(--muted);max-width:900px">What started as a small project to collect useful tweaks and guides grew into a full platform where creators can submit mods, players can find trusted content, and teams can collaborate on larger mod packs. We grew by listening to our community and shipping practical tools.</p>
+            </section>
+
+            <section class="fade-in fade-delay-1" style="margin-top:18px">
+                <h3 style="margin-bottom:8px">Meet the Founder</h3>
+                <div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap">
+                    <div style="flex:0 0 140px">
+                        <img src="lg.png" alt="Martins - CEO" class="portrait">
+                    </div>
+                    <div style="flex:1;min-width:220px">
+                        <h4 style="margin:0">Martins — CEO</h4>
+                        <p style="margin-top:8px;color:var(--muted);max-width:700px">Martins is the CEO and heart of ModHive. A lifelong technophile, he fell in love with the technology and gaming worlds early on and has built a varied skillset across development, community building and mod creation. He leads ModHive with a focus on quality, curiosity and helping creators thrive.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="fade-in fade-delay-2" style="margin-top:18px">
+                <h3 style="margin-bottom:8px">More From ModHive</h3>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-users"></i><p><strong>Community Events</strong><br>Regular mod jams, giveaways and livestream Q&amp;As.</p></div>
+                    <div class="feature"><i class="fas fa-video"></i><p><strong>Tutorials & Videos</strong><br>Concise how-tos and deep-dive series for creators and players.</p></div>
+                    <div class="feature"><i class="fas fa-toolbox"></i><p><strong>Creator Tools</strong><br>Utilities and templates to speed up mod development and packaging.</p></div>
+                    <div class="feature"><i class="fas fa-handshake"></i><p><strong>Partnerships</strong><br>Collaborations with creators, small studios and community leaders.</p></div>
+                </div>
+            </section>
+
+            <section class="fade-in fade-delay-3" style="margin-top:18px">
+                <h3 style="margin-bottom:8px">Values</h3>
+                <ul class="values">
+                    <li>Community first — creators and players are our priority.</li>
+                    <li>Quality & security — every mod is reviewed before publication.</li>
+                    <li>Open exploration — we celebrate experimentation across platforms.</li>
+                    <li>Transparency — changelogs, testing notes and clear install steps.</li>
+                    <li>Learning — workshops and resources to level up creators.</li>
+                </ul>
+            </section>
+
+            <section class="fade-in fade-delay-1" style="margin-top:18px">
+                <h3 style="margin-bottom:8px">FAQ About ModHive</h3>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:15px;margin-top:15px">
+                    <div style="background:rgba(102,126,234,0.06);padding:15px;border-radius:8px;border-left:3px solid var(--accent);cursor:pointer" onclick="this.classList.toggle('expanded')">
+                        <div style="display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--accent)">
+                            <span>When was ModHive founded?</span>
+                            <i class="fas fa-chevron-down" style="font-size:0.8rem"></i>
+                        </div>
+                        <p style="margin:8px 0 0;color:var(--muted);display:none" class="faq-answer">ModHive was founded in 2024 by MarTech with a mission to make premium game mods accessible to all gamers. The platform grew rapidly through community feedback and creator support.</p>
+                    </div>
+
+                    <div style="background:rgba(102,126,234,0.06);padding:15px;border-radius:8px;border-left:3px solid var(--accent);cursor:pointer" onclick="this.classList.toggle('expanded')">
+                        <div style="display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--accent)">
+                            <span>How many creators are on ModHive?</span>
+                            <i class="fas fa-chevron-down" style="font-size:0.8rem"></i>
+                        </div>
+                        <p style="margin:8px 0 0;color:var(--muted);display:none" class="faq-answer">We have thousands of verified creators contributing custom mods, walkthroughs and gaming guides. Our quality assurance team reviews every submission.</p>
+                    </div>
+
+                    <div style="background:rgba(102,126,234,0.06);padding:15px;border-radius:8px;border-left:3px solid var(--accent);cursor:pointer" onclick="this.classList.toggle('expanded')">
+                        <div style="display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--accent)">
+                            <span>Is ModHive open source?</span>
+                            <i class="fas fa-chevron-down" style="font-size:0.8rem"></i>
+                        </div>
+                        <p style="margin:8px 0 0;color:var(--muted);display:none" class="faq-answer">While ModHive maintains proprietary security standards, we're committed to transparency. Creator tools and templates are available for the community.</p>
+                    </div>
+
+                    <div style="background:rgba(102,126,234,0.06);padding:15px;border-radius:8px;border-left:3px solid var(--accent);cursor:pointer" onclick="this.classList.toggle('expanded')">
+                        <div style="display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--accent)">
+                            <span>How do I contact ModHive?</span>
+                            <i class="fas fa-chevron-down" style="font-size:0.8rem"></i>
+                        </div>
+                        <p style="margin:8px 0 0;color:var(--muted);display:none" class="faq-answer">Reach us via email at ibrahimmartinex@gmail.com, WhatsApp, Telegram, or use the contact form at contact.html. We respond within 2 hours.</p>
+                    </div>
+
+                    <div style="background:rgba(102,126,234,0.06);padding:15px;border-radius:8px;border-left:3px solid var(--accent);cursor:pointer" onclick="this.classList.toggle('expanded')">
+                        <div style="display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--accent)">
+                            <span>What is Martbot?</span>
+                            <i class="fas fa-chevron-down" style="font-size:0.8rem"></i>
+                        </div>
+                        <p style="margin:8px 0 0;color:var(--muted);display:none" class="faq-answer">Martbot is our AI-powered mod search assistant available on Telegram and WhatsApp. Simply message your game or mod preferences for instant personalized recommendations.</p>
+                    </div>
+
+                    <div style="background:rgba(102,126,234,0.06);padding:15px;border-radius:8px;border-left:3px solid var(--accent);cursor:pointer" onclick="this.classList.toggle('expanded')">
+                        <div style="display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--accent)">
+                            <span>What platforms does ModHive support?</span>
+                            <i class="fas fa-chevron-down" style="font-size:0.8rem"></i>
+                        </div>
+                        <p style="margin:8px 0 0;color:var(--muted);display:none" class="faq-answer">We support PC (Windows, Mac, Linux), Android, iOS, and emulators including PPSSPP, Dolphin, Citra and more. Each platform has optimized mod collections.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div style="max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
+            <div>
+                <strong>ModHive</strong>
+                <p style="margin:6px 0;color:#9aa">Professional platform for premium gaming modifications.</p>
+            </div>
+            <div>
+                <a href="https://www.facebook.com/martechmods1">Facebook</a> ·
+                <a href="t.me/martechmods">Telegram</a> ·
+                <a href="https://chat.whatsapp.com/DsvyRgBCUgBLQrx6vNauQe?mode=ac_t">WhatsApp</a> ·
+                <a href="https://www.youtube.com/@martechmods">YouTube</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function(){
+            const logo = document.getElementById('siteLogo');
+            if (!logo) return;
+            function setLogo(e){
+                const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+                logo.src = prefersLight ? 'lg.png' : 'lg2.png';
+            }
+            setLogo();
+            if (window.matchMedia) {
+                try { window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', setLogo); } catch(e){ /* Safari fallback */ window.matchMedia('(prefers-color-scheme: light)').addListener(setLogo); }
+            }
+        })();
+    </script>
+
+    <script>
+        // Sidebar functionality
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
+
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+                sidebarToggle.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                    sidebar.classList.remove('active');
+                    sidebarToggle.classList.remove('active');
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    sidebar.classList.remove('active');
+                    sidebarToggle.classList.remove('active');
+                }
+            });
+        }
+
+        function setActive(element) {
+            document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+            element.classList.add('active');
+            sidebar.classList.remove('active');
+            sidebarToggle.classList.remove('active');
+        }
+    </script>
+</body>
+</html>

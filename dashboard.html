@@ -10,6 +10,7 @@
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="main2.css">
+  <script defer src="site-shell.js"></script>
 
   <style>
   /* ------- Theme + utility ------- */
@@ -106,6 +107,24 @@
   /* small helpers */
   .muted-xs{font-size:.82rem; color:var(--mh-muted);}
   .hidden-el{display:none !important;}
+  </style>
+  <style>
+  /* Bridge modern theme variables into dashboard legacy CSS */
+  :root{
+    --mh-primary: var(--accent);
+    --mh-primary-2: var(--accent-2);
+    --mh-accent: var(--accent-2);
+    --mh-dark: var(--bg);
+    --mh-panel: rgba(255,255,255,0.03);
+    --mh-panel-2: rgba(255,255,255,0.02);
+    --mh-text: var(--text);
+    --mh-muted: var(--muted);
+  }
+  body{ background:var(--bg); color:var(--text); transition:background .28s, color .28s }
+  header.appbar{ background: linear-gradient(90deg, rgba(0,0,0,0.35), transparent); }
+  .logo{ background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+  .post-card, .profile-card, .widget{ background: var(--glass); box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.03); }
+  .chat-msg.me{ background: linear-gradient(90deg,var(--accent),var(--accent-2)); color: #001219 }
   </style>
 </head>
 

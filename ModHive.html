@@ -4,18 +4,18 @@
     <meta name="google-site-verification" content="c3lAawSJwbEEgt674R__IYb93wgaY2_2i1jwrpnRz4I" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <meta name="description" content="ModHive - Professional gaming mods platform for PC, Android, and emulator modifications.">
-    <meta name="keywords" content="game mods, PC mods, Android mods, emulator mods, GTA mods, PPSSPP mods">
+    <meta name="description" content="ModHive - Download premium game mods for PC, Android, and emulators. Professional mod library with walkthroughs, installation guides, and 24/7 support.">
+    <meta name="keywords" content="game mods, PC mods, Android mods, emulator mods, GTA mods, PPSSPP mods, mod downloads, mod installation, game walkthroughs, gaming guides, mod creator, modding platform, custom mods, mod testing, modhive, MartBot, MartechBot, modmenuBot, martech, Martech web, mod reviews, Martbot, mod search engine, gaming bot, mod finder, mod recommendations, best game mods 2025">
     <meta name="author" content="ModHive Team">
     <meta name="robots" content="index, follow">
-    <meta property="og:title" content="ModHive - Professional Gaming Mods Platform">
-    <meta property="og:description" content="Download premium gaming modifications for all platforms. Join our professional gaming community!">
+    <meta property="og:title" content="ModHive - Premium Game Mods for PC, Android & Emulators">
+    <meta property="og:description" content="Download curated game mods, walkthroughs, and gaming guides. Professional mod library with installation support across PC, Android, iOS, and emulators.">
     <meta property="og:image" content="lg.png">
     <meta property="og:url" content="https://modhive.com">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/png" href="lg.png">
     <link rel="apple-touch-icon" href="lg.png">
-    <title>ModHive - Professional Gaming Mods Platform</title>
+    <title>ModHive - Download Premium Game Mods for PC, Android & Emulators</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* ===== ROOT VARIABLES & RESET ===== */
@@ -171,22 +171,21 @@
         /* ===== NAVBAR ===== */
         .navbar {
             display: flex;
-            border-radius: var(--border-radius);
-            top: 2%;
-            left: 50%;
-            transform: translateX(-50%);
+            border-radius: 0;
+            top: 0;
+            left: 0;
+            right: 0;
             z-index: 1000;
             position: fixed;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 30px;
+            padding: 18px 40px;
             transition: all var(--transition-speed);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: var(--max-width);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            width: 100%;
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
-            border: 1px solid var(--dark-border);
+            border-bottom: 1px solid var(--dark-border);
         }
 
         body.light-theme .navbar {
@@ -287,17 +286,18 @@
         /* ===== SIDEBAR ===== */
         #sidebar {
             position: fixed;
-            left: -300px;
+            left: -250px;
             top: 0;
             height: 100vh;
             width: 250px;
             padding: 100px 20px 30px;
             transition: transform 0.4s ease;
             z-index: 999;
+            overflow-y: auto;
         }
 
         #sidebar.active {
-            transform: translateX(300px);
+            transform: translateX(250px);
         }
 
         #sidebar .glass-effect {
@@ -365,7 +365,7 @@
             border-radius: 50%;
             font-size: 1.2rem;
             cursor: pointer;
-            z-index: 1000;
+            z-index: 1001;
             transition: all var(--transition-speed);
             display: flex;
             align-items: center;
@@ -404,9 +404,9 @@
 
         /* ===== HERO SECTION ===== */
         .hero-section {
-            padding: 100px 40px;
-            border-radius: var(--border-radius);
-            margin: 30px auto 50px;
+            padding: 120px 40px 60px;
+            border-radius: 0;
+            margin: 0 auto 40px;
             position: relative;
             overflow: hidden;
             text-align: center;
@@ -414,7 +414,7 @@
         }
 
         .hero-section .glass-effect {
-            padding: 60px 40px;
+            padding: 40px 30px;
             position: relative;
             overflow: hidden;
         }
@@ -563,14 +563,20 @@
 
         /* ===== MOD CARDS ===== */
         section {
-            padding: 80px 5%;
-            max-width: var(--max-width);
+            padding: 60px 5%;
+            max-width: 100%;
             margin: 0 auto;
+        }
+
+        section > * {
+            max-width: var(--max-width);
+            margin-left: auto;
+            margin-right: auto;
         }
 
         section h2 {
             font-size: 2.5rem;
-            margin-bottom: 40px;
+            margin-bottom: 35px;
             text-align: center;
             position: relative;
         }
@@ -593,7 +599,6 @@
 
         .mod-carousel {
             position: relative;
-            max-width: var(--max-width);
             margin: 0 auto;
             padding: 20px 0;
         }
@@ -749,8 +754,7 @@
         .updates-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: var(--max-width);
+            gap: 25px;
             margin: 0 auto;
         }
 
@@ -817,8 +821,7 @@
         .testimonials-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            max-width: var(--max-width);
+            gap: 25px;
             margin: 0 auto;
         }
 
@@ -875,7 +878,6 @@
         /* ===== TUTORIALS ===== */
         .tutorial-list {
             list-style: none;
-            max-width: var(--max-width);
             margin: 0 auto;
         }
 
@@ -1424,10 +1426,6 @@
 
         /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 1200px) {
-            .navbar {
-                width: 95%;
-            }
-            
             .hero-title {
                 font-size: 2.8rem;
             }
@@ -1453,19 +1451,19 @@
 
         @media (max-width: 768px) {
             .navbar {
-                flex-wrap: wrap;
-                padding: 12px 20px;
+                flex-direction: column;
+                padding: 15px 20px;
+                gap: 12px;
             }
             
             .navbar h1 {
-                font-size: 1.5rem;
-                margin-right: 20px;
+                font-size: 1.4rem;
+                margin-right: 12px;
             }
             
             .search-container {
-                order: 3;
                 width: 100%;
-                margin: 15px 0 0 0;
+                margin: 0;
             }
             
             .hero-title {
@@ -1518,40 +1516,540 @@
 
         @media (max-width: 576px) {
             section {
-                padding: 60px 20px;
+                padding: 50px 20px;
             }
             
             .hero-section {
-                padding: 80px 20px;
+                padding: 100px 20px 40px;
+                margin: 0 auto 30px;
             }
             
             .hero-section .glass-effect {
-                padding: 40px 20px;
+                padding: 25px 15px;
             }
             
             .hero-title {
+                font-size: 1.6rem;
+                margin-bottom: 15px;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.95rem;
+                margin-bottom: 20px;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .stat {
+                min-width: 100%;
+                padding: 15px;
+            }
+            
+            .stat h3 {
                 font-size: 1.8rem;
             }
             
+            .cta-buttons {
+                flex-direction: column;
+                width: 100%;
+                gap: 12px;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                min-height: 48px;
+                padding: 14px 20px;
+            }
+            
             section h2 {
-                font-size: 2rem;
+                font-size: 1.6rem;
+                margin-bottom: 25px;
+            }
+            
+            .mod-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .mod-card .glass-effect {
+                padding: 20px;
+            }
+            
+            .mod-icon {
+                font-size: 2.5rem;
+                width: 60px;
+                height: 60px;
+            }
+            
+            .mod-card h3 {
+                font-size: 1.2rem;
+            }
+            
+            .mod-card p {
+                font-size: 0.9rem;
+            }
+            
+            .action-btn {
+                min-height: 44px;
+                padding: 12px 16px;
+                font-size: 0.85rem;
+            }
+            
+            .updates-grid,
+            .testimonials-container,
+            .faq-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .testimonial-card .glass-effect,
+            .update-card .glass-effect {
+                padding: 20px;
+            }
+            
+            .faq-item .glass-effect {
+                padding: 15px;
+            }
+            
+            .faq-question {
+                font-size: 0.95rem;
+            }
+            
+            .contact-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .contact-form .glass-effect {
+                padding: 20px;
+            }
+            
+            .form-group input,
+            .form-group textarea {
+                padding: 12px;
+                min-height: 44px;
+                font-size: 16px;
+            }
+            
+            .form-group textarea {
+                min-height: 120px;
+            }
+            
+            .submit-btn {
+                min-height: 48px;
+                padding: 14px;
+                font-size: 1rem;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .newsletter-input,
+            .newsletter-btn {
+                padding: 12px 16px;
+                min-height: 44px;
+                font-size: 16px;
             }
             
             .newsletter-content h2 {
-                font-size: 2rem;
+                font-size: 1.6rem;
+                margin-bottom: 15px;
             }
             
-            .settings-panel {
-                width: 90vw;
-                right: 5vw;
+            .tutorial-list li {
+                padding: 16px;
+                margin-bottom: 12px;
+            }
+            
+            .breadcrumb-nav {
+                margin: 60px 10px 15px;
+                padding: 10px 12px;
+                font-size: 0.8rem;
+                gap: 4px;
+            }
+            
+            .breadcrumb-nav a,
+            .breadcrumb-nav span {
+                margin: 0 2px;
+            }
+            
+            .breadcrumb-nav i {
+                font-size: 0.75rem;
+            }
+            
+            .navbar {
+                padding: 12px 15px;
+                flex-wrap: wrap;
+            }
+            
+            .navbar h1 {
+                font-size: 1.2rem;
+                margin-right: 10px;
+            }
+            
+            .search-container {
+                order: 3;
+                width: 100%;
+                margin: 12px 0 0 0;
+                max-width: 100%;
+            }
+            
+            .search-input {
+                font-size: 16px;
+                padding: 12px;
+                min-height: 44px;
+            }
+            
+            .search-btn {
+                font-size: 16px;
+                padding: 12px 16px;
+                min-height: 44px;
+            }
+            
+            #main-content {
+                padding: 20px;
+            }
+            
+            #sidebar {
+                width: 200px;
+                left: -200px;
+            }
+            
+            #sidebar.active {
+                transform: translateX(200px);
+            }
+            
+            .sidebar-toggle {
+                width: 48px;
+                height: 48px;
+                font-size: 1.1rem;
+                left: 15px;
+                top: 18px;
             }
             
             #back-to-top {
-                bottom: 20px;
-                right: 20px;
-                width: 45px;
-                height: 45px;
+                bottom: 25px;
+                right: 15px;
+                width: 48px;
+                height: 48px;
+                min-height: 48px;
             }
+            
+            .settings-panel {
+                width: 85vw;
+                right: 7.5vw;
+                bottom: 130px;
+            }
+            
+            .settings-toggle {
+                width: 48px;
+                height: 48px;
+                min-height: 48px;
+            }
+            
+            .hero-logo {
+                max-width: 180px;
+                margin-top: 20px;
+            }
+            
+            .feature-card .glass-effect {
+                padding: 20px;
+                min-height: 200px;
+            }
+            
+            .feature-icon {
+                font-size: 2rem;
+            }
+            
+            .feature-card h3 {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* ===== BREADCRUMB NAVIGATION ===== */
+        .breadcrumb-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            margin: 70px 2% 20px;
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--dark-border);
+            max-width: var(--max-width);
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        body.light-theme .breadcrumb-nav {
+            background: var(--light-glass-bg);
+            border: 1px solid var(--light-border);
+        }
+
+        .breadcrumb-nav a {
+            color: #667eea;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .breadcrumb-nav a:hover {
+            color: #5a67d8;
+            text-decoration: underline;
+        }
+
+        .breadcrumb-nav span {
+            color: #a0a0a0;
+            margin: 0 4px;
+        }
+
+        body.light-theme .breadcrumb-nav span {
+            color: #6c757d;
+        }
+
+        .breadcrumb-nav .active {
+            color: var(--dark-text);
+            cursor: default;
+        }
+
+        body.light-theme .breadcrumb-nav .active {
+            color: var(--light-text);
+        }
+
+        /* ===== FAQ SECTION ===== */
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            transition: all var(--transition-speed);
+        }
+
+        .faq-item .glass-effect {
+            padding: 25px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        .faq-item:hover .glass-effect {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark-text);
+        }
+
+        body.light-theme .faq-question {
+            color: var(--light-text);
+        }
+
+        .faq-icon {
+            font-size: 1.3rem;
+            color: #667eea;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, margin-top 0.3s ease;
+            color: #a0a0a0;
+            line-height: 1.6;
+        }
+
+        body.light-theme .faq-answer {
+            color: #6c757d;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            margin-top: 15px;
+        }
+
+        /* ===== ENHANCED ANIMATIONS ===== */
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .btn-primary.loading,
+        .btn-secondary.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-primary.loading::after,
+        .btn-secondary.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            z-index: 1000;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Sticky navbar enhancement */
+        .navbar.sticky {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Feature highlight cards */
+        .feature-card {
+            transition: all var(--transition-speed);
+            border-radius: var(--border-radius);
+        }
+
+        .feature-card .glass-effect {
+            padding: 30px;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all var(--transition-speed);
+        }
+
+        .feature-card:hover .glass-effect {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            color: var(--dark-text);
+        }
+
+        body.light-theme .feature-card h3 {
+            color: var(--light-text);
+        }
+
+        .feature-card p {
+            color: #a0a0a0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        body.light-theme .feature-card p {
+            color: #6c757d;
+        }
+
+        /* Scroll reveal effect */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .scroll-reveal.reveal {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* ===== PRINT STYLES ===== */
@@ -1603,32 +2101,51 @@
 
     <!-- Top Navigation Bar -->
     <nav class="navbar">
-        <h1>ModHive</h1>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search mods..." class="search-input">
-            <button onclick="searchMods()" class="search-btn"><i class="fas fa-search"></i></button>
+        <div style="display:flex;align-items:center;gap:18px">
+            <img id="siteLogo" src="lg2.png" alt="ModHive logo" style="width:8cm;height:1cm;object-fit:contain;display:block">
+            <div style="display:flex;gap:14px;align-items:center">
+                <a href="ModHive.html" style="color:inherit;text-decoration:none;font-weight:600">Home</a>
+                <a href="about.html" style="color:inherit;text-decoration:none">About</a>
+                <a href="services.html" style="color:inherit;text-decoration:none">Services</a>
+                <a href="contact.html" style="color:inherit;text-decoration:none">Contact</a>
+            </div>
         </div>
-        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
-            <i class="fas fa-moon"></i>
-        </button>
+        <div style="display:flex;align-items:center;gap:12px">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search mods..." class="search-input">
+                <button onclick="searchMods()" class="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <a href="auth.html" class="btn-secondary" style="padding:8px 12px;border-radius:12px;text-decoration:none;color:inherit;border:1px solid rgba(255,255,255,0.08)">Login</a>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
     </nav>
 
     <!-- Sidebar Navigation -->
     <aside id="sidebar">
         <div class="glass-effect">
             <nav class="sidebar-nav">
-                <a href="#home" class="active" onclick="setActive(this)"><i class="fas fa-home"></i> Home</a>
-                <a href="#mods" onclick="setActive(this)"><i class="fas fa-box-open"></i> Mod Library</a>
-                <a href="#updates" onclick="setActive(this)"><i class="fas fa-newspaper"></i> Updates</a>
-                <a href="#testimonials" onclick="setActive(this)"><i class="fas fa-comments"></i> Testimonials</a>
-                <a href="#tutorials" onclick="setActive(this)"><i class="fas fa-graduation-cap"></i> Tutorials</a>
-                <a href="#about" onclick="setActive(this)"><i class="fas fa-info-circle"></i> About</a>
-                <a href="#contact" onclick="setActive(this)"><i class="fas fa-envelope"></i> Contact</a>
-                <a href="#newsletter" onclick="setActive(this)"><i class="fas fa-bell"></i> Newsletter</a>
+                <a href="ModHive.html" class="active" onclick="setActive(this)"><i class="fas fa-home"></i> Home</a>
+                <a href="ModHive.html#mods" onclick="setActive(this)"><i class="fas fa-box-open"></i> Mod Library</a>
+                <a href="ModHive.html#updates" onclick="setActive(this)"><i class="fas fa-newspaper"></i> Updates</a>
+                <a href="ModHive.html#testimonials" onclick="setActive(this)"><i class="fas fa-comments"></i> Testimonials</a>
+                <a href="ModHive.html#tutorials" onclick="setActive(this)"><i class="fas fa-graduation-cap"></i> Tutorials</a>
+                <a href="ModHive.html#faq" onclick="setActive(this)"><i class="fas fa-question-circle"></i> FAQ</a>
+                <a href="about.html" onclick="setActive(this)"><i class="fas fa-info-circle"></i> About</a>
+                <a href="contact.html" onclick="setActive(this)"><i class="fas fa-envelope"></i> Contact</a>
+                <a href="ModHive.html#newsletter" onclick="setActive(this)"><i class="fas fa-bell"></i> Newsletter</a>
                 <a href="dashboard.html" onclick="setActive(this)"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
             </nav>
         </div>
     </aside>
+
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb-nav">
+        <a href="ModHive.html"><i class="fas fa-home"></i> Home</a>
+        <span>›</span>
+        <span class="active">Mod Library</span>
+    </nav>
 
     <!-- Main Content -->
     <main id="main-content">
@@ -1878,6 +2395,84 @@
             </ul>
         </section>
 
+        <!-- FAQ Section -->
+        <section id="faq" class="fade-in">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="glass-effect">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>How do I install mods on my device?</span>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Installation varies by platform. For Android, enable unknown sources and use a file manager. For PC, follow mod-specific instructions. For emulators like PPSSPP, place mod files in the appropriate folder. Each mod includes detailed installation guides.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="glass-effect">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Are all mods safe and tested?</span>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes! All mods on ModHive are scanned for malware, tested for stability, and verified by our professional team. We maintain the highest security standards to protect our community. Every mod includes safety badges and testing details.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="glass-effect">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Can I create and sell my own mods?</span>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Absolutely! ModHive supports creators. You can upload your mods, set pricing, and earn revenue directly. We handle payments securely and provide analytics to track your mod performance and sales.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="glass-effect">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>What platforms do you support?</span>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            We support PC (Windows, Mac, Linux), Android, iOS, and popular emulators like PPSSPP, Dolphin, Citra, and more. Our mod database covers all major gaming platforms with platform-specific optimizations.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="glass-effect">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Is customer support really 24/7?</span>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Yes! Our global support team is available 24/7 via email, WhatsApp, Telegram, and our help center. Average response time is under 2 hours. We also have a thriving community forum for peer support.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="glass-effect">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>How do I use Martbot for mod search?</span>
+                            <i class="fas fa-chevron-down faq-icon"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Martbot is our intelligent mod finder bot available on Telegram and WhatsApp. Simply message it with your game name or mod preferences, and it instantly searches and recommends mods. It learns from your preferences for personalized recommendations.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- About Section -->
         <section id="about" class="fade-in">
             <h2>About ModHive</h2>
@@ -2042,6 +2637,29 @@
     <div class="particle-layer" id="particleLayer"></div>
 
     <script>
+        // Error handling for unhandled promise rejections
+        window.addEventListener('unhandledrejection', event => {
+            console.warn('Unhandled promise rejection:', event.reason);
+        });
+
+        // Performance monitoring
+        if (window.PerformanceObserver) {
+            const observer = new PerformanceObserver((list) => {
+                for (const entry of list.getEntries()) {
+                    if (entry.duration > 3000) {
+                        console.warn('Long task detected:', entry.duration);
+                    }
+                }
+            });
+            try {
+                observer.observe({entryTypes: ['longtask']});
+            } catch (e) {
+                // Long task API not supported
+            }
+        }
+    </script>
+
+    <script>
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize loading screen
@@ -2098,10 +2716,12 @@
                 document.body.classList.remove('dark-theme');
                 document.body.classList.add('light-theme');
                 themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                updateLogo();
             } else {
                 document.body.classList.remove('light-theme');
                 document.body.classList.add('dark-theme');
                 localStorage.setItem('modhive-theme', 'dark');
+                updateLogo();
             }
         }
 
@@ -2119,6 +2739,17 @@
                 body.classList.add('light-theme');
                 themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
                 localStorage.setItem('modhive-theme', 'light');
+            }
+            updateLogo();
+        }
+
+        function updateLogo(){
+            const logo = document.getElementById('siteLogo');
+            if(!logo) return;
+            if(document.body.classList.contains('light-theme')){
+                logo.src = 'lg.png';
+            } else {
+                logo.src = 'lg2.png';
             }
         }
 
@@ -2534,6 +3165,134 @@
 
         // Initialize responsive carousel
         window.dispatchEvent(new Event('resize'));
+
+        // ===== FAQ FUNCTIONALITY =====
+        function toggleFAQ(element) {
+            const faqItem = element.closest('.faq-item');
+            const wasActive = faqItem.classList.contains('active');
+            
+            // Close all other FAQs
+            document.querySelectorAll('.faq-item').forEach(item => {
+                if (item !== faqItem) {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Toggle current FAQ
+            if (!wasActive) {
+                faqItem.classList.add('active');
+            } else {
+                faqItem.classList.remove('active');
+            }
+        }
+
+        // ===== SCROLL REVEAL ANIMATIONS =====
+        function revealOnScroll() {
+            const revealElements = document.querySelectorAll('.scroll-reveal');
+            revealElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                if (elementTop < windowHeight - 100) {
+                    element.classList.add('reveal');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); // Initial check
+
+        // ===== STICKY NAVBAR ON SCROLL =====
+        let lastScrollTop = 0;
+        const navbar = document.querySelector('.navbar');
+        
+        window.addEventListener('scroll', function() {
+            let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (currentScroll > 100) {
+                navbar.classList.add('sticky');
+            } else {
+                navbar.classList.remove('sticky');
+            }
+            lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+        });
+
+        // ===== BUTTON LOADING STATE =====
+        window.addButtonLoading = function(button) {
+            button.classList.add('loading');
+            button.disabled = true;
+            setTimeout(() => {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }, 2000);
+        }
+
+        // Add click handlers to all primary buttons for demo
+        document.querySelectorAll('.btn-primary, .action-btn').forEach(button => {
+            const originalClick = button.onclick;
+            button.addEventListener('click', function(e) {
+                if (this.textContent.includes('Download') || this.textContent.includes('Submit')) {
+                    addButtonLoading(this);
+                }
+            });
+        });
+
+        // ===== BREADCRUMB UPDATES =====
+        window.updateBreadcrumb = function(pageName, path) {
+            const breadcrumb = document.querySelector('.breadcrumb-nav');
+            if (breadcrumb) {
+                breadcrumb.innerHTML = `
+                    <a href="ModHive.html"><i class="fas fa-home"></i> Home</a>
+                    <span>›</span>
+                    <span class="active">${pageName}</span>
+                `;
+            }
+        }
+
+        // ===== SEARCH ENHANCEMENT =====
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.toLowerCase();
+            
+            if (query.length < 2) return;
+            
+            searchTimeout = setTimeout(() => {
+                const results = [];
+                const sections = ['mods', 'updates', 'tutorials'];
+                
+                sections.forEach(sectionId => {
+                    const section = document.getElementById(sectionId);
+                    if (section) {
+                        const text = section.innerText.toLowerCase();
+                        if (text.includes(query)) {
+                            results.push(sectionId);
+                        }
+                    }
+                });
+                
+                console.log('Search results found in sections:', results);
+            }, 300);
+        });
+
+        // ===== ENHANCED FORM VALIDATION =====
+        window.validateForm = function(formId) {
+            const form = document.getElementById(formId);
+            if (!form) return false;
+            
+            const inputs = form.querySelectorAll('input[required], textarea[required]');
+            let isValid = true;
+            
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    input.style.borderColor = '#ff6b6b';
+                    isValid = false;
+                } else {
+                    input.style.borderColor = 'var(--dark-border)';
+                }
+            });
+            
+            return isValid;
+        }
     </script>
 </body>
 </html>

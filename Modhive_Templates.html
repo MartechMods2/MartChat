@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ModHive - Professional Gaming Mods Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            /* Dark Theme - Professional Grey/Black with Glass Effects */
+            --dark-primary: #121212;
+            --dark-secondary: #1e1e1e;
+            --dark-accent: #2a2a2a;
+            --dark-text: #e8e8e8;
+            --dark-highlight: #3a3a3a;
+            --dark-border: rgba(255, 255, 255, 0.08);
+            --dark-gradient: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #121212 100%);
+            --glass-bg: rgba(18, 18, 18, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            
+            /* Light Theme - Professional Grey */
+            --light-primary: #f8f9fa;
+            --light-secondary: #e9ecef;
+            --light-accent: #dee2e6;
+            --light-text: #212529;
+            --light-highlight: #495057;
+            --light-border: rgba(0, 0, 0, 0.08);
+            --light-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+            --light-glass-bg: rgba(255, 255, 255, 0.7);
+            --light-glass-border: rgba(0, 0, 0, 0.1);
+            
+            --transition-speed: 0.4s;
+            --border-radius: 12px;
+        }
+
+        body {
+            background: var(--dark-gradient);
+            color: var(--dark-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all var(--transition-speed);
+        }
+
+        body.light-theme {
+            background: var(--light-gradient);
+            color: var(--light-text);
+        }
+
+        /* Glass Effect Base */
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--dark-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-theme .glass-effect {
+            background: var(--light-glass-bg);
+            border: 1px solid var(--light-glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-gradient);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s, visibility 0.8s;
+        }
+
+        #loading-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-container {
+            text-align: center;
+        }
+
+        .loading-logo {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #e8e8e8, #a0a0a0, #e8e8e8);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shimmer 3s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin: 30px auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loading-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #e8e8e8, #a0a0a0);
+            border-radius: 2px;
+            transition: width 0.5s;
+        }
+
+        .loading-text {
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-top: 15px;
+            color: #a0a0a0;
+            font-weight: 300;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Top Bar */
+        #top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        #top-bar .glass-effect {
+            width: 100%;
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e8e8e8;
+            font-size: 1.5rem;
+        }
+
+        body.light-theme .logo-icon {
+            background: linear-gradient(135deg, #e9ecef, #dee2e6);
+            color: #212529;
+        }
+
+        .logo-text {
+            background: linear-gradient(90deg, #e8e8e8, #a0a0a0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        body.light-theme .logo-text {
+            background: linear-gradient(90deg, #212529, #495057);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .top-nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        .top-nav a {
+            color: var(--dark-text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color var(--transition-speed);
+            font-size: 0.95rem;
+        }
+
+        body.light-theme .top-nav a {
+            color: var(--light-text);
+        }
+
+        .top-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #e8e8e8, #a0a0a0);
+            transition: width var(--transition-speed);
+        }
+
+        body.light-theme .top-nav a::after {
+            background: linear-gradient(90deg, #212529, #495057);
+        }
+
+        .top-nav a:hover {
+            color: #a0a0a0;
+        }
+
+        body.light-theme .top-nav a:hover {
+            color: #495057;
+        }
+
+        .top-nav a:hover::after {
+            width: 100%;
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--dark-border);
+            width: 50px;
+            height: 26px;
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+        }
+
+        body.light-theme .theme-toggle {
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--light-border);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .toggle-circle {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: #e8e8e8;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #121212;
+        }
+
+        body.light-theme .toggle-circle {
+            background: #212529;
+            color: #f8f9fa;
+            transform: translateX(24px);
+        }
+
+        /* Sidebar */
+        #sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 250px;
+            padding: 100px 20px 30px;
+            transform: translateX(-100%);
+            transition: transform 0.4s ease;
+            z-index: 99;
+        }
+
+        #sidebar.active {
+            transform: translateX(0);
+        }
+
+        #sidebar .glass-effect {
+            height: 100%;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-nav a {
+            color: var(--dark-text);
+            text-decoration: none;
+            padding: 14px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all var(--transition-speed);
+            font-weight: 500;
+        }
+
+        body.light-theme .sidebar-nav a {
+            color: var(--light-text);
+        }
+
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e8e8e8;
+            transform: translateX(5px);
+        }
+
+        body.light-theme .sidebar-nav a:hover, 
+        body.light-theme .sidebar-nav a.active {
+            background: rgba(0, 0, 0, 0.05);
+            color: #212529;
+        }
+
+        .sidebar-nav i {
+            width: 20px;
+            text-align: center;
+            color: #a0a0a0;
+        }
+
+        body.light-theme .sidebar-nav i {
+            color: #495057;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #e8e8e8;
+            border: 1px solid var(--dark-border);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 101;
+            transition: all var(--transition-speed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.light-theme .sidebar-toggle {
+            background: rgba(255, 255, 255, 0.7);
+            color: #212529;
+            border: 1px solid var(--light-border);
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        body.light-theme .sidebar-toggle:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Main Content */
+        #main-content {
+            padding: 30px 5%;
+            margin-left: 0;
+            transition: margin-left 0.4s;
+        }
+
+        #main-content.shifted {
+            margin-left: 250px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 80px 40px;
+            border-radius: var(--border-radius);
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .hero-section .glass-effect {
+            padding: 60px 40px;
+            border-radius: var(--border-radius);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+            position: relative;
+            background: linear-gradient(90deg, #e8e8e8, #a0a0a0, #e8e8e8);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shimmer 3s infinite linear;
+        }
+
+        body.light-theme .hero-title {
+            background: linear-gradient(90deg, #212529, #495057, #212529);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+            color: #a0a0a0;
+            font-weight: 300;
+        }
+
+        body.light-theme .hero-subtitle {
+            color: #6c757d;
+        }
+
+        /* Platform Sections */
+        .section-title {
+            font-size: 2.2rem;
+            margin: 40px 0 30px;
+            position: relative;
+            display: inline-block;
+            font-weight: 700;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #e8e8e8, #a0a0a0);
+            border-radius: 2px;
+        }
+
+        body.light-theme .section-title::after {
+            background: linear-gradient(90deg, #212529, #495057);
+        }
+
+        .platforms {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .platform-card {
+            padding: 30px;
+            border-radius: var(--border-radius);
+            transition: all var(--transition-speed);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .platform-card .glass-effect {
+            padding: 30px;
+            border-radius: var(--border-radius);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: all var(--transition-speed);
+        }
+
+        .platform-card:hover .glass-effect {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme .platform-card:hover .glass-effect {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .platform-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #e8e8e8;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        body.light-theme .platform-icon {
+            color: #212529;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .platform-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .mod-count {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e8e8e8;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+            border: 1px solid var(--dark-border);
+        }
+
+        body.light-theme .mod-count {
+            background: rgba(0, 0, 0, 0.05);
+            color: #212529;
+            border: 1px solid var(--light-border);
+        }
+
+        /* Featured Mods */
+        .mods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .mod-card {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: all var(--transition-speed);
+            height: 100%;
+        }
+
+        .mod-card .glass-effect {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: all var(--transition-speed);
+        }
+
+        .mod-card:hover .glass-effect {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme .mod-card:hover .glass-effect {
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .mod-image {
+            height: 180px;
+            background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: #e8e8e8;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.light-theme .mod-image {
+            background: linear-gradient(135deg, #e9ecef, #dee2e6);
+            color: #212529;
+        }
+
+        .mod-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.3));
+        }
+
+        body.light-theme .mod-image::after {
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
+        }
+
+        .mod-info {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mod-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .mod-info p {
+            color: #a0a0a0;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        body.light-theme .mod-info p {
+            color: #6c757d;
+        }
+
+        .mod-tags {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .mod-tag {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e8e8e8;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid var(--dark-border);
+        }
+
+        body.light-theme .mod-tag {
+            background: rgba(0, 0, 0, 0.05);
+            color: #212529;
+            border: 1px solid var(--light-border);
+        }
+
+        .download-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e8e8e8;
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all var(--transition-speed);
+            font-size: 0.95rem;
+        }
+
+        body.light-theme .download-btn {
+            background: rgba(0, 0, 0, 0.05);
+            color: #212529;
+            border: 1px solid var(--light-border);
+        }
+
+        .download-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        body.light-theme .download-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Animations for sections */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s, transform 0.6s;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 50px;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        body.light-theme footer {
+            border-top: 1px solid var(--light-border);
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #e8e8e8;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            transition: all var(--transition-speed);
+            border: 1px solid var(--dark-border);
+        }
+
+        body.light-theme .social-icons a {
+            background: rgba(0, 0, 0, 0.05);
+            color: #212529;
+            border: 1px solid var(--light-border);
+        }
+
+        .social-icons a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        body.light-theme .social-icons a:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            margin-top: 20px;
+        }
+
+        body.light-theme .copyright {
+            color: #6c757d;
+        }
+
+        .copyright a {
+            color: #e8e8e8;
+            text-decoration: none;
+            transition: color var(--transition-speed);
+        }
+
+        body.light-theme .copyright a {
+            color: #212529;
+        }
+
+        .copyright a:hover {
+            color: #a0a0a0;
+        }
+
+        body.light-theme .copyright a:hover {
+            color: #495057;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            #main-content.shifted {
+                margin-left: 0;
+            }
+            
+            .hero-title {
+                font-size: 2.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #top-bar .glass-effect {
+                flex-direction: column;
+                gap: 15px;
+                padding: 20px;
+            }
+            
+            .top-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+            
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            #sidebar {
+                width: 220px;
+            }
+            
+            .hero-section {
+                padding: 40px 20px;
+            }
+            
+            .hero-section .glass-effect {
+                padding: 40px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .platforms, .mods-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            
+            .platform-card, .mod-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-container">
+            <h1 class="loading-logo pulse">ModHive</h1>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loading-progress"></div>
+            </div>
+            <p class="loading-text">Initializing professional gaming hub...</p>
+        </div>
+    </div>
+
+    <!-- Top Bar -->
+    <header id="top-bar">
+        <div class="glass-effect">
+            <button class="sidebar-toggle" id="sidebar-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <span class="logo-text">ModHive</span>
+            </div>
+            <nav class="top-nav">
+                <a href="#home">Home</a>
+                <a href="#mods">Mod Library</a>
+                <a href="#platforms">Platforms</a>
+                <a href="#community">Community</a>
+                <a href="#developers">Developers</a>
+            </nav>
+            <button class="theme-toggle" id="theme-toggle">
+                <div class="toggle-circle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+        <div class="glass-effect">
+            <nav class="sidebar-nav">
+                <a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="#"><i class="fas fa-box-open"></i> My Mods</a>
+                <a href="#"><i class="fas fa-star"></i> Favorites</a>
+                <a href="#"><i class="fas fa-chart-line"></i> Trending</a>
+                <a href="#"><i class="fas fa-mobile-alt"></i> Mobile Mods</a>
+                <a href="#"><i class="fas fa-desktop"></i> PC Mods</a>
+                <a href="#"><i class="fas fa-gamepad"></i> Console Mods</a>
+                <a href="#"><i class="fas fa-users"></i> Community</a>
+                <a href="#"><i class="fas fa-tools"></i> Developer Tools</a>
+                <a href="#"><i class="fas fa-cog"></i> Settings</a>
+            </nav>
+            <div style="margin-top: auto; padding-top: 30px;">
+                <div class="mod-count" style="text-align: center; width: 100%;">
+                    <i class="fas fa-download"></i> 12,847 Total Mods
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section fade-in" id="home">
+            <div class="glass-effect">
+                <h1 class="hero-title">PROFESSIONAL MOD PLATFORM</h1>
+                <p class="hero-subtitle">ModHive delivers premium gaming modifications for all platforms. Our curated collection features only the highest quality mods, vetted for performance and stability.</p>
+                <button class="download-btn" style="width: auto; padding: 16px 50px; margin: 20px auto 0; display: block; max-width: 250px;">EXPLORE MOD LIBRARY</button>
+            </div>
+        </section>
+
+        <!-- Platforms Section -->
+        <section class="platforms-section">
+            <h2 class="section-title fade-in">CROSS-PLATFORM MOD SUPPORT</h2>
+            <div class="platforms">
+                <div class="platform-card fade-in">
+                    <div class="glass-effect">
+                        <div class="platform-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>Mobile</h3>
+                        <span class="mod-count">2,150+ Optimized Mods</span>
+                        <p>Performance-optimized modifications for iOS and Android gaming. All mods are tested for mobile compatibility and battery efficiency.</p>
+                        <button class="download-btn" style="margin-top: auto;">BROWSE MOBILE MODS</button>
+                    </div>
+                </div>
+                <div class="platform-card fade-in">
+                    <div class="glass-effect">
+                        <div class="platform-icon">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                        <h3>PC & Mac</h3>
+                        <span class="mod-count">7,400+ Premium Mods</span>
+                        <p>High-fidelity modifications for desktop gaming. Includes 4K texture packs, ray tracing enhancements, and complete gameplay overhauls.</p>
+                        <button class="download-btn" style="margin-top: auto;">BROWSE DESKTOP MODS</button>
+                    </div>
+                </div>
+                <div class="platform-card fade-in">
+                    <div class="glass-effect">
+                        <div class="platform-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3>Consoles</h3>
+                        <span class="mod-count">1,300+ Certified Mods</span>
+                        <p>Officially approved modifications for PlayStation, Xbox, and Nintendo platforms. All mods comply with platform guidelines.</p>
+                        <button class="download-btn" style="margin-top: auto;">BROWSE CONSOLE MODS</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Mods -->
+        <section class="mods-section">
+            <h2 class="section-title fade-in">FEATURED PREMIUM MODS</h2>
+            <div class="mods-grid">
+                <div class="mod-card fade-in">
+                    <div class="glass-effect">
+                        <div class="mod-image">
+                            <i class="fas fa-city"></i>
+                        </div>
+                        <div class="mod-info">
+                            <h3>Cyberpunk 2077: Neon Overdrive</h3>
+                            <p>Complete visual overhaul with enhanced neon lighting, new weather systems, and 4K texture packs for the ultimate Night City experience.</p>
+                            <div class="mod-tags">
+                                <span class="mod-tag">PC</span>
+                                <span class="mod-tag">Visuals</span>
+                                <span class="mod-tag">4K</span>
+                                <span class="mod-tag">Premium</span>
+                            </div>
+                            <button class="download-btn">DOWNLOAD - 2.4 GB</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mod-card fade-in">
+                    <div class="glass-effect">
+                        <div class="mod-image">
+                            <i class="fas fa-mountain"></i>
+                        </div>
+                        <div class="mod-info">
+                            <h3>Elder Scrolls: Enhanced Realism</h3>
+                            <p>Comprehensive realism modpack with survival mechanics, enhanced AI, and visual improvements for a truly immersive adventure.</p>
+                            <div class="mod-tags">
+                                <span class="mod-tag">PC</span>
+                                <span class="mod-tag">Xbox</span>
+                                <span class="mod-tag">Realism</span>
+                                <span class="mod-tag">Gameplay</span>
+                            </div>
+                            <button class="download-btn">DOWNLOAD - 1.8 GB</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mod-card fade-in">
+                    <div class="glass-effect">
+                        <div class="mod-image">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="mod-info">
+                            <h3>Minecraft RTX Ultimate</h3>
+                            <p>Complete ray tracing implementation with PBR materials, global illumination, and 4K texture packs for Minecraft Bedrock and Java.</p>
+                            <div class="mod-tags">
+                                <span class="mod-tag">Mobile</span>
+                                <span class="mod-tag">PC</span>
+                                <span class="mod-tag">RTX</span>
+                                <span class="mod-tag">Visuals</span>
+                            </div>
+                            <button class="download-btn">DOWNLOAD - 3.1 GB</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mod-card fade-in">
+                    <div class="glass-effect">
+                        <div class="mod-image">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="mod-info">
+                            <h3>Forza Horizon: Performance+</h3>
+                            <p>Advanced physics overhaul, new vehicle models, and enhanced graphics for the ultimate racing experience on console and PC.</p>
+                            <div class="mod-tags">
+                                <span class="mod-tag">Xbox</span>
+                                <span class="mod-tag">PC</span>
+                                <span class="mod-tag">Physics</span>
+                                <span class="mod-tag">Vehicles</span>
+                            </div>
+                            <button class="download-btn">DOWNLOAD - 4.2 GB</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-logo">
+                <div class="logo-icon" style="width: 35px; height: 35px; font-size: 1.2rem;">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <span class="logo-text">ModHive</span>
+            </div>
+            <p style="max-width: 600px; margin: 0 auto; color: #a0a0a0; line-height: 1.6;">
+                The professional platform for premium gaming modifications. All mods are vetted for quality, security, and performance across all supported platforms.
+            </p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-discord"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-reddit"></i></a>
+            </div>
+            <p class="copyright">
+                &copy; 2023 ModHive. All rights reserved. | 
+                <a href="#">Privacy Policy</a> | 
+                <a href="#">Terms of Service</a> | 
+                <a href="#">Mod Submission Guidelines</a>
+            </p>
+        </footer>
+    </main>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', function() {
+            const loadingScreen = document.getElementById('loading-screen');
+            const loadingProgress = document.getElementById('loading-progress');
+            
+            // Simulate loading progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // Fade out loading screen after a short delay
+                    setTimeout(() => {
+                        loadingScreen.classList.add('fade-out');
+                    }, 300);
+                }
+                loadingProgress.style.width = `${progress}%`;
+            }, 100);
+        });
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            
+            // Update toggle icon
+            const toggleIcon = document.querySelector('.toggle-circle i');
+            if (document.body.classList.contains('light-theme')) {
+                toggleIcon.className = 'fas fa-sun';
+            } else {
+                toggleIcon.className = 'fas fa-moon';
+            }
+            
+            // Save theme preference
+            const isLightTheme = document.body.classList.contains('light-theme');
+            localStorage.setItem('modhive-theme', isLightTheme ? 'light' : 'dark');
+        });
+
+        // Check saved theme preference
+        const savedTheme = localStorage.getItem('modhive-theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            const toggleIcon = document.querySelector('.toggle-circle i');
+            toggleIcon.className = 'fas fa-sun';
+        }
+
+        // Sidebar Toggle
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            mainContent.classList.toggle('shifted');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (event) => {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnToggle = sidebarToggle.contains(event.target);
+            
+            if (!isClickInsideSidebar && !isClickOnToggle && window.innerWidth <= 992) {
+                sidebar.classList.remove('active');
+                mainContent.classList.remove('shifted');
+            }
+        });
+
+        // Scroll animations
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const fadeInOnScroll = () => {
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        };
+
+        // Initial check
+        fadeInOnScroll();
+        
+        // Check on scroll
+        window.addEventListener('scroll', fadeInOnScroll);
+
+        // Card hover effects
+        const platformCards = document.querySelectorAll('.platform-card');
+        platformCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                const glassEffect = this.querySelector('.glass-effect');
+                glassEffect.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                const glassEffect = this.querySelector('.glass-effect');
+                glassEffect.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Download button animations
+        const downloadButtons = document.querySelectorAll('.download-btn');
+        downloadButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Create a subtle animation
+                this.style.transform = 'translateY(-2px) scale(0.98)';
+                
+                // Simulate download
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING...';
+                this.disabled = true;
+                
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-check"></i> DOWNLOAD STARTED';
+                    this.style.background = 'rgba(255, 255, 255, 0.2)';
+                    
+                    // Reset after 3 seconds
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.style.background = '';
+                        this.disabled = false;
+                        this.style.transform = '';
+                    }, 3000);
+                }, 1500);
+            });
+        });
+
+        // Navigation smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add subtle parallax effect to hero section
+        window.addEventListener('scroll', () => {
+            const heroSection = document.querySelector('.hero-section');
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.3;
+            
+            if (heroSection) {
+                heroSection.style.backgroundPosition = `center ${rate}px`;
+            }
+        });
+    </script>
+</body>
+</html>

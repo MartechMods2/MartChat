@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ModHive Services - Download mods, walkthroughs, and gaming guides for PC, Android, and emulators. Custom mod development and professional QA testing.">
+    <meta name="keywords" content="mod downloads, game mods library, walkthroughs, hints, gaming guides, mod installation, PC mods, Android mods, emulator mods, custom mods, mod creation, Martbot, QA testing, mod packs, gaming tutorials">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="ModHive Services - Game Mods, Walkthroughs & Guides">
+    <meta property="og:description" content="Browse our comprehensive mod library, installation guides, walkthroughs, and quality-tested mods for all gaming platforms.">
+    <meta property="og:image" content="lg.png">
+    <meta property="og:url" content="https://modhive.com/services.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>ModHive Services - Game Mods, Walkthroughs & Custom Modifications</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body{font-family: 'Poppins', Arial, sans-serif; margin:0; background:linear-gradient(135deg,#0a0a0a,#121212); color:#e8e8e8;transition:background 400ms}
+        .navbar{display:flex;justify-content:space-between;align-items:center;padding:18px 40px;width:100%;background:rgba(18,18,18,0.7);border-bottom:1px solid rgba(255,255,255,0.06)}
+        .container{max-width:1100px;margin:0 auto;padding:120px 5% 60px}
+        .glass{background:rgba(18,18,18,0.6);padding:35px;border-radius:12px;border:1px solid rgba(255,255,255,0.06)}
+        .service-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:25px}
+        .service{background:rgba(255,255,255,0.03);padding:18px;border-radius:10px;transition:all 300ms;border:1px solid rgba(255,255,255,0.04)}
+        .service:hover{background:rgba(102,126,234,0.08);transform:translateY(-4px);border-color:rgba(102,126,234,0.3)}
+        .service h3{font-size:1.1rem;margin-top:0;color:#e8e8e8}
+        .service p{color:#a0a0a0;font-size:0.9rem;line-height:1.5;margin:8px 0}
+        footer{margin-top:40px;padding:30px 20px;background:rgba(18,18,18,0.8);color:#a0a0a0;border-top:1px solid rgba(255,255,255,0.06)}
+        a{color:#667eea;text-decoration:none;transition:all 300ms}
+        a:hover{color:#8fd;text-decoration:underline}
+        
+        /* Breadcrumb */
+        .breadcrumb{display:flex;gap:8px;padding:12px 20px;background:rgba(18,18,18,0.5);border-radius:8px;border:1px solid rgba(255,255,255,0.06);font-size:0.9rem;margin-top:80px;margin-bottom:20px}
+        .breadcrumb a{color:#667eea}
+        .breadcrumb span{color:#a0a0a0}
+        .breadcrumb .active{color:#e8e8e8}
+
+        html { scroll-behavior: smooth; }
+
+        @media (prefers-color-scheme: light) {
+            body { background: linear-gradient(135deg, #f8f9fa, #e9ecef); color: #212529; }
+            .navbar { background: rgba(248, 249, 250, 0.7); border-bottom: 1px solid rgba(0,0,0,0.06); }
+            .glass { background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(0,0,0,0.1); }
+            .service { background: rgba(0,0,0,0.02); }
+            .service h3 { color: #212529; }
+            .service p { color: #6c757d; }
+            footer { background: rgba(248, 249, 250, 0.8); border-top: 1px solid rgba(0,0,0,0.06); }
+            .breadcrumb { background: rgba(255,255,255,0.5); border: 1px solid rgba(0,0,0,0.1); }
+            .breadcrumb span { color: #6c757d; }
+            .breadcrumb .active { color: #212529; }
+        }
+
+        /* Sidebar styles */
+        #sidebar {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            height: 100vh;
+            width: 250px;
+            padding: 100px 20px 30px;
+            transition: transform 0.4s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        #sidebar.active {
+            transform: translateX(250px);
+        }
+
+        #sidebar .glass-effect {
+            height: 100%;
+            background: rgba(18,18,18,0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0 12px 12px 0;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-nav a {
+            color: #e8e8e8;
+            text-decoration: none;
+            padding: 14px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 300ms;
+            font-weight: 500;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e8e8e8;
+            transform: translateX(5px);
+        }
+
+        .sidebar-nav i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #e8e8e8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 300ms;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .sidebar-toggle.active {
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 200px;
+                left: -200px;
+            }
+
+            #sidebar.active {
+                transform: translateX(200px);
+            }
+
+            .sidebar-toggle {
+                width: 48px;
+                height: 48px;
+                min-height: 48px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                padding: 12px 15px;
+                gap: 12px;
+            }
+            
+            .navbar h1 {
+                font-size: 1.2rem;
+            }
+            
+            .navbar div:last-child {
+                width: 100%;
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .navbar a {
+                font-size: 0.9rem;
+                margin-right: 8px !important;
+            }
+            
+            .container {
+                margin: 100px auto 20px;
+                padding: 15px;
+            }
+            
+            .glass {
+                padding: 20px;
+            }
+            
+            .service-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .service {
+                padding: 12px;
+                border-radius: 8px;
+            }
+            
+            .service h3 {
+                font-size: 0.95rem;
+            }
+            
+            .service p {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px;
+                gap: 8px;
+            }
+            
+            .navbar img {
+                width: 6cm !important;
+                height: 0.8cm !important;
+            }
+            
+            .navbar h1 {
+                font-size: 1rem;
+                margin: 0;
+            }
+            
+            .navbar div:last-child {
+                display: none;
+            }
+            
+            .container {
+                margin: 70px auto 15px;
+                padding: 10px;
+            }
+            
+            .glass {
+                padding: 12px;
+                border-radius: 10px;
+            }
+            
+            .breadcrumb {
+                margin: 60px auto 12px;
+                padding: 8px 10px;
+                font-size: 0.8rem;
+                max-width: 95%;
+            }
+            
+            h2 {
+                font-size: 1.4rem;
+                margin-bottom: 6px !important;
+            }
+            
+            h3 {
+                font-size: 0.9rem;
+            }
+            
+            p {
+                font-size: 0.85rem;
+            }
+            
+            .service-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .service {
+                padding: 10px;
+                border-radius: 8px;
+            }
+            
+            .service h3 {
+                font-size: 0.9rem;
+                margin: 0 0 6px 0;
+            }
+            
+            .service p {
+                font-size: 0.8rem;
+                margin: 0;
+            }
+            
+            div[style*="margin-top:20px"] {
+                margin-top: 15px !important;
+                flex-direction: column;
+                gap: 10px !important;
+            }
+            
+            div[style*="margin-top:20px"] a,
+            div[style*="margin-top:20px"] p {
+                width: 100%;
+                margin: 0 !important;
+                padding: 10px 12px !important;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            hr {
+                margin: 12px 0 !important;
+            }
+            
+            footer {
+                margin-top: 20px;
+                padding: 15px 10px;
+            }
+            
+            footer div {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="sidebar-toggle" id="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <nav class="navbar">
+        <div style="display:flex;align-items:center;gap:12px">
+            <img id="siteLogo" src="lg2.png" alt="ModHive logo" style="width:8cm;height:1cm;object-fit:contain;display:block">
+        </div>
+        <div>
+            <a href="ModHive.html" style="margin-right:16px;color:#a0a0a0">Home</a>
+            <a href="about.html" style="margin-right:16px;color:#a0a0a0">About</a>
+            <a href="contact.html" style="margin-right:16px;color:#a0a0a0">Contact</a>
+            <a href="auth.html" style="color:#a0a0a0">Login</a>
+        </div>
+    </nav>
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar">
+        <div class="glass-effect">
+            <nav class="sidebar-nav">
+                <a href="ModHive.html" onclick="setActive(this)"><i class="fas fa-home"></i> Home</a>
+                <a href="ModHive.html#mods" onclick="setActive(this)"><i class="fas fa-box-open"></i> Mod Library</a>
+                <a href="ModHive.html#updates" onclick="setActive(this)"><i class="fas fa-newspaper"></i> Updates</a>
+                <a href="ModHive.html#testimonials" onclick="setActive(this)"><i class="fas fa-comments"></i> Testimonials</a>
+                <a href="ModHive.html#tutorials" onclick="setActive(this)"><i class="fas fa-graduation-cap"></i> Tutorials</a>
+                <a href="ModHive.html#faq" onclick="setActive(this)"><i class="fas fa-question-circle"></i> FAQ</a>
+                <a href="about.html" onclick="setActive(this)"><i class="fas fa-info-circle"></i> About</a>
+                <a href="contact.html" onclick="setActive(this)"><i class="fas fa-envelope"></i> Contact</a>
+                <a href="ModHive.html#newsletter" onclick="setActive(this)"><i class="fas fa-bell"></i> Newsletter</a>
+                <a href="dashboard.html" onclick="setActive(this)"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Breadcrumb Navigation -->
+    <div class="breadcrumb" style="max-width:1100px;margin:80px auto 20px;padding:12px 20px">
+        <a href="ModHive.html"><i class="fas fa-home" style="margin-right:4px"></i>Home</a>
+        <span>›</span>
+        <span class="active">Services</span>
+    </div>
+
+    <main class="container">
+        <div class="glass">
+            <h2 style="font-size:2rem;margin-bottom:8px">Our Services</h2>
+            <p style="color:#9aa;margin-bottom:18px">Tools, mods, walkthroughs and support for players and creators across PC, mobile and emulators.</p>
+
+            <section class="service-grid">
+                <div class="service">
+                    <h3>Mods Library — Browse & Download</h3>
+                    <p>Discover curated mods sorted by game, platform and compatibility. Each mod includes install instructions, version history and verified checksums.</p>
+                </div>
+
+                <div class="service">
+                    <h3>Mod Submission & Moderation</h3>
+                    <p>Creators can submit mods for review. We test for stability, remove malware, and provide feedback so your release is safe and polished.</p>
+                </div>
+
+                <div class="service">
+                    <h3>Walkthroughs, Hints & Guides</h3>
+                    <p>Platform-agnostic walkthroughs, boss strategies, achievement guides and quick hints — written and video formats for all skill levels.</p>
+                </div>
+
+                <div class="service">
+                    <h3>Step-by-step Installation Guides</h3>
+                    <p>Clear installation tutorials for PC, Android, iOS (where applicable), and emulators with troubleshooting tips and rollback steps.</p>
+                </div>
+
+                <div class="service">
+                    <h3>Compatibility & QA Testing</h3>
+                    <p>Hands-on QA across platforms and emulator setups — compatibility matrices, conflict reports, and recommended load orders.</p>
+                </div>
+
+                <div class="service">
+                    <h3>Custom Mods & Commissions</h3>
+                    <p>Need a feature or overhaul? Hire our modders for paid custom work: feature design, scripting, assets and integration.</p>
+                </div>
+
+                <div class="service">
+                    <h3>Mod Packs & Curated Collections</h3>
+                    <p>Download tested mod packs built for stability and thematic coherence — perfect for new players or themed playthroughs.</p>
+                </div>
+
+                <div class="service">
+                    <h3>Tutorial Videos & Live Help</h3>
+                    <p>Short how-to clips, full walkthrough channels and scheduled live help sessions for hands-on troubleshooting.</p>
+                </div>
+            </section>
+
+            <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+                <a href="contact.html" style="background:#2ecc71;color:#021; padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:600">Request a Custom Mod</a>
+                <a href="auth.html" style="background:transparent;border:1px solid rgba(255,255,255,0.07);color:#e8e8e8;padding:10px 14px;border-radius:8px;text-decoration:none">Contribute a Mod</a>
+                <p style="color:#9aa;margin:0;padding-left:8px">Need enterprise/priority support? <a href="contact.html" style="color:#8fd">Contact us</a>.</p>
+            </div>
+
+            <hr style="margin-top:18px;border-color:rgba(255,255,255,0.04)">
+
+            <h3 style="margin-top:14px">Supported Platforms</h3>
+            <p style="color:#9aa">PC (Windows/Linux), Android, iOS (when permissible), major emulators (e.g., BlueStacks, PPSSPP), and select consoles via homebrew.</p>
+
+        </div>
+    </main>
+
+    <footer>
+        <div style="max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
+            <div>
+                <strong>ModHive</strong>
+                <p style="margin:6px 0;color:#9aa">Professional platform for premium gaming modifications.</p>
+            </div>
+            <div>
+                <a href="https://www.facebook.com/martechmods1">Facebook</a> ·
+                <a href="t.me/martechmods">Telegram</a> ·
+                <a href="https://chat.whatsapp.com/DsvyRgBCUgBLQrx6vNauQe?mode=ac_t">WhatsApp</a> ·
+                <a href="https://www.youtube.com/@martechmods">YouTube</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function(){
+            const logo = document.getElementById('siteLogo');
+            if (!logo) return;
+            function setLogo(){
+                const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+                logo.src = prefersLight ? 'lg.png' : 'lg2.png';
+            }
+            setLogo();
+            if (window.matchMedia) {
+                try { window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', setLogo); } catch(e){ window.matchMedia('(prefers-color-scheme: light)').addListener(setLogo); }
+            }
+        })();
+    </script>
+
+    <script>
+        // Sidebar functionality
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
+
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+                sidebarToggle.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+                    sidebar.classList.remove('active');
+                    sidebarToggle.classList.remove('active');
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    sidebar.classList.remove('active');
+                    sidebarToggle.classList.remove('active');
+                }
+            });
+        }
+
+        function setActive(element) {
+            document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+            element.classList.add('active');
+            sidebar.classList.remove('active');
+            sidebarToggle.classList.remove('active');
+        }
+    </script>
+</body>
+</html>
